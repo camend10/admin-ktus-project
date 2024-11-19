@@ -1,0 +1,21 @@
+.first-mayuscula {
+    // Estilo general del texto
+    font-size: 16px;
+    color: #333;
+  
+    // Aplicar estilo a la primera letra
+    &::first-letter {
+      text-transform: uppercase; // Convierte la primera letra a mayúscula
+      font-size: 20px;          // Opcional: Cambiar el tamaño de la letra
+      font-weight: bold;        // Opcional: Hacerla negrita
+      color: #000;              // Opcional: Cambiar el color
+    }
+  }
+  
+.tab-pane {
+    font-size: 0.9rem; /* Tamaño de letra más pequeño */
+}
+
+.nav-item .nav-link {
+    font-size: 0.875rem; /* Tamaño más pequeño */
+}

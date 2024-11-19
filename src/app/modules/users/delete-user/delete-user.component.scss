@@ -1,0 +1,10 @@
+.btn-close-modal {
+    transition: border 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s;
+
+    &:hover {
+        border: 2px solid #ff5c5c; // Borde rojo claro en hover
+        color: #ff5c5c; // Texto rojo claro en hover
+        background-color: #f8d7da; // Fondo rojo claro en hover
+        box-shadow: 0 0 8px rgba(255, 92, 92, 0.5); // Sombra alrededor del botón
+    }
+}

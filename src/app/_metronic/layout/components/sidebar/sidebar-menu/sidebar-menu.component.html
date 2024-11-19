@@ -1,0 +1,296 @@
+<!--begin::Menu wrapper-->
+<div id="kt_app_sidebar_menu_scroll" class="scroll-y my-5 mx-3" data-kt-scroll="true" data-kt-scroll-activate="true"
+  data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_app_sidebar_logo, #kt_app_sidebar_footer"
+  data-kt-scroll-wrappers="#kt_app_sidebar_menu" data-kt-scroll-offset="5px" data-kt-scroll-save-state="true">
+  <!--begin::Menu-->
+  <div class="menu menu-column menu-rounded menu-sub-indention fw-semibold fs-6" id="#kt_app_sidebar_menu"
+    data-kt-menu="true" data-kt-menu-expand="false">
+    <!-- Dashboard -->
+    <div class="menu-item">
+      <a class="menu-link without-sub" routerLink="/dashboard" routerLinkActive="active">
+        <span class="menu-icon">
+          <app-keenicon name="element-11" class="fs-2"></app-keenicon>
+        </span>
+        <span class="menu-title" translate="MENU.DASHBOARD"></span>
+      </a>
+    </div>
+
+    <!-- Sistema -->
+    <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show"
+      *ngIf="showMenu(['registrar_usuario','editar_usuario','ver_usuarios','eliminar_usuario']) || showMenu(['registrar_roles','editar_roles','ver_roles','eliminar_roles']) || showMenu(['registrar_sede','editar_sede','eliminar_sede','ver_sede'])">
+      <span class="menu-link">
+        <span class="menu-icon">
+          <app-keenicon name="setting" class="fs-2"></app-keenicon>
+        </span>
+        <span class="menu-title">Sistema
+        </span>
+        <span class="menu-arrow"></span>
+      </span>
+      <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
+
+        <div class="menu-item" *ngIf="isRole()">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/configuraciones/empresas/list">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Empresa
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item"
+          *ngIf="showMenu(['registrar_usuario','editar_usuario','ver_usuarios','eliminar_usuario'])">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/usuarios/list">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Usuarios
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item" *ngIf="showMenu(['registrar_roles','editar_roles','ver_roles','eliminar_roles'])">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/roles/listar">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Roles
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item" *ngIf="showMenu(['registrar_sede','editar_sede','eliminar_sede','ver_sede'])">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/configuraciones/sedes/list">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Sedes
+            </span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Inventario -->
+    <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show"
+      *ngIf="showMenu(['registrar_articulos','editar_articulos','ver_articulos','eliminar_articulos']) || showMenu(['registrar_bodega','editar_bodega','eliminar_bodega','ver_bodega'])">
+      <span class="menu-link">
+        <span class="menu-icon">
+          <app-keenicon name="some-files" class="fs-2"></app-keenicon>
+        </span>
+        <span class="menu-title">Inventario
+        </span>
+        <span class="menu-arrow"></span>
+      </span>
+      
+      <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/overview">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Categorias
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Unidades
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item" *ngIf="showMenu(['registrar_bodega','editar_bodega','eliminar_bodega','ver_bodega'])">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/configuraciones/bodegas/list">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Bodegas
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Ivas
+            </span>
+          </a>
+        </div>
+
+
+        <div class="menu-item"
+          *ngIf="showMenu(['registrar_articulos','editar_articulos','ver_articulos','eliminar_articulos'])">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Productos
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Proveedores
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Movimientos
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Solicitudes
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Clientes
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/overview">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Plantillas
+            </span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Facturas -->
+    <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
+      <span class="menu-link">
+        <span class="menu-icon">
+          <app-keenicon name="two-credit-cart" class="fs-2"></app-keenicon>
+        </span>
+        <span class="menu-title" data-link="/crafted/account">Facturas
+        </span>
+        <span class="menu-arrow"></span>
+      </span>
+      <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/overview">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Ventas
+            </span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Reportes -->
+    <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
+      <span class="menu-link">
+        <span class="menu-icon">
+          <app-keenicon name="questionnaire-tablet" class="fs-2"></app-keenicon>
+        </span>
+        <span class="menu-title" data-link="/crafted/account">Reportes
+        </span>
+        <span class="menu-arrow"></span>
+      </span>
+      <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/overview">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Ventas
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/overview">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Baja Existencia
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/overview">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Lo más pedido
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/overview">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Códigos
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/overview">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Inventario
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/overview">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Movimientos
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!--end::Menu-->
+</div>
+<!--end::Menu wrapper-->

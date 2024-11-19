@@ -1,0 +1,14 @@
+.action-buttons {
+    display: flex;
+    justify-content: center; // Centra horizontalmente los botones
+    align-items: center;    // Centra verticalmente los botones
+    gap: 0.1rem;            // Espaciado uniforme entre botones
+
+    // Opcional: Ajusta los márgenes para prevenir inconsistencias
+    .btn {
+        margin: 0;
+        padding: 0.5rem; // Ajusta el relleno si es necesario
+        width: 30px;     // Opcional, para asegurar que todos los botones tengan el mismo tamaño
+        height: 30px;
+    }
+}
