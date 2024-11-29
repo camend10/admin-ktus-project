@@ -83,28 +83,8 @@
         </span>
         <span class="menu-arrow"></span>
       </span>
-      
+
       <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
-
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/overview">
-            <span class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span class="menu-title">Categorias
-            </span>
-          </a>
-        </div>
-
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
-            <span class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span class="menu-title">Unidades
-            </span>
-          </a>
-        </div>
 
         <div class="menu-item" *ngIf="showMenu(['registrar_bodega','editar_bodega','eliminar_bodega','ver_bodega'])">
           <a class="menu-link without-sub" routerLinkActive="active" routerLink="/configuraciones/bodegas/list">
@@ -116,8 +96,76 @@
           </a>
         </div>
 
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
+        <div class="menu-item"
+          *ngIf="showMenu(['registrar_sedeDeliverie','editar_sedeDeliverie','eliminar_sedeDeliverie','ver_sedeDeliverie'])">
+          <a class="menu-link without-sub" routerLinkActive="active"
+            routerLink="/configuraciones/lugar-de-entrega/list">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Lugar de entrega
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item"
+          *ngIf="showMenu(['registrar_metodoPago','editar_metodoPago','eliminar_metodoPago','ver_metodoPago'])">
+          <a class="menu-link without-sub" routerLinkActive="active"
+            routerLink="/configuraciones/metodos-de-pagos/list">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Metodos de pagos
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item"
+          *ngIf="showMenu(['registrar_segmentoCliente','editar_segmentoCliente','eliminar_segmentoCliente','ver_segmentoCliente'])">
+          <a class="menu-link without-sub" routerLinkActive="active"
+            routerLink="/configuraciones/segmento-de-clientes/list">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Segmento de clientes
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item"
+          *ngIf="showMenu(['registrar_categoria','editar_categoria','eliminar_categoria','ver_categoria'])">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/configuraciones/categorias/list">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Categorias
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item"
+          *ngIf="showMenu(['registrar_proveedor','editar_proveedor','eliminar_proveedor','ver_proveedor'])">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/configuraciones/proveedores/list">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Proveedores
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item" *ngIf="showMenu(['registrar_unidad','editar_unidad','eliminar_unidad','ver_unidad'])">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/configuraciones/unidades/list">
+            <span class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Unidades
+            </span>
+          </a>
+        </div>
+
+        <div class="menu-item" *ngIf="showMenu(['registrar_iva','editar_iva','eliminar_iva','ver_iva'])">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/configuraciones/iva/list">
             <span class="menu-bullet">
               <span class="bullet bullet-dot"></span>
             </span>
@@ -126,19 +174,53 @@
           </a>
         </div>
 
-
-        <div class="menu-item"
-          *ngIf="showMenu(['registrar_articulos','editar_articulos','ver_articulos','eliminar_articulos'])">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
+        <!--begin:Menu item-->
+        <div data-kt-menu-trigger="{default:'click', lg: 'hover'}" data-kt-menu-placement="right-start"
+          class="menu-item menu-lg-down-accordion" *ngIf="showMenu(['registrar_articulos','ver_articulos'])"
+          routerLinkActive="here show">
+          <!--begin:Menu link-->
+          <span class="menu-link">
             <span class="menu-bullet">
               <span class="bullet bullet-dot"></span>
             </span>
-            <span class="menu-title">Productos
-            </span>
-          </a>
+            <span class="menu-title" data-link="/articulos">Articulos</span>
+            <span class="menu-arrow"></span>
+          </span>
+          <!--end:Menu link-->
+          <!--begin:Menu sub-->
+          <div
+            class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown menu-active-bg px-lg-2 py-lg-4 w-lg-225px"
+            routerLinkActive="menu-active-bg">
+            <!--begin:Menu item-->
+            <div class="menu-item" *ngIf="showMenu(['registrar_articulos'])">
+              <!--begin:Menu link-->
+              <a class="menu-link" routerLinkActive="active" routerLink="/articulos/registrar">
+                <span class="menu-bullet">
+                  <span class="bullet bullet-dot"></span>
+                </span>
+                <span class="menu-title">Registrar</span>
+              </a>
+              <!--end:Menu link-->
+            </div>
+            <!--end:Menu item-->
+            <!--begin:Menu item-->
+            <div class="menu-item" *ngIf="showMenu(['ver_articulos'])">
+              <!--begin:Menu link-->
+              <a class="menu-link" routerLinkActive="active" routerLink="/articulos/list">
+                <span class="menu-bullet">
+                  <span class="bullet bullet-dot"></span>
+                </span>
+                <span class="menu-title">Listar</span>
+              </a>
+              <!--end:Menu link-->
+            </div>
+            <!--end:Menu item-->
+          </div>
+          <!--end:Menu sub-->
         </div>
+        <!--end:Menu item-->
 
-        <div class="menu-item">
+        <!-- <div class="menu-item">
           <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
             <span class="menu-bullet">
               <span class="bullet bullet-dot"></span>
@@ -146,7 +228,7 @@
             <span class="menu-title">Proveedores
             </span>
           </a>
-        </div>
+        </div> -->
 
         <div class="menu-item">
           <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">

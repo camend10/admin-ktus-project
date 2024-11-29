@@ -46,6 +46,7 @@ export class BodegaService {
     this.isLoadingSubject.next(true);
 
     let data = {
+      id: bodega.id,
       nombre: bodega.nombre,
       descripcion: bodega.descripcion,
       empresa_id: bodega.empresa_id,

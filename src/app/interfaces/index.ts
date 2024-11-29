@@ -1,4 +1,10 @@
+import { Bodega } from "../modules/configuracion/bodegas/interfaces";
+import { Categoria } from "../modules/configuracion/categorias/interfaces";
+import { Iva } from "../modules/configuracion/ivas/interfaces";
+import { Proveedor } from "../modules/configuracion/proveedores/interfaces";
 import { Sede } from "../modules/configuracion/sedes/interfaces";
+import { SegmentoCliente } from "../modules/configuracion/segmento-clientes/interfaces";
+import { Unidad } from "../modules/configuracion/unidades/interfaces";
 import { User } from "../modules/users/interfaces";
 
 export interface ResponseConfiguracion {
@@ -11,6 +17,17 @@ export interface ResponseConfiguracion {
     // municipios:     { [key: string]: Municipio[] };
     municipios: Municipio[];
     arraySedes: Sede[];
+}
+
+export interface ResponseConfiguracionArticulos {
+    unidades: Unidad[];
+    empresas: Empresa[];
+    sedes: Sede[];
+    bodegas: Bodega[];
+    segmentos_clientes: SegmentoCliente[];
+    ivas: Iva[];
+    categorias: Categoria[];
+    proveedores: Proveedor[];
 }
 
 
@@ -58,7 +75,7 @@ export interface Empresa {
 
 export interface ResponseAuth {
     access_token: string;
-    token_type:   string;
-    expires_in:   number;
-    user:         User;
+    token_type: string;
+    expires_in: number;
+    user: User;
 }

@@ -4,7 +4,6 @@ import { Observable, BehaviorSubject, finalize } from 'rxjs';
 import { AuthService } from '../../auth';
 import { URL_SERVICIOS } from 'src/app/config/config';
 import { ResponseGestionUsers, ResponseUser, User } from '../interfaces';
-import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 
 
@@ -30,7 +29,6 @@ export class UsersService {
 
     let formData = new FormData();
     formData.append('name', user.name);
-    formData.append('email', user.email);
     formData.append('email', user.email);
     formData.append('identificacion', user.identificacion);
     formData.append('direccion', user.direccion);
@@ -69,7 +67,6 @@ export class UsersService {
     this.isLoadingSubject.next(true);
     let formData = new FormData();
     formData.append('name', user.name);
-    formData.append('email', user.email);
     formData.append('email', user.email);
     formData.append('identificacion', user.identificacion);
     formData.append('direccion', user.direccion);

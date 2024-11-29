@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
-import { Departamento, Empresa, Municipio } from 'src/app/interfaces';
+import { Empresa } from 'src/app/interfaces';
 import { GeneralesService } from 'src/app/services/generales.service';
 import { AuthService } from 'src/app/modules/auth';
 import { User } from 'src/app/modules/users/interfaces';

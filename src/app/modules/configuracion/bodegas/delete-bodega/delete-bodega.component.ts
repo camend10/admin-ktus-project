@@ -12,8 +12,7 @@ import { BodegaService } from '../service/bodega.service';
   styleUrl: './delete-bodega.component.scss'
 })
 export class DeleteBodegaComponent implements OnInit {
-
-
+  
   name: string = '';
   isLoading$: any;
   @Output() BodegaD: EventEmitter<Bodega> = new EventEmitter;

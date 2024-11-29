@@ -75,7 +75,6 @@ export class CreateEmpresaComponent implements OnInit {
       return false;
     }
 
-
     this.empresaService.registrar(this.empresa).subscribe((resp) => {
       if (resp.message === 403) {
         this.toast.error('Validación', resp.message_text);

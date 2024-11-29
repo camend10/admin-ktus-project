@@ -6,6 +6,8 @@ import { Empresa } from 'src/app/interfaces';
 import { Sede } from '../../sedes/interfaces';
 import { BodegaService } from '../service/bodega.service';
 import { Bodega } from '../interfaces/index';
+import { User } from 'src/app/modules/users/interfaces';
+import { AuthService } from 'src/app/modules/auth';
 
 
 @Component({
@@ -21,6 +23,8 @@ export class CreateBodegaComponent implements OnInit {
   @Input() empresas: Empresa[] = [];
   @Input() sedes: Sede[] = [];
 
+  user: User;
+
   bodega: Bodega = {
     id: 0,
     nombre: '',
@@ -35,12 +39,15 @@ export class CreateBodegaComponent implements OnInit {
     public modal: NgbActiveModal,
     public bodegaService: BodegaService,
     public generalService: GeneralesService,
+    public authService: AuthService,
     public toast: ToastrService
   ) {
 
   }
   ngOnInit(): void {
     this.isLoading$ = this.bodegaService.isLoading$;
+    this.user = this.authService.user;
+    this.bodega.empresa_id = this.user.empresa_id;
   }
 
   store() {

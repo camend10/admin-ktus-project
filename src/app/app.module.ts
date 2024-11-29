@@ -17,6 +17,7 @@ import { FakeAPIService } from './_fake/fake-api.service';
 import { ToastrModule } from 'ngx-toastr';
 import { InterceptorService } from './interceptors/interceptor.service';
 import { PermissionGeneralService } from './interceptors/permission-general.service';
+
 // #fake-end#
 
 function appInitializer(authService: AuthService) {

@@ -1,0 +1,116 @@
+<!--begin::Modal content CREATE-->
+<div class="modal-content">
+    <!--begin::Modal header-->
+    <div class="modal-header" id="kt_modal_add_user_header">
+        <!--begin::Modal title-->
+        <h2 class="fw-bolder">Editar Unidad: <span class="text-capitalize">{{ UnidadSeleccionado.nombre
+                }}</span></h2>
+        <!--end::Modal title-->
+
+        <!--begin::Close-->
+        <div id="kt_modal_add_customer_close" class="btn btn-icon btn-sm btn-active-icon-primary"
+            (click)="modal.dismiss()">
+            <i class="ki-duotone ki-cross fs-1">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+        </div>
+        <!--end::Close-->
+    </div>
+    <!--end::Modal header-->
+    <!--begin::Modal body-->
+    <div class="modal-body py-10 px-lg-17 scroll-y mx-5 my-3">
+        <!--begin::Form-->
+        <form class="form fv-plugins-bootstrap5 fv-plugins-framework" action="#" id="kt_modal_add_customer_form">
+            <!--begin::Scroll-->
+            <div class="scroll-y me-n7 pe-7" id="kt_modal_add_customer_scroll" data-kt-scroll="true"
+                data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto"
+                data-kt-scroll-dependencies="#kt_modal_add_customer_header"
+                data-kt-scroll-wrappers="#kt_modal_add_customer_scroll" data-kt-scroll-offset="300px"
+                style="max-height: 350px;">
+                <!--begin::Input group-->
+
+
+                <div class="row fv-row my-1 fv-plugins-icon-container">
+                    <div class="col-12">
+                        <!--begin::Label-->
+                        <label class="required fs-6 fw-semibold mb-2">Nombre</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <input type="text" name="nombre" class="form-control form-control-solid mb-3 mb-lg-0"
+                            placeholder="Nombre" style="text-transform: capitalize;" [(ngModel)]="unidad.nombre" />
+                        <!--end::Input-->
+                    </div>
+                </div>
+
+                <div class="row fv-row my-1 fv-plugins-icon-container">
+                    <div class="col-12">
+                        <!--begin::Label-->
+                        <label class="required fs-6 fw-semibold mb-2">Sigla</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <input type="text" name="sigla" class="form-control form-control-solid mb-3 mb-lg-0"
+                            placeholder="Sigla" [(ngModel)]="unidad.sigla" />
+                        <!--end::Input-->
+                    </div>
+                </div>
+
+                <div class="row fv-row my-1 fv-plugins-icon-container">
+                    <div class="col-12">
+                        <!--begin::Label-->
+                        <label class="fs-6 fw-semibold mb-2">Descripción</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <textarea type="text" name="descripcion" class="form-control form-control-solid mb-3 mb-lg-0"
+                            placeholder="Descripción" [(ngModel)]="unidad.descripcion">
+                        </textarea>
+                        <!--end::Input-->
+                    </div>
+                </div>
+
+                <div class="row fv-row my-1 fv-plugins-icon-container">
+                    <div class="col-12">
+                        <!--begin::Label-->
+                        <label class="required fs-6 fw-semibold mb-2">Empresa</label>
+                        <!--end::Label-->
+                        <select class="form-select form-select-solid fw-bolder" name="emprea_id" data-control="select2"
+                            data-placeholder="Seleccione Empresa" placeholder="Seleccione Empresa"
+                            [(ngModel)]="unidad.empresa_id">
+                            <option [ngValue]="9999999" selected>Seleccione Empresa</option>
+
+                            <ng-container *ngFor="let item of empresas">
+                                <option [value]="item.id">{{ item.nombre }}</option>
+                            </ng-container>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            <!--end::Scroll-->
+
+
+            <!--begin::Actions-->
+            <div class="text-center pt-15">
+                <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()"
+                    [disabled]="isLoading$ | async"> <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i> Cerrar</button>
+                <button type="button" (click)="store()" class="btn btn-primary" data-kt-users-modal-action="submit"
+                    [disabled]="isLoading$ | async">
+                    <span class="indicator-label">
+                        <i class="ki-duotone ki-check"></i>
+                        Editar</span>
+
+                    <span class="spinner-border spinner-border-sm align-middle ms-2" *ngIf="isLoading$ | async"></span>
+                    <!-- <span class="indicator-progress">Please wait...
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span> -->
+                </button>
+            </div>
+            <!--end::Actions-->
+        </form>
+        <!--end::Form-->
+    </div>
+    <!--end::Modal body-->
+</div>
+<!--end::Modal content CREATE-->

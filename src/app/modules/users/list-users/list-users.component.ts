@@ -117,7 +117,7 @@ export class ListUsersComponent implements OnInit {
 
 
     modalRef.componentInstance.UserE.subscribe((UserR: User) => {
-      console.log(UserR.sedes);
+
       let index = this.usuarios.findIndex((userFind: User) => userFind.id === user.id);
       if (index != -1) {
         // this.usuarios[index] = UserR;

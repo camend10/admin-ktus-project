@@ -127,6 +127,161 @@ export const SIDEBAR: any = [
             }
         ]
     },
+    {
+        'name': 'Lugar de Entrega',
+        'permisos': [
+            {
+                name: 'Registrar',
+                permiso: 'registrar_sedeDeliverie',
+            },
+            {
+                name: 'Editar',
+                permiso: 'editar_sedeDeliverie',
+            },
+            {
+                name: 'Eliminar',
+                permiso: 'eliminar_sedeDeliverie',
+            },
+            {
+                name: 'Ver',
+                permiso: 'ver_sedeDeliverie',
+            }
+        ]
+    },
+    {
+        'name': 'Metodo de pago',
+        'permisos': [
+            {
+                name: 'Registrar',
+                permiso: 'registrar_metodoPago',
+            },
+            {
+                name: 'Editar',
+                permiso: 'editar_metodoPago',
+            },
+            {
+                name: 'Eliminar',
+                permiso: 'eliminar_metodoPago',
+            },
+            {
+                name: 'Ver',
+                permiso: 'ver_metodoPago',
+            }
+        ]
+    },
+    {
+        'name': 'Segmento de clientes',
+        'permisos': [
+            {
+                name: 'Registrar',
+                permiso: 'registrar_segmentoCliente',
+            },
+            {
+                name: 'Editar',
+                permiso: 'editar_segmentoCliente',
+            },
+            {
+                name: 'Eliminar',
+                permiso: 'eliminar_segmentoCliente',
+            },
+            {
+                name: 'Ver',
+                permiso: 'ver_segmentoCliente',
+            }
+        ]
+    },
+    {
+        'name': 'Categorias',
+        'permisos': [
+            {
+                name: 'Registrar',
+                permiso: 'registrar_categoria',
+            },
+            {
+                name: 'Editar',
+                permiso: 'editar_categoria',
+            },
+            {
+                name: 'Eliminar',
+                permiso: 'eliminar_categoria',
+            },
+            {
+                name: 'Ver',
+                permiso: 'ver_categoria',
+            }
+        ]
+    },
+    {
+        'name': 'Proveedores',
+        'permisos': [
+            {
+                name: 'Registrar',
+                permiso: 'registrar_proveedor',
+            },
+            {
+                name: 'Editar',
+                permiso: 'editar_proveedor',
+            },
+            {
+                name: 'Eliminar',
+                permiso: 'eliminar_proveedor',
+            },
+            {
+                name: 'Ver',
+                permiso: 'ver_proveedor',
+            }
+        ]
+    },
+    {
+        'name': 'Unidades',
+        'permisos': [
+            {
+                name: 'Registrar',
+                permiso: 'registrar_unidad',
+            },
+            {
+                name: 'Editar',
+                permiso: 'editar_unidad',
+            },
+            {
+                name: 'Eliminar',
+                permiso: 'eliminar_unidad',
+            },
+            {
+                name: 'Ver',
+                permiso: 'ver_unidad',
+            },
+            {
+                name: 'Crear Transformacion',
+                permiso: 'registrar_transformacion',
+            },
+            {
+                name: 'Eliminar Transformacion',
+                permiso: 'eliminar_transformacion',
+            }
+        ]
+    },
+    {
+        'name': 'Iva',
+        'permisos': [
+            {
+                name: 'Registrar',
+                permiso: 'registrar_iva',
+            },
+            {
+                name: 'Editar',
+                permiso: 'editar_iva',
+            },
+            {
+                name: 'Eliminar',
+                permiso: 'eliminar_iva',
+            },
+            {
+                name: 'Ver',
+                permiso: 'ver_iva',
+            }
+        ]
+    },
     // {
     //     'name': 'Clientes',
     //     'permisos': [

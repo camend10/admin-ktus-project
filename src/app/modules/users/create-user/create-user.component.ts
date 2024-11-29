@@ -182,6 +182,11 @@ export class CreateUserComponent implements OnInit {
       return false;
     }
 
+    if (!this.user.celular) {
+      this.toast.error('Validación', 'El celular es requerido');
+      return false;
+    }
+
     if (this.user.empresa_id === 9999999) {
       this.toast.error('Validación', 'La empresa es requerida');
       return false;
@@ -257,7 +262,6 @@ export class CreateUserComponent implements OnInit {
         resp.user.estado = Number(resp.user.estado);
         this.toast.success('Exito', resp.message_text);
         this.UserC.emit(resp.user);
-        console.log(resp.user);
         this.modal.close();
       }
     });

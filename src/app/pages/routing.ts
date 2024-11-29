@@ -68,6 +68,11 @@ const Routing: Routes = [
     loadChildren: () => import('../modules/configuracion/configuracion.module').then((m) => m.ConfiguracionModule),
   },
   {
+    path: 'articulos',
+    canActivate: [verificaTokenGuard],
+    loadChildren: () => import('../modules/articulos/articulos.module').then((m) => m.ArticulosModule),
+  },
+  {
     path: '',
     redirectTo: '/dashboard',
     pathMatch: 'full',
