@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, finalize } from 'rxjs';
 import { URL_SERVICIOS } from 'src/app/config/config';
 import { Router } from '@angular/router';
-import { Articulo, ArticuloWallet, BodegaArticulo, Especificacion, ResponseArticulo, ResponseGestionArticulo } from '../interfaces';
+import { Articulo, ArticuloWallet, BodegaArticulo, Especificacion, ResponseArticulo, ResponseGestionArticulo, ResponseGestionSubir } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -149,7 +149,6 @@ export class ArticulosService {
     );
   }
 
-
   cambiarEstado(articulo: Articulo, nuevoEstado: number): Observable<ResponseGestionArticulo> {
 
     this.isLoadingSubject.next(true);
@@ -157,6 +156,20 @@ export class ArticulosService {
     let URL = URL_SERVICIOS + `/articulos/${articulo.id}/cambiar-estado`;
 
     return this.http.patch<ResponseGestionArticulo>(URL, { estado: nuevoEstado }).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
+
+  import_articulo(file_name: File): Observable<ResponseGestionSubir> {
+    this.isLoadingSubject.next(true);
+
+    let formData = new FormData();
+
+    formData.append('import_file', file_name);
+
+    let URL = URL_SERVICIOS + `/articulos/import/excel`;
+
+    return this.http.post<ResponseGestionSubir>(URL,formData).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }

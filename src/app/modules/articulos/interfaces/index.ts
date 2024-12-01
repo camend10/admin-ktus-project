@@ -92,3 +92,8 @@ export interface ResponseGestionArticuloWallet {
     message_text: string;
     articulo_wallet: ArticuloWallet;
 }
+
+export interface ResponseGestionSubir {
+    message: number;
+    message_text: string;
+}

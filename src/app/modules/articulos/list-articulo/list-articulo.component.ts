@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { isPermission } from 'src/app/config/config';
+import { isPermission, URL_SERVICIOS } from 'src/app/config/config';
 import { ArticulosService } from '../service/articulos.service';
 import { AuthService } from '../../auth';
 import { ToastrService } from 'ngx-toastr';
@@ -16,6 +16,7 @@ import { Iva } from '../../configuracion/ivas/interfaces';
 import { Categoria } from '../../configuracion/categorias/interfaces';
 import { DeleteArticuloComponent } from '../delete-articulo/delete-articulo.component';
 import { Proveedor } from '../../configuracion/proveedores/interfaces';
+import { ImportArticuloComponent } from '../import-articulo/import-articulo.component';
 
 @Component({
   selector: 'app-list-articulo',
@@ -120,10 +121,6 @@ export class ListArticuloComponent implements OnInit, OnDestroy {
     this.listar();
   }
 
-  editar(articulo: Articulo) {
-
-  }
-
   cambiarEstado(articulo: Articulo) {
     const modalRef = this.modalService.open(DeleteArticuloComponent, { centered: true, size: 'md' });
     modalRef.componentInstance.ArticuloSeleccionado = articulo;
@@ -132,7 +129,6 @@ export class ListArticuloComponent implements OnInit, OnDestroy {
       if (index != -1) {
         this.articulos[index] = ArticuloR;
       }
-
     });
   }
 
@@ -146,7 +142,7 @@ export class ListArticuloComponent implements OnInit, OnDestroy {
         this.segmentos_clientes = response.segmentos_clientes;
         this.ivas = response.ivas;
         this.categorias = response.categorias;
-        this.proveedores = response.proveedores;      
+        this.proveedores = response.proveedores;
       });
   }
 
@@ -156,5 +152,38 @@ export class ListArticuloComponent implements OnInit, OnDestroy {
 
   isPermission(permission: string) {
     return isPermission(permission);
+  }
+
+  download() {
+    const params = {
+      buscar: this.buscar, // Siempre incluir
+      categoria_id: this.categoria_id,
+      impuesto: this.impuesto,
+      sede_id: this.sede_id,
+      bodega_id: this.bodega_id,
+      segmento_cliente_id: this.segmento_cliente_id,
+      unidad_id_bodegas: this.unidad_id_bodegas,
+      proveedor_id: this.proveedor_id,
+      empresa_id: this.user.empresa_id
+    };
+
+    // Filtrar las claves excepto 'buscar', que siempre se envía
+    const queryString = Object.entries(params)
+      .filter(([key, value]) => key === 'buscar' || (value !== undefined && value !== null && value !== ''))
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+
+    // Construir el enlace
+    const link = queryString ? `?${queryString}` : '';
+
+    window.open(URL_SERVICIOS + '/excel/export-articulo' + link, '_BLANK');
+  }
+
+  import() {
+    const modalRef = this.modalService.open(ImportArticuloComponent, { centered: true, size: 'md' });
+
+    modalRef.componentInstance.ImportArticuloD.subscribe((ArticuloR: Articulo) => {
+      this.listar();
+    });
   }
 }

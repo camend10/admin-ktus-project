@@ -1,3 +1,9 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
+
 <div class="card">
     <!--begin::Card header-->
     <div class="card-header border-0 pt-6">
@@ -12,7 +18,7 @@
                             <span class="path2"></span>
                         </i>
                         <input type="text" data-kt-customer-table-filter="search" [(ngModel)]="buscar" name="buscar"
-                            class="form-control w-400px ps-12" placeholder="Articulos">
+                            class="form-control w-400px ps-12" placeholder="Articulos" (keyup.enter)="listar()">
                     </div>
                     <!--end::Search-->
                 </div>
@@ -52,7 +58,7 @@
                 </div>
 
                 <div class="col-1">
-                    <button (click)="listar()" class="btn btn-success btn-icon" title="buscar">
+                    <button (click)="listar()" class="btn btn-primary btn-icon" title="Buscar">
                         <i class="ki-duotone ki-magnifier fs-2">
                             <span class="path1"></span>
                             <span class="path2"></span>
@@ -61,7 +67,7 @@
                 </div>
 
                 <div class="col-1">
-                    <button (click)="resetList()" class="btn btn-dark btn-icon" title="resetear">
+                    <button (click)="resetList()" class="btn btn-dark btn-icon" title="Resetear">
                         <i class="ki-duotone ki-loading fs-2">
                             <span class="path1"></span>
                             <span class="path2"></span>
@@ -162,7 +168,6 @@
                 <!--end::Description-->
             </div>
 
-
             <div class="col-2">
                 <!--begin::Select2-->
                 <select class="form-select mb-2" name="proveedor_id" placeholder="Seleccione Proveedor"
@@ -184,6 +189,22 @@
                 <!--begin::Description-->
                 <div class="text-muted fs-7">Proveedor.</div>
                 <!--end::Description-->
+            </div>
+
+            <div class="col-2">
+                <button (click)="download()" class="btn btn-success btn-icon me-2" title="Exportar">
+                    <i class="ki-duotone ki-folder-down fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </button>
+
+                <button (click)="import()" class="btn btn-warning btn-icon" title="Exportar">
+                    <i class="ki-duotone ki-update-folder fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </button>
             </div>
 
         </div>
@@ -213,7 +234,7 @@
                         <ng-container *ngIf="articulos.length <= 0">
                             <tr>
                                 <td style='font-weight: bold;vertical-align: middle;'
-                                    class="text-center text-gray-900 fw-bold text-hover-primary fs-1" colspan="8">
+                                    class="text-center text-gray-900 fw-bold text-hover-primary fs-1" colspan="9">
                                     No existen articulos para estos criterios de busqueda
                                 </td>
                             </tr>
@@ -323,4 +344,5 @@
         <!--end::Table-->
     </div>
     <!--end::Card body-->
+
 </div>

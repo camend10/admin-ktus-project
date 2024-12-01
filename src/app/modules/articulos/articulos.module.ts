@@ -17,6 +17,7 @@ import { EditBodegaArticuloComponent } from './bodega/edit-bodega-articulo/edit-
 import { DeleteBodegaArticuloComponent } from './bodega/delete-bodega-articulo/delete-bodega-articulo.component';
 import { EditWalletPriceComponent } from './wallet/edit-wallet-price/edit-wallet-price.component';
 import { DeleteWalletPriceComponent } from './wallet/delete-wallet-price/delete-wallet-price.component';
+import { ImportArticuloComponent } from './import-articulo/import-articulo.component';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { DeleteWalletPriceComponent } from './wallet/delete-wallet-price/delete-
     EditBodegaArticuloComponent,
     DeleteBodegaArticuloComponent,
     EditWalletPriceComponent,
-    DeleteWalletPriceComponent
+    DeleteWalletPriceComponent,
+    ImportArticuloComponent
   ],
   imports: [
     CommonModule,
