@@ -78,7 +78,7 @@ export class DeleteUserComponent implements OnInit {
         this.toast.error('Validación', resp.message_text);
       } else {
         this.toast.success('Exito', resp.message_text);
-        this.UserD.emit(this.user);
+        this.UserD.emit(resp.user);
         this.modal.close();
       }
     });

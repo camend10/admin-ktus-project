@@ -52,7 +52,7 @@ export class DeleteIvaComponent implements OnInit {
         this.toast.error('Validación', resp.message_text);
       } else {
         this.toast.success('Exito', resp.message_text);
-        this.IvaD.emit(this.iva);
+        this.IvaD.emit(resp.iva);
         this.modal.close();
       }
     });

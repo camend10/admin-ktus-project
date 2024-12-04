@@ -9,8 +9,9 @@
     <div class="card-header border-0 pt-6">
         <!--begin::Card title-->
         <div class="card-title">
-            <div class="row ">
-                <div class="col-4">
+            <div class="row">
+
+                <div class="col-3">
                     <!--begin::Search-->
                     <div class="d-flex align-items-center position-relative my-1">
                         <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
@@ -22,9 +23,10 @@
                     </div>
                     <!--end::Search-->
                 </div>
-                <div class="col-3">
+
+                <div class="col-2">
                     <!--begin::Select2-->
-                    <select class="form-select fw-bolder" name="emprcategoria_idea_id"
+                    <select class="form-select fw-bolder" name="categoria_id"
                         placeholder="Seleccione Categoria" [(ngModel)]="categoria_id">
                         <option [ngValue]="9999999" selected>Categorias</option>
 
@@ -37,6 +39,7 @@
                     <div class="text-muted fs-7">Categoria</div>
                     <!--end::Description-->
                 </div>
+
                 <div class="col-3">
                     <!--begin::Select2-->
                     <select class="form-select mb-2" data-control="select2" data-hide-search="true"
@@ -57,16 +60,32 @@
                     <!--end::Description-->
                 </div>
 
-                <div class="col-1">
-                    <button (click)="listar()" class="btn btn-primary btn-icon" title="Buscar">
+                <div class="col-2">
+                    <!--begin::Select2-->
+                    <select class="form-select fw-bolder" name="state_stock" placeholder="Seleccione Disponibilidad"
+                        [(ngModel)]="state_stock">
+                        <option [ngValue]="9999999" selected>Disponibilidad</option>
+
+                        <option [ngValue]="1" selected="selected">Disponible
+                        </option>
+                        <option [ngValue]="2" selected="selected">Por agotar</option>
+                        <option [ngValue]="3" selected="selected">Agotado
+                        </option>
+                    </select>
+                    <!--end::Select2-->
+                    <!--begin::Description-->
+                    <div class="text-muted fs-7">Disponibilidad de stock</div>
+                    <!--end::Description-->
+                </div>
+
+                <div class="col-2">
+                    <button (click)="listar()" class="btn btn-primary btn-icon me-2" title="Buscar">
                         <i class="ki-duotone ki-magnifier fs-2">
                             <span class="path1"></span>
                             <span class="path2"></span>
                         </i>
                     </button>
-                </div>
 
-                <div class="col-1">
                     <button (click)="resetList()" class="btn btn-dark btn-icon" title="Resetear">
                         <i class="ki-duotone ki-loading fs-2">
                             <span class="path1"></span>
@@ -199,11 +218,20 @@
                     </i>
                 </button>
 
-                <button (click)="import()" class="btn btn-warning btn-icon" title="Exportar">
+                <button (click)="import()" class="btn btn-info btn-icon me-2" title="Importar">
                     <i class="ki-duotone ki-update-folder fs-2">
                         <span class="path1"></span>
                         <span class="path2"></span>
                     </i>
+                </button>
+
+                <button *ngIf="num_art_agotados>0" (click)="selectAgotado()" class="btn btn-danger btn-icon me-2"
+                    title="Agotados">
+                    ({{ num_art_agotados }})
+                </button>
+                <button *ngIf="num_art_por_agotar>0" (click)="selectPorAgotar()" class="btn btn-warning btn-icon me-2"
+                    title="Por Agotar">
+                    ({{ num_art_por_agotar }})
                 </button>
             </div>
 
@@ -262,7 +290,18 @@
                                                     item.nombre }}</a>
                                                 <span class="text-muted fw-semibold text-muted d-block fs-7">{{ item.sku
                                                     }}</span>
+                                                <span class="badge fs-7 fw-bold badge-status"
+                                                    [class.badge-primary]="item?.state_stock === 1"
+                                                    [class.badge-warning]="item?.state_stock === 2"
+                                                    [class.badge-danger]="item?.state_stock === 3">
+                                                    {{
+                                                    item?.state_stock === 1 ? 'Disponible' :
+                                                    item?.state_stock === 2 ? 'Por agotar' :
+                                                    'Agotado'
+                                                    }}
+                                                </span>
                                             </div>
+
                                         </div>
                                     </td>
 
@@ -297,11 +336,9 @@
                                         item.empresa?.nombre }}</td>
 
                                     <td class="text-center">
-                                        <span *ngIf="item?.estado === 1 " class="badge badge-success fs-7 fw-bold">
-                                            Activo
-                                        </span>
-                                        <span *ngIf="item?.estado === 0 " class="badge badge-danger fs-7 fw-bold">
-                                            Inactivo
+                                        <span class="badge fs-7 fw-bold"
+                                            [class]="item.estado === 1 ? 'badge-success' : 'badge-danger'">
+                                            {{ item?.estado === 1 ? 'Activo' : 'Inactivo' }}
                                         </span>
                                     </td>
 

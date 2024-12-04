@@ -1,3 +1,10 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
+
+
 <!--begin::Modal content-->
 <div class="modal-content">
     <!--begin::Modal header-->
@@ -32,8 +39,8 @@
         <!--begin::Form-->
         <form id="kt_modal_add_user_form" class="form" action="#">
             <span class="indicator-label">
-                <p>{{ proveedor.estado === 0 ? '¿Estas seguro de activar esta proveedor?' : '¿Estas seguro de eliminar
-                    esta
+                <p>{{ proveedor.estado === 0 ? '¿Estas seguro de activar este proveedor?' : '¿Estas seguro de eliminar
+                    este
                     proveedor?' }}</p>
             </span>
             <div class="text-center pt-15">
@@ -53,7 +60,7 @@
                         {{ proveedor.estado === 0 ? 'Activar' : 'Eliminar' }}
                     </span>
 
-                    <span class="spinner-border spinner-border-sm align-middle ms-2" *ngIf="isLoading$ | async"></span>
+                    <!-- <span class="spinner-border spinner-border-sm align-middle ms-2" *ngIf="isLoading$ | async"></span> -->
                 </button>
 
             </div>

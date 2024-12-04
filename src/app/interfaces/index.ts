@@ -17,6 +17,7 @@ export interface ResponseConfiguracion {
     // municipios:     { [key: string]: Municipio[] };
     municipios: Municipio[];
     arraySedes: Sede[];
+    segmentos_clientes: SegmentoCliente[];
 }
 
 export interface ResponseConfiguracionArticulos {

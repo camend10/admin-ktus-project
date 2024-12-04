@@ -53,7 +53,7 @@ export class DeleteSegmentoClienteComponent implements OnInit {
         this.toast.error('Validación', resp.message_text);
       } else {
         this.toast.success('Exito', resp.message_text);
-        this.SegmentoClienteD.emit(this.segmentoCliente);
+        this.SegmentoClienteD.emit(resp.segmentoCliente);
         this.modal.close();
       }
     });

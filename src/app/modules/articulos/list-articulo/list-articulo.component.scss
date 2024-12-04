@@ -29,3 +29,18 @@
     color: #000; /* Texto negro */
   }
   
+.fixed-size-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover; /* Mantiene la proporción de la imagen y la recorta si es necesario */
+    border-radius: 4px; /* Opcional: redondear esquinas */
+}
+
+.badge-status {
+  display: inline-block;
+  width: 100px; /* Fija el ancho */
+  text-align: center;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+}

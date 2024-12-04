@@ -1,3 +1,10 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
+
+
 <div class="card">
     <!--begin::Card header-->
     <div class="card-header border-0 pt-6">
@@ -16,7 +23,7 @@
             <!--end::Search-->
         </div>
         <!--begin::Card title-->
-        <span class="spinner-border spinner-border-sm align-middle ms-2" *ngIf="isLoading$ | async"></span>
+        <!-- <span class="spinner-border spinner-border-sm align-middle ms-2" *ngIf="isLoading$ | async"></span> -->
         <!--begin::Card toolbar-->
         <div class="card-toolbar">
             <!--begin::Toolbar-->
@@ -71,11 +78,11 @@
                                         <div class="d-flex justify-content-start flex-column">
                                             <a style="text-transform: capitalize;" href="#"
                                                 class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">{{
-                                                item.nombres }}</a>
+                                                item.nombres }} {{ item.tipo_identificacion === 6 ? '': item.apellidos
+                                                }}</a>
                                             <span class="text-muted fw-semibold text-muted d-block fs-7">
                                                 {{ item.sigla }} :
-                                                {{ item.identificacion
-                                                }}
+                                                {{ item.identificacion | number:'1.0-2'}}
                                                 {{ item.tipo_identificacion === 6 ? ' - ' + item.dv : '' }}
                                             </span>
                                             <span class="text-muted fw-semibold text-muted d-block fs-7">{{ item.email

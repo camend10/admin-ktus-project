@@ -54,7 +54,7 @@ export class DeleteCategoriaComponent implements OnInit {
         this.toast.error('Validación', resp.message_text);
       } else {
         this.toast.success('Exito', resp.message_text);
-        this.CategoriaD.emit(this.categoria);
+        this.CategoriaD.emit(resp.categoria);
         this.modal.close();
       }
     });

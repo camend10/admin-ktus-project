@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, finalize } from 'rxjs';
 import { URL_SERVICIOS } from 'src/app/config/config';
 import { Router } from '@angular/router';
-import { Articulo, ArticuloWallet, BodegaArticulo, Especificacion, ResponseArticulo, ResponseGestionArticulo, ResponseGestionSubir } from '../interfaces';
+import { Articulo, ArticuloWallet, BodegaArticulo, Especificacion, ResponseArticulo, ResponseGestionArticulo, ResponseGestionSku, ResponseGestionSubir } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -71,7 +71,7 @@ export class ArticulosService {
     );
   }
 
-  listar(page = 1, data: { buscar: string; categoria_id: number; impuesto: number, sede_id: number, bodega_id: number, segmento_cliente_id: number, unidad_id_bodegas: number, proveedor_id: number }): Observable<ResponseArticulo> {
+  listar(page = 1, data: { buscar: string; categoria_id: number; impuesto: number, sede_id: number, bodega_id: number, segmento_cliente_id: number, unidad_id_bodegas: number, proveedor_id: number,state_stock: number }): Observable<ResponseArticulo> {
     this.isLoadingSubject.next(true);
 
     const params = {
@@ -83,6 +83,7 @@ export class ArticulosService {
       segmento_cliente_id: data.segmento_cliente_id.toString(),
       unidad_id_bodegas: data.unidad_id_bodegas.toString(),
       proveedor_id: data.proveedor_id.toString(),
+      state_stock: data.state_stock.toString(),
     };
 
     let URL = URL_SERVICIOS + `/articulos/index?page=${page}`;
@@ -98,6 +99,16 @@ export class ArticulosService {
     let URL = URL_SERVICIOS + `/articulos/${id}`;
 
     return this.http.get<ResponseGestionArticulo>(URL).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
+
+  generarSku(categoria_id: string): Observable<ResponseGestionSku> {
+    this.isLoadingSubject.next(true);
+
+    let URL = URL_SERVICIOS + `/articulos/generar-sku/${categoria_id}`;
+
+    return this.http.get<ResponseGestionSku>(URL).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }

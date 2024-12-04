@@ -1,3 +1,8 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
 <!--begin::Modal content-->
 <div class="modal-content">
     <!--begin::Modal header-->
@@ -51,7 +56,7 @@
                         {{ sede.estado === 0 ? 'Activar' : 'Eliminar' }}
                     </span>
 
-                    <span class="spinner-border spinner-border-sm align-middle ms-2" *ngIf="isLoading$ | async"></span>
+                    <!-- <span class="spinner-border spinner-border-sm align-middle ms-2" *ngIf="isLoading$ | async"></span> -->
                 </button>
 
             </div>

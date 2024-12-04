@@ -56,7 +56,7 @@ export class DeleteBodegaComponent implements OnInit {
         this.toast.error('Validación', resp.message_text);
       } else {
         this.toast.success('Exito', resp.message_text);
-        this.BodegaD.emit(this.bodega);
+        this.BodegaD.emit(resp.bodega);
         this.modal.close();
       }
     });

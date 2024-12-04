@@ -49,6 +49,10 @@ export class AuthService implements OnDestroy {
 
     this.currentUser$ = this.currentUserSubject.asObservable();
     this.isLoading$ = this.isLoadingSubject.asObservable();
+
+    // Inicializar el token desde localStorage
+    this.token = localStorage.getItem('token') || null;
+
     const subscr = this.getUserByToken().subscribe();
     this.unsubscribe.push(subscr);
   }
@@ -73,9 +77,14 @@ export class AuthService implements OnDestroy {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    this.router.navigate(['/auth/login'], {
-      queryParams: {},
-    });
+    // this.router.navigate(['/auth/login'], {
+    //   queryParams: {},
+    // });
+    // Si tienes propiedades como `this.token`, inicialízalas correctamente
+    this.token = null; // O asegúrate de que no se utilice durante el logout
+
+    // (Opcional) Notifica otros servicios sobre el cierre de sesión
+    console.log('Sesión cerrada');
   }
 
   getUserByToken(): Observable<any> {
@@ -128,8 +137,6 @@ export class AuthService implements OnDestroy {
       localStorage.setItem('token', auth.access_token);
       localStorage.setItem('user', JSON.stringify(auth.user));
 
-      console.log("token del authservice == " + auth.access_token);
-      console.log("token del authservice == " + auth.access_token);
       this.user = auth.user;
       return true;
     }
@@ -223,9 +230,14 @@ export class AuthService implements OnDestroy {
       );
   }
 
-  estaLogueado() {
-    return (this.token.length > 5) ? true : false;
+  // estaLogueado() {
+  //   return (this.token.length > 5) ? true : false;
+  // }
+
+  estaLogueado(): boolean {
+    return this.token && this.token.length > 5 ? true : false;
   }
+  
 
   ngOnDestroy() {
     this.unsubscribe.forEach((sb) => sb.unsubscribe());

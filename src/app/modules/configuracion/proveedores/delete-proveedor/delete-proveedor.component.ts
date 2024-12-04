@@ -34,7 +34,6 @@ export class DeleteProveedorComponent implements OnInit {
     estado: 1,
   };
 
-
   constructor(
     public modal: NgbActiveModal,
     public proveedorService: ProveedorService,
@@ -64,7 +63,7 @@ export class DeleteProveedorComponent implements OnInit {
         this.toast.error('Validación', resp.message_text);
       } else {
         this.toast.success('Exito', resp.message_text);
-        this.ProveedorD.emit(this.proveedor);
+        this.ProveedorD.emit(resp.proveedor);
         this.modal.close();
       }
     });

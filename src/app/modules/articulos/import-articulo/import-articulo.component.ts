@@ -98,7 +98,6 @@ export class ImportArticuloComponent implements OnInit {
     }, 50);
   }
 
-
   store() {
 
     if (!this.file_name) {

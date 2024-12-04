@@ -35,6 +35,7 @@ export interface Articulo {
     largo?: number;
     user_id?: number;
     proveedor_id?: number;
+    state_stock?: number;
     iva?: Iva;
     empresa?: Empresa;
     categoria?: Categoria;
@@ -68,6 +69,8 @@ export interface ResponseArticulo {
     articulos: { // Ajuste para reflejar la estructura anidada
         data: Articulo[];
     };
+    num_art_agotados: number;
+    num_art_por_agotar: number;
 }
 
 export interface ResponseGestionArticulo {
@@ -84,7 +87,7 @@ export interface Especificacion {
 export interface ResponseGestionBodegaArticulo {
     message: number;
     message_text: string;
-    bodega_articulo	: BodegaArticulo;
+    bodega_articulo: BodegaArticulo;
 }
 
 export interface ResponseGestionArticuloWallet {
@@ -96,4 +99,10 @@ export interface ResponseGestionArticuloWallet {
 export interface ResponseGestionSubir {
     message: number;
     message_text: string;
+}
+
+export interface ResponseGestionSku {
+    message: number;
+    message_text: string;
+    sku: string;
 }

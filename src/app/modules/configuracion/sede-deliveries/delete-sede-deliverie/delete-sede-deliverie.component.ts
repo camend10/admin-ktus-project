@@ -56,7 +56,7 @@ export class DeleteSedeDeliverieComponent implements OnInit {
         this.toast.error('Validación', resp.message_text);
       } else {
         this.toast.success('Exito', resp.message_text);
-        this.SedeDeliverieD.emit(this.sedeDeliverie);
+        this.SedeDeliverieD.emit(resp.sedeDeliverie);
         this.modal.close();
       }
     });

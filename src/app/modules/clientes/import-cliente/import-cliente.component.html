@@ -1,0 +1,91 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
+
+<!--begin::Modal content CREATE-->
+<div class="modal-content">
+    <!--begin::Modal header-->
+    <div class="modal-header" id="kt_modal_add_user_header">
+        <!--begin::Modal title-->
+        <h2 class="fw-bolder">Importar clientes (.xls,.xlsx,.csv)</h2>
+        <!--end::Modal title-->
+
+        <!--begin::Close-->
+        <div id="kt_modal_add_customer_close" class="btn btn-icon btn-sm btn-active-icon-primary"
+            (click)="modal.dismiss()">
+            <i class="ki-duotone ki-cross fs-1">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+        </div>
+        <!--end::Close-->
+    </div>
+    <!--end::Modal header-->
+    <!--begin::Modal body-->
+    <div class="modal-body py-10 px-lg-17 scroll-y mx-5 my-3">
+        <!--begin::Form-->
+        <form class="form fv-plugins-bootstrap5 fv-plugins-framework" action="#" id="kt_modal_add_customer_form">
+            <!--begin::Scroll-->
+            <div class="scroll-y me-n7 pe-7" id="kt_modal_add_customer_scroll" data-kt-scroll="true"
+                data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto"
+                data-kt-scroll-dependencies="#kt_modal_add_customer_header"
+                data-kt-scroll-wrappers="#kt_modal_add_customer_scroll" data-kt-scroll-offset="300px"
+                style="max-height: 350px;">
+                <!--begin::Input group-->
+
+                <div class="row fv-row my-1">
+                    <div class="col-12">
+                        <label class="form-label fw-bold fs-6">Sube tu archivo Excel: *</label>
+                        <div class="custom-dropzone" (drop)="handleDrop($event)" (dragover)="preventDefault($event)">
+                            <input type="file" id="customFile" accept=".xls,.xlsx,.csv"
+                                (change)="processFile($event)" />
+                            <span class="dropzone-text">
+                                <ng-container *ngIf="file_name; else noFile">
+                                    Archivo seleccionado: <strong>{{ file_name.name }}</strong>
+                                </ng-container>
+                                <ng-template #noFile>
+                                    Arrastra y suelta tu archivo aquí o
+                                    <span class="dropzone-button">haz clic para seleccionarlo</span>
+                                </ng-template>
+                            </span>
+                        </div>
+                        <small class="text-muted">Acepta archivos con extensiones: .xls, .xlsx, .csv</small>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <!--end::Scroll-->
+
+
+            <!--begin::Actions-->
+            <div class="text-center pt-15">
+                <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()"
+                    [disabled]="isLoading$ | async"> <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i> Cerrar</button>
+                <button type="button" (click)="store()" class="btn btn-primary" data-kt-users-modal-action="submit"
+                    [disabled]="isLoading$ | async">
+                    <span class="indicator-label">
+                        <i class="ki-duotone ki-update-folder fs-2">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                        Importar</span>
+
+                    <span class="spinner-border spinner-border-sm align-middle ms-2" *ngIf="isLoading$ | async"></span>
+                    <!-- <span class="indicator-progress">Please wait...
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span> -->
+                </button>
+            </div>
+            <!--end::Actions-->
+        </form>
+        <!--end::Form-->
+    </div>
+    <!--end::Modal body-->
+</div>
+<!--end::Modal content CREATE-->

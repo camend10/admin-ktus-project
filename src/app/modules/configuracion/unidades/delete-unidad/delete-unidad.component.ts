@@ -55,7 +55,7 @@ export class DeleteUnidadComponent implements OnInit {
         this.toast.error('Validación', resp.message_text);
       } else {
         this.toast.success('Exito', resp.message_text);
-        this.UnidadD.emit(this.unidad);
+        this.UnidadD.emit(resp.unidad);
         this.modal.close();
       }
     });

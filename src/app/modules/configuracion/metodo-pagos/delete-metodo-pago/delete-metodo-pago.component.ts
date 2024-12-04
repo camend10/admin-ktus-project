@@ -54,7 +54,7 @@ export class DeleteMetodoPagoComponent implements OnInit{
         this.toast.error('Validación', resp.message_text);
       } else {
         this.toast.success('Exito', resp.message_text);
-        this.MetodoPagoD.emit(this.metodoPago);
+        this.MetodoPagoD.emit(resp.metodoPago);
         this.modal.close();
       }
     });

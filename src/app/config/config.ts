@@ -282,23 +282,48 @@ export const SIDEBAR: any = [
             }
         ]
     },
-    // {
-    //     'name': 'Clientes',
-    //     'permisos': [
-    //         {
-    //             name: 'Registrar',
-    //             permiso: 'register_clientes',
-    //         },
-    //         {
-    //             name: 'Editar',
-    //             permiso: 'edit_clientes',
-    //         },
-    //         {
-    //             name: 'Eliminar',
-    //             permiso: 'delete_clientes',
-    //         },
-    //     ]
-    // },
+    {
+        'name': 'Clientes',
+        'permisos': [
+            {
+                name: 'Registrar',
+                permiso: 'registrar_cliente',
+            },
+            {
+                name: 'Editar',
+                permiso: 'editar_cliente',
+            },
+            {
+                name: 'Eliminar',
+                permiso: 'eliminar_cliente',
+            },
+            {
+                name: 'Ver',
+                permiso: 'ver_cliente',
+            }
+        ]
+    },
+    {
+        'name': 'Facturas',
+        'permisos': [
+            {
+                name: 'Registrar',
+                permiso: 'registrar_factura',
+            },
+            {
+                name: 'Editar',
+                permiso: 'editar_factura',
+            },
+            {
+                name: 'Eliminar',
+                permiso: 'eliminar_factura',
+            },
+            {
+                name: 'Ver',
+                permiso: 'ver_factura',
+            }
+        ]
+    },
     // {
     //     'name': 'Caja',
     //     'permisos': [

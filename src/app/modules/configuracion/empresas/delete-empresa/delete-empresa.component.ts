@@ -61,7 +61,7 @@ export class DeleteEmpresaComponent implements OnInit {
         this.toast.error('Validación', resp.message_text);
       } else {
         this.toast.success('Exito', resp.message_text);
-        this.EmpresaD.emit(this.empresa);
+        this.EmpresaD.emit(resp.empresa);
         this.modal.close();
       }
     });

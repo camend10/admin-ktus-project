@@ -1,3 +1,9 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
+
 <!--begin::Content wrapper-->
 <div class="d-flex flex-column flex-column-fluid">
     <!--begin::Toolbar-->
@@ -181,7 +187,8 @@
                             <!--end::Select store template-->
                             <!--begin::Select2-->
                             <select class="form-select form-select-solid fw-bolder" name="categoria_id"
-                                placeholder="Seleccione Categoria" [(ngModel)]="articulo.categoria_id">
+                                placeholder="Seleccione Categoria" [(ngModel)]="articulo.categoria_id"
+                                (change)="onCategoriaChange($event)">
                                 <option [ngValue]="9999999" selected>Seleccione Categoria</option>
 
                                 <ng-container *ngFor="let item of categorias">

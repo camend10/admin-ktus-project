@@ -7,7 +7,7 @@ export const verificaTokenGuard: CanActivateFn = (route, state) => {
   const _usuarioService = inject(AuthService);
   const router = inject(Router);
 
-  let token = _usuarioService.token;
+  const token = _usuarioService.token;
 
   // Verificar formato del token
   if (!token || typeof token !== 'string' || token.split('.').length < 3) {

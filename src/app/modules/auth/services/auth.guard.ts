@@ -12,6 +12,7 @@ export class AuthGuard {
       return true;
     } else {
       this.authService.logout();
+      this.router.navigate(['/auth/login']); // Redirige explícitamente al login
       return false;
     }
 

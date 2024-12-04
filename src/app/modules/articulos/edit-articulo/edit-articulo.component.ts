@@ -595,4 +595,17 @@ export class EditArticuloComponent implements OnInit, OnDestroy {
     this.especificaciones.splice(i, 1);
   }
 
+  onCategoriaChange(event: Event): void {
+    const categoria_id = (event.target as HTMLSelectElement).value;
+
+    if (categoria_id) {
+      this.articuloService.generarSku(categoria_id).subscribe((data: any) => {
+        this.articulo.sku = data.sku;
+      });
+    } else {
+      this.articulo.sku = '';
+    }
+  }
+
+
 }

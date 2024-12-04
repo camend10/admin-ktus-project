@@ -74,7 +74,7 @@ export class DeleteSedeComponent implements OnInit {
         this.toast.error('Validación', resp.message_text);
       } else {
         this.toast.success('Exito', resp.message_text);
-        this.SedeD.emit(this.sede);
+        this.SedeD.emit(resp.sede);
         this.modal.close();
       }
     });

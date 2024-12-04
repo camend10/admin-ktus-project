@@ -33,6 +33,9 @@ export class ListArticuloComponent implements OnInit, OnDestroy {
   segmento_cliente_id: number = 9999999;
   unidad_id_bodegas: number = 9999999;
   proveedor_id: number = 9999999;
+  state_stock: number = 9999999;
+  num_art_agotados: number = 0;
+  num_art_por_agotar: number = 0;
 
   articulos: Articulo[] = [];
   isLoading$: any;
@@ -90,6 +93,7 @@ export class ListArticuloComponent implements OnInit, OnDestroy {
       segmento_cliente_id: this.segmento_cliente_id,
       unidad_id_bodegas: this.unidad_id_bodegas,
       proveedor_id: this.proveedor_id,
+      state_stock: this.state_stock,
     };
     this.articuloService.listar(page, data).subscribe((resp) => {
 
@@ -102,7 +106,8 @@ export class ListArticuloComponent implements OnInit, OnDestroy {
 
         this.totalPages = resp.total; // Asigna el total de páginas desde `resp.total`
         this.currentPage = page; // Página actual
-
+        this.num_art_agotados = resp.num_art_agotados;
+        this.num_art_por_agotar = resp.num_art_por_agotar;
       } else {
         console.error('Estructura inesperada en la respuesta del servidor:', resp);
       }
@@ -118,6 +123,7 @@ export class ListArticuloComponent implements OnInit, OnDestroy {
     this.segmento_cliente_id = 9999999;
     this.unidad_id_bodegas = 9999999;
     this.proveedor_id = 9999999;
+    this.state_stock = 9999999;
     this.listar();
   }
 
@@ -164,7 +170,8 @@ export class ListArticuloComponent implements OnInit, OnDestroy {
       segmento_cliente_id: this.segmento_cliente_id,
       unidad_id_bodegas: this.unidad_id_bodegas,
       proveedor_id: this.proveedor_id,
-      empresa_id: this.user.empresa_id
+      empresa_id: this.user.empresa_id,
+      state_stock: this.state_stock,
     };
 
     // Filtrar las claves excepto 'buscar', que siempre se envía
@@ -185,5 +192,15 @@ export class ListArticuloComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.ImportArticuloD.subscribe((ArticuloR: Articulo) => {
       this.listar();
     });
+  }
+
+  selectAgotado() {
+    this.state_stock = 3;
+    this.listar();
+  }
+  
+  selectPorAgotar() {
+    this.state_stock = 2;
+    this.listar();
   }
 }
