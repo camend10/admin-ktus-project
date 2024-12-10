@@ -1,1 +1,175 @@
-<p>buscar-articulo works!</p>
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
+
+
+<!--begin::Modal content CREATE-->
+<div class="modal-content">
+    <!--begin::Modal header-->
+    <div class="modal-header" id="kt_modal_add_user_header">
+        <!--begin::Modal title-->
+        <h2 class="fw-bolder">Articulos ({{ articulos.length }})</h2>
+        <!--end::Modal title-->
+
+        <!--begin::Close-->
+        <div id="kt_modal_add_customer_close" class="btn btn-icon btn-sm btn-active-icon-primary"
+            (click)="modal.dismiss()">
+            <i class="ki-duotone ki-cross fs-1">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+        </div>
+        <!--end::Close-->
+    </div>
+    <!--end::Modal header-->
+    <!--begin::Modal body-->
+    <div class="modal-body py-10 px-lg-17 scroll-y mx-5 my-3">
+        <!--begin::Form-->
+        <form class="form fv-plugins-bootstrap5 fv-plugins-framework" action="#" id="kt_modal_add_customer_form">
+
+
+            <div class="row">
+                <div class="col-12">
+                    <div id="" class="table-responsive">
+                        <table class="table table-row-dashed table-row-gray-100 align-middle gs-0 gy-2 dataTable"
+                            id="kt_customers_table" style="width: 1150.9px;">
+
+                            <thead>
+                                <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                                    <th class="min-w-30px text-center">#</th>
+                                    <th class="min-w-125px">Articulo</th>
+                                    <th class="min-w-135px">Categoria</th>
+                                    <th class="min-w-125px text-end">Precio</th>
+                                    <th class="min-w-125px text-center">Punto de pedido</th>
+                                    <th class="min-w-100px">Proveedor</th>
+                                    <th class="min-w-100px">Empresa</th>
+                                    <th class="min-w-80px text-center">Estado</th>
+                                    <th class="text-center min-w-100px">Acciones
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="fw-semibold text-gray-600 fs-7">
+                                <ng-container *ngIf="articulos.length <= 0">
+                                    <tr>
+                                        <td style='font-weight: bold;vertical-align: middle;'
+                                            class="text-center text-gray-900 fw-bold text-hover-primary fs-1"
+                                            colspan="9">
+                                            No existen articulos para estos criterios de busqueda
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                                <ng-container *ngIf="articulos.length >= 1">
+                                    <ng-container *ngFor="let item of articulos; let i=index;">
+                                        <tr>
+                                            <!-- <td>
+                                                <div class="form-check form-check-sm form-check-custom form-check-solid">
+                                                    <input class="form-check-input" type="checkbox" value="1">
+                                                </div>
+                                            </td> -->
+                                            <td style='font-weight: bold;vertical-align: middle;'
+                                                class="text-center text-gray-900 fw-bold text-hover-primary">
+                                                {{ (i+1)}}
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="symbol symbol-50px me-5">
+                                                        <img [src]="item.imagen" class="" alt="">
+                                                    </div>
+                                                    <div class="d-flex justify-content-start flex-column">
+                                                        <a style="text-transform: capitalize;" href="#"
+                                                            class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">{{
+                                                            item.nombre }}</a>
+                                                        <span class="text-muted fw-semibold text-muted d-block fs-7">{{
+                                                            item.sku
+                                                            }}</span>
+                                                        <span class="badge fs-7 fw-bold badge-status"
+                                                            [class.badge-primary]="item?.state_stock === 1"
+                                                            [class.badge-warning]="item?.state_stock === 2"
+                                                            [class.badge-danger]="item?.state_stock === 3">
+                                                            {{
+                                                            item?.state_stock === 1 ? 'Disponible' :
+                                                            item?.state_stock === 2 ? 'Por agotar' :
+                                                            'Agotado'
+                                                            }}
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                            </td>
+
+                                            <td style='font-weight: bold;vertical-align: middle;'
+                                                class="text-gray-900 fw-bold text-hover-primary">
+                                                {{ item.categoria?.nombre }}
+                                            </td>
+
+                                            <td style='font-weight: bold;vertical-align: middle;'
+                                                class="text-gray-900 fw-bold text-hover-primary text-end">
+                                                $ {{ item.precio_general | number:'1.0-2' }}
+                                            </td>
+
+                                            <td style='font-weight: bold;vertical-align: middle;'
+                                                class="text-gray-900 fw-bold text-hover-primary text-center">
+                                                {{ item.punto_pedido }} {{ item.unidad_punto_pedido?.nombre}}
+                                            </td>
+
+                                            <td style='font-weight: bold; vertical-align: middle;'
+                                                class="text-gray-900 fw-bold text-hover-primary text-capitalize">
+
+                                                {{ item.proveedor?.nombres }}
+                                                <ng-container
+                                                    *ngIf="item.proveedor?.apellidos && item.proveedor?.apellidos !== 'null'">
+                                                    {{ item.proveedor?.apellidos }}
+                                                </ng-container>
+                                            </td>
+
+
+                                            <td style='font-weight: bold;vertical-align: middle;'
+                                                class="text-gray-900 fw-bold text-hover-primary text-capitalize">{{
+                                                item.empresa?.nombre }}</td>
+
+                                            <td class="text-center">
+                                                <span class="badge fs-7 fw-bold"
+                                                    [class]="item.estado === 1 ? 'badge-success' : 'badge-danger'">
+                                                    {{ item?.estado === 1 ? 'Activo' : 'Inactivo' }}
+                                                </span>
+                                            </td>
+
+                                            <td class="text-center">
+                                                <div class="action-buttons">
+                                                    <a href="#" onclick="return false"
+                                                        (click)="seleccionarArticulo(item)" placement="top"
+                                                        ngbTooltip="Seleccionar"
+                                                        class="btn btn-icon btn-primary w-30px h-30px me-3">
+                                                        <i class="ki-duotone ki-check fs-2"><span
+                                                                class="path1"></span><span class="path2"></span></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                    </ng-container>
+                                </ng-container>
+                            </tbody>
+                            <tfoot></tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!--begin::Actions-->
+            <div class="text-center pt-15">
+                <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()"
+                    [disabled]="isLoading$ | async"> <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i> Cerrar</button>
+            </div>
+            <!--end::Actions-->
+        </form>
+        <!--end::Form-->
+    </div>
+    <!--end::Modal body-->
+</div>
+<!--end::Modal content CREATE-->

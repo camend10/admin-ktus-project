@@ -34,7 +34,7 @@ export interface User {
     // fecha_nacimiento?: Date | null;
     created_format_at?: string;
     sedes?: Sede[];
-    sede_id?: Number;
+    sede_id?: number;
     nombre_sede?: String;
     sigla?: string;
     empresa?: string;

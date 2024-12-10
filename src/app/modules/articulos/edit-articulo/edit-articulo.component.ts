@@ -153,6 +153,7 @@ export class EditArticuloComponent implements OnInit, OnDestroy {
         this.articulo.punto_pedido = Number(this.articulo.punto_pedido);
         this.articulo.tiempo_de_abastecimiento = Number(this.articulo.tiempo_de_abastecimiento);
         this.articulo.sku = String(resp.articulo.sku);
+        this.is_discount = Number(this.articulo.is_discount);
 
         this.imagen_previzualizada = this.articulo.imagen;
 

@@ -510,7 +510,9 @@
                                                         <span
                                                             class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
                                                             <input class="form-check-input" type="radio"
-                                                                name="discount_option" (click)="selectedDiscount(2)" />
+                                                                name="discount_option" (click)="selectedDiscount(2)" 
+                                                                [checked]="articulo.is_discount === 2"
+                                                                />
                                                         </span>
                                                         <!--end::Radio-->
                                                         <!--begin::Info-->

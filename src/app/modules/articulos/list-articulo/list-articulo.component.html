@@ -26,8 +26,8 @@
 
                 <div class="col-2">
                     <!--begin::Select2-->
-                    <select class="form-select fw-bolder" name="categoria_id"
-                        placeholder="Seleccione Categoria" [(ngModel)]="categoria_id">
+                    <select class="form-select fw-bolder" name="categoria_id" placeholder="Seleccione Categoria"
+                        [(ngModel)]="categoria_id">
                         <option [ngValue]="9999999" selected>Categorias</option>
 
                         <ng-container *ngFor="let item of categorias">
@@ -79,15 +79,16 @@
                 </div>
 
                 <div class="col-2">
-                    <button (click)="listar()" class="btn btn-primary btn-icon me-2" title="Buscar">
+                    <button (click)="listar()" class="btn btn-primary btn-icon me-2" placement="top"
+                        ngbTooltip="Buscar">
                         <i class="ki-duotone ki-magnifier fs-2">
                             <span class="path1"></span>
                             <span class="path2"></span>
                         </i>
                     </button>
 
-                    <button (click)="resetList()" class="btn btn-dark btn-icon" title="Resetear">
-                        <i class="ki-duotone ki-loading fs-2">
+                    <button (click)="resetList()" class="btn btn-dark btn-icon" placement="top" ngbTooltip="Resetear">
+                        <i class="ki-duotone ki-arrows-circle fs-2">
                             <span class="path1"></span>
                             <span class="path2"></span>
                         </i>
@@ -211,14 +212,15 @@
             </div>
 
             <div class="col-2">
-                <button (click)="download()" class="btn btn-success btn-icon me-2" title="Exportar">
+                <button (click)="download()" class="btn btn-success btn-icon me-2" placement="top"
+                    ngbTooltip="Exportar">
                     <i class="ki-duotone ki-folder-down fs-2">
                         <span class="path1"></span>
                         <span class="path2"></span>
                     </i>
                 </button>
 
-                <button (click)="import()" class="btn btn-info btn-icon me-2" title="Importar">
+                <button (click)="import()" class="btn btn-info btn-icon me-2" placement="top" ngbTooltip="Importar">
                     <i class="ki-duotone ki-update-folder fs-2">
                         <span class="path1"></span>
                         <span class="path2"></span>
@@ -226,11 +228,11 @@
                 </button>
 
                 <button *ngIf="num_art_agotados>0" (click)="selectAgotado()" class="btn btn-danger btn-icon me-2"
-                    title="Agotados">
+                    placement="top" ngbTooltip="Agotados">
                     ({{ num_art_agotados }})
                 </button>
                 <button *ngIf="num_art_por_agotar>0" (click)="selectPorAgotar()" class="btn btn-warning btn-icon me-2"
-                    title="Por Agotar">
+                    placement="top" ngbTooltip="Por Agotar">
                     ({{ num_art_por_agotar }})
                 </button>
             </div>
@@ -246,7 +248,7 @@
                     <thead>
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="min-w-30px text-center">#</th>
-                            <th class="min-w-125px">Producto</th>
+                            <th class="min-w-125px">Articulo</th>
                             <th class="min-w-135px">Categoria</th>
                             <th class="min-w-125px text-end">Precio</th>
                             <th class="min-w-125px text-center">Punto de pedido</th>
@@ -285,7 +287,7 @@
                                                 <img [src]="item.imagen" class="" alt="">
                                             </div>
                                             <div class="d-flex justify-content-start flex-column">
-                                                <a style="text-transform: capitalize;" href="#"
+                                                <a style="text-transform: capitalize;" href="#" onclick="return false;"
                                                     class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">{{
                                                     item.nombre }}</a>
                                                 <span class="text-muted fw-semibold text-muted d-block fs-7">{{ item.sku

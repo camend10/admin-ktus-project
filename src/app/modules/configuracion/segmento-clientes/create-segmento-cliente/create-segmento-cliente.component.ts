@@ -38,6 +38,7 @@ export class CreateSegmentoClienteComponent implements OnInit {
   ) {
 
   }
+  
   ngOnInit(): void {
     this.isLoading$ = this.segmentoClienteService.isLoading$;
     this.user = this.authService.user;

@@ -1,1 +1,148 @@
-<p>buscar-cliente works!</p>
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
+
+
+<!--begin::Modal content CREATE-->
+<div class="modal-content">
+    <!--begin::Modal header-->
+    <div class="modal-header" id="kt_modal_add_user_header">
+        <!--begin::Modal title-->
+        <h2 class="fw-bolder">Clientes ({{ clientes.length }})</h2>
+        <!--end::Modal title-->
+
+        <!--begin::Close-->
+        <div id="kt_modal_add_customer_close" class="btn btn-icon btn-sm btn-active-icon-primary"
+            (click)="modal.dismiss()">
+            <i class="ki-duotone ki-cross fs-1">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+        </div>
+        <!--end::Close-->
+    </div>
+    <!--end::Modal header-->
+    <!--begin::Modal body-->
+    <div class="modal-body py-10 px-lg-17 scroll-y mx-5 my-3">
+        <!--begin::Form-->
+        <form class="form fv-plugins-bootstrap5 fv-plugins-framework" action="#" id="kt_modal_add_customer_form">
+
+
+            <div class="row">
+                <div class="col-12">
+                    <div id="" class="table-responsive">
+                        <table class="table table-row-dashed table-row-gray-100 align-middle gs-0 gy-3 dataTable"
+                            id="kt_customers_table" style="width: 1150.9px;">
+
+                            <thead>
+                                <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                                    <th class="min-w-125px text-center">#</th>
+                                    <th class="min-w-125px">Cliente</th>
+                                    <th class="min-w-125px">Tipo</th>
+                                    <th class="min-w-125px">Sede</th>
+                                    <th class="min-w-125px">Departamento</th>
+                                    <th class="min-w-125px">Municipio</th>
+                                    <th class="min-w-125px text-center">Estado</th>
+                                    <th class="text-center min-w-70px">
+                                        Acciones
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="fw-semibold text-gray-600">
+                                <ng-container *ngFor="let item of clientes; let i=index;">
+                                    <tr>
+                                        <td style='font-weight: bold;vertical-align: middle;'
+                                            class="text-center text-gray-900 fw-bold text-hover-primary">
+                                            {{ (i+1)}}
+                                        </td>
+
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="d-flex justify-content-start flex-column">
+                                                    <a style="text-transform: capitalize;" href="#"
+                                                        class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">{{
+                                                        item.nombres }} {{ item.tipo_identificacion === 6 ? '':
+                                                        item.apellidos
+                                                        }}</a>
+                                                    <span
+                                                        class="text-muted fw-semibold text-muted d-block fs-7 text-hover-primary">
+                                                        {{ item.sigla }} :
+                                                        {{ item.identificacion | number:'1.0-2'}}
+                                                        {{ item.tipo_identificacion === 6 ? ' - ' + item.dv : '' }}
+                                                    </span>
+                                                    <span
+                                                        class="text-muted fw-semibold text-muted d-block fs-7 text-hover-primary">{{
+                                                        item.email
+                                                        }}</span>
+                                                    <span
+                                                        class="text-muted fw-semibold text-muted d-block fs-7 text-hover-primary"
+                                                        *ngIf="item.tipo_identificacion === 1">
+                                                        {{ item.genero?.nombre }}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td style='font-weight: bold;vertical-align: middle;'
+                                            class="text-gray-900 fw-bold text-hover-primary text-capitalize">{{
+                                            item.segmento?.nombre }}</td>
+
+                                        <td style='font-weight: bold;vertical-align: middle;'
+                                            class="text-gray-900 fw-bold text-hover-primary  text-capitalizetext-capitalize">
+                                            {{
+                                            item.sede?.nombre }}</td>
+
+                                        <td style='font-weight: bold;vertical-align: middle;'
+                                            class="text-gray-900 fw-bold text-hover-primary text-capitalize">{{
+                                            item.departamento?.nombre }}
+                                        </td>
+
+                                        <td style='font-weight: bold;vertical-align: middle;'
+                                            class="text-gray-900 fw-bold text-hover-primary text-capitalize">{{
+                                            item.municipio?.nombre }}</td>
+
+                                        <td class="text-center">
+                                            <span *ngIf="item?.estado === 1 " class="badge badge-success fs-7 fw-bold">
+                                                Activo
+                                            </span>
+                                            <span *ngIf="item?.estado === 0 " class="badge badge-danger fs-7 fw-bold">
+                                                Inactivo
+                                            </span>
+                                        </td>
+
+                                        <td class="text-center">
+
+                                            <a href="#" onclick="return false" (click)="seleccionarCliente(item)"
+                                                placement="top" ngbTooltip="Seleccionar"
+                                                class="btn btn-icon btn-primary w-30px h-30px me-3">
+                                                <i class="ki-duotone ki-check fs-2"><span class="path1"></span><span
+                                                        class="path2"></span></i>
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                </ng-container>
+
+                            </tbody>
+                            <tfoot></tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!--begin::Actions-->
+            <div class="text-center pt-15">
+                <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()"
+                    [disabled]="isLoading$ | async"> <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i> Cerrar</button>
+            </div>
+            <!--end::Actions-->
+        </form>
+        <!--end::Form-->
+    </div>
+    <!--end::Modal body-->
+</div>
+<!--end::Modal content CREATE-->

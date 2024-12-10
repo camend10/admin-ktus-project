@@ -42,8 +42,9 @@ export interface Articulo {
     usuario?: User;
     unidad_punto_pedido?: Unidad;
     proveedor?: Proveedor;
-    bodegas_articulos?: BodegaArticulo;
-    articulos_wallets?: ArticuloWallet;
+    bodegas_articulos?: BodegaArticulo[];
+    articulos_wallets?: ArticuloWallet[];
+    unidades?: Unidad[];
 }
 
 export interface BodegaArticulo {
@@ -62,7 +63,6 @@ export interface ArticuloWallet {
     segmento_cliente?: SegmentoCliente | null;
     id?: number;
 }
-
 
 export interface ResponseArticulo {
     total: number;

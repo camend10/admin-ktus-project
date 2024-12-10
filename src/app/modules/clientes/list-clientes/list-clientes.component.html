@@ -57,28 +57,31 @@
                 </div>
 
                 <div class="col-3">
-                    <button (click)="listar()" class="btn btn-primary btn-icon me-2" title="Buscar">
+                    <button (click)="listar()" class="btn btn-primary btn-icon me-2" placement="top"
+                        ngbTooltip="Buscar">
                         <i class="ki-duotone ki-magnifier fs-2">
                             <span class="path1"></span>
                             <span class="path2"></span>
                         </i>
                     </button>
 
-                    <button (click)="resetList()" class="btn btn-dark btn-icon me-2" title="Resetear">
-                        <i class="ki-duotone ki-loading fs-2">
+                    <button (click)="resetList()" class="btn btn-dark btn-icon me-2" placement="top"
+                        ngbTooltip="Resetear">
+                        <i class="ki-duotone ki-arrows-circle fs-2">
                             <span class="path1"></span>
                             <span class="path2"></span>
                         </i>
                     </button>
 
-                    <button (click)="download()" class="btn btn-success btn-icon me-2" title="Exportar">
+                    <button (click)="download()" class="btn btn-success btn-icon me-2" placement="top"
+                        ngbTooltip="Exportar">
                         <i class="ki-duotone ki-folder-down fs-2">
                             <span class="path1"></span>
                             <span class="path2"></span>
                         </i>
                     </button>
 
-                    <button (click)="import()" class="btn btn-info btn-icon me-2" title="Importar">
+                    <button (click)="import()" class="btn btn-info btn-icon me-2" placement="top" ngbTooltip="Importar">
                         <i class="ki-duotone ki-update-folder fs-2">
                             <span class="path1"></span>
                             <span class="path2"></span>

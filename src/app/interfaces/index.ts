@@ -2,6 +2,7 @@ import { Bodega } from "../modules/configuracion/bodegas/interfaces";
 import { Categoria } from "../modules/configuracion/categorias/interfaces";
 import { Iva } from "../modules/configuracion/ivas/interfaces";
 import { Proveedor } from "../modules/configuracion/proveedores/interfaces";
+import { SedeDeliverie } from "../modules/configuracion/sede-deliveries/interfaces";
 import { Sede } from "../modules/configuracion/sedes/interfaces";
 import { SegmentoCliente } from "../modules/configuracion/segmento-clientes/interfaces";
 import { Unidad } from "../modules/configuracion/unidades/interfaces";
@@ -18,6 +19,7 @@ export interface ResponseConfiguracion {
     municipios: Municipio[];
     arraySedes: Sede[];
     segmentos_clientes: SegmentoCliente[];
+    sede_deliveries: SedeDeliverie[];
 }
 
 export interface ResponseConfiguracionArticulos {
