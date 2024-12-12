@@ -167,6 +167,7 @@ export class CreateProveedorComponent implements OnInit {
   }
 
   cancelImage() {
+    this.file_name = null;
     // Restablece la imagen a la predeterminada cuando se cancela
     this.imagen_previzualizada = '../../../../assets/media/icons/proveedores.png';
   }

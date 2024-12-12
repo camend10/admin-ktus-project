@@ -25,6 +25,7 @@ import { ArticuloWallet } from '../../articulos/interfaces/index';
 import { DetalleFactura } from '../interfaces';
 import { EditArticuloFacturaComponent } from '../componentes/edit-articulo-factura/edit-articulo-factura.component';
 import { DeleteArticuloFacturaComponent } from '../componentes/delete-articulo-factura/delete-articulo-factura.component';
+import { Banco, MetodoPago } from '../../configuracion/metodo-pagos/interfaces';
 
 @Component({
   selector: 'app-create-factura',
@@ -34,7 +35,8 @@ import { DeleteArticuloFacturaComponent } from '../componentes/delete-articulo-f
 
 export class CreateFacturaComponent implements OnInit, OnDestroy {
 
-  isLoading$: Observable<boolean>;
+  // isLoading$: Observable<boolean>;
+  isLoading$: any;
 
   empresas: Empresa[] = [];
   sedes: Sede[] = [];
@@ -49,6 +51,7 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
   sede_deliveries: SedeDeliverie[] = [];
   tipodocumentos: TipoDoc[] = [];
   generos: Genero[] = [];
+  metodos_pagos: MetodoPago[] = [];
 
   // CLIENTES
   identificacion_cliente: number;
@@ -68,26 +71,42 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
 
   total_iva_factura: number = 0;
   total_costo_factura: number = 0;
+  subtotal_factura: number = 0;
+  total_descuento_factura: number = 0;
+
+  detalle_factura: DetalleFactura[] = [];
+  descripcion: string = '';
+  deuda: number = 0;
+  pago_out: number = 0;
+
 
   // LUGAR DE ENTREGA
   sede_deliverie_id: number = 9999999;
   departamento_id_deliverie: number = 9999999;
   municipio_id_deliverie: number = 9999999;
-  descripcion_deliverie: string = '';
+  direccion_deliverie: string = '';
   fecha_deliverie: string = '';
   agencia_deliverie: string = '';
   encargado_deliverie: string = '';
   documento_deliverie: string = '';
   celular_deliverie: string = '';
 
-  detalle_factura: DetalleFactura[] = [];
-  deuda: number = 0;
-  pago_out: number = 0;
+  isDomicilio: boolean = false;
 
   // METODO PAGO
-  monto_pago: number;
+  monto_pago: number = 0;
+  metodo_pago_id: number = 9999999;
+  banco_id: number = 9999999;
+  metodos_pagos_seleccionado: MetodoPago | null = null;
+  file_name: File | null = null;
+  imagen_previzualizada: string | null = null;
+  descuento_final: number = 0;
+
+  efectivo_recibido: number = 0;
+  vueltos: number = 0;
 
   user: User;
+  currentDate: string = '';
 
   cliente: Cliente = {
     id: 0,
@@ -174,11 +193,30 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
     this.cargarConfiguraciones();
     this.closeSidebar();
 
-    this.cliente.nombres = 'SEDE';
-    this.buscarCliente();
+    // this.cliente.nombres = 'SEDE';
+    // this.buscarCliente();
 
-    this.buscar_articulo = 'carne';
-    this.buscarArticulos();
+    // this.buscar_articulo = 'carne';
+    // this.buscarArticulos();
+
+    this.departamento_id_deliverie = this.user.departamento_id;
+    this.municipio_id_deliverie = this.user.municipio_id;
+
+    const today = new Date();
+    this.fecha_deliverie = today.toISOString().split('T')[0];
+    this.focusField('.buscar-cliente-input');
+    this.setCurrentDate();
+  }
+
+  setCurrentDate(): void {
+    const date = new Date();
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'America/Bogota', // Cambia por tu zona horaria
+    };
+    this.currentDate = new Intl.DateTimeFormat('es-CO', options).format(date);
   }
 
   // Inicializa la validación del descuento
@@ -226,6 +264,8 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
         this.tipodocumentos = response.tipodocumentos.filter((doc: TipoDoc) => doc.id === 1 || doc.id === 6);
         this.segmentos_clientes = response.segmentos_clientes;
         this.generos = response.generos;
+        this.metodos_pagos = response.metodos_pagos;
+        // this.isLoadingProcess();
       });
   }
 
@@ -252,17 +292,20 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
       }
       // Si solo se encuentra un cliente, asignarlo y concatenar los nombres si es necesario
       else if (resp.clientes.data.length === 1) {
+
         this.cliente = resp.clientes.data[0];
         if (this.cliente.tipo_identificacion === 1) {
           this.cliente.nombres = this.cliente.nombres + ' ' + this.cliente.apellidos;
         }
+
         setTimeout(() => {
           this.unidad_id_articulo = 9999999;
           this.precio_general_articulo = 0;
+          this.focusField('.buscar-articulo-input');
         });
         // this.cliente.identificacion = this.cliente.tipodocumento?.sigla + ' : ' + this.cliente.identificacion;
-        this.toast.success('Exito', 'Se ha seleccionado un cliente');
         this.isLoadingProcess();
+        // this.toast.success('Exito', 'Se ha seleccionado un cliente');
       }
     });
   }
@@ -280,10 +323,11 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.unidad_id_articulo = 9999999;
         this.precio_general_articulo = 0;
+        this.focusField('.buscar-articulo-input');
       });
       // this.cliente.identificacion = this.cliente.tipodocumento?.sigla + ' : ' + this.cliente.identificacion;
       this.isLoadingProcess();
-      this.toast.success('Exito', 'Se ha seleccionado un cliente');
+      // this.toast.success('Exito', 'Se ha seleccionado un cliente');
     });
   }
 
@@ -305,7 +349,6 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
 
       // this.cliente.identificacion = this.cliente.tipodocumento?.sigla + ' : ' + this.cliente.identificacion;
       this.isLoadingProcess();
-      // this.toast.success('Exito', 'Se ha seleccionado un cliente');
     });
   }
 
@@ -331,6 +374,9 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
       sede_id: 9999999,
       fecha_nacimiento: '',
     };
+    setTimeout(() => {
+      this.focusField('.buscar-cliente-input');
+    });
     this.isLoadingProcess();
   }
 
@@ -375,9 +421,10 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
         this.articulo = resp.articulos.data[0];
         this.buscar_articulo = this.articulo.nombre;
         // this.cliente.identificacion = this.cliente.tipodocumento?.sigla + ' : ' + this.cliente.identificacion;
-        this.toast.success('Exito', 'Se ha seleccionado un articulo');
+        // this.toast.success('Exito', 'Se ha seleccionado un articulo');
         setTimeout(() => {
           this.initKeyupDescuento();
+          this.focusField('.unidad-id-articulo-select');
         }, 50);
 
         this.monto_descuento = 0;
@@ -389,7 +436,6 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
         this.iva = 0;
         this.bodegas_articulos = [];
         this.exist_bodegas = [];
-
         this.isLoadingProcess();
       }
     });
@@ -403,10 +449,10 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
 
       this.articulo = articulo;
       this.buscar_articulo = this.articulo.nombre;
-      this.toast.success('Exito', 'Se ha seleccionado un articulo');
 
       setTimeout(() => {
         this.initKeyupDescuento();
+        this.focusField('.unidad-id-articulo-select');
       }, 50);
 
       this.monto_descuento = 0;
@@ -418,9 +464,8 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
       this.iva = 0;
       this.bodegas_articulos = [];
       this.exist_bodegas = [];
-
       this.isLoadingProcess();
-      this.toast.success('Exito', 'Se ha seleccionado el articulo');
+      // this.toast.success('Exito', 'Se ha seleccionado el articulo');
     });
   }
 
@@ -477,7 +522,7 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
       // console.error('Error: `articulos_wallets` no está definido o no es un array.');
       return false;
     }
-
+    this.focusField('.cantidad-input');
     // Prioridad 1: Búsqueda por unidad, sede y segmento de cliente
     let precio_s = this.buscarPrecio(wallets, this.unidad_id_articulo, this.user.sede_id ?? null,
       this.cliente.segmento?.id ?? null);
@@ -554,8 +599,9 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
 
   getTotalCosto(): number {
     if (this.precio_general_articulo && this.cantidad_articulo) {
-      // Aplica el descuento al precio
-      const precioConDescuento = this.precio_general_articulo - (this.monto_descuento || 0);
+      // Aplica el descuento al precio unitario
+      const descuentoAplicado = this.monto_descuento || 0;
+      const precioConDescuento = this.precio_general_articulo - descuentoAplicado;
 
       // Subtotal sin IVA (precio con descuento multiplicado por cantidad)
       const subtotal = precioConDescuento * this.cantidad_articulo;
@@ -568,8 +614,6 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
         this.iva = 0; // Resetea el IVA si no aplica
       }
 
-      this.isLoadingProcess();
-
       // Total con IVA
       return subtotal + this.iva;
     }
@@ -580,8 +624,17 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
 
   getSubtotal(): number {
     if (this.precio_general_articulo && this.cantidad_articulo) {
-      // Calcula el subtotal como precio por cantidad sin descuento ni IVA
-      return this.precio_general_articulo * this.cantidad_articulo;
+      // Calcula el subtotal considerando el descuento
+      const descuentoAplicado = this.monto_descuento || 0;
+      return (this.precio_general_articulo - descuentoAplicado) * this.cantidad_articulo;
+    }
+    return 0; // Devuelve 0 si no hay datos suficientes
+  }
+
+  getTotalDescuento(): number {
+    if (this.monto_descuento && this.cantidad_articulo) {
+      // Multiplica el descuento unitario por la cantidad de productos
+      return this.monto_descuento * this.cantidad_articulo;
     }
     return 0; // Devuelve 0 si no hay datos suficientes
   }
@@ -642,6 +695,35 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
       }
     }
 
+    // Validar si el artículo ya existe con descuento o sin descuento
+    const articuloExistente = this.detalle_factura.find(
+      (detalle) =>
+        detalle.articulo_id === this.articulo.id &&
+        detalle.unidad_id === this.unidad_id_articulo
+    );
+
+    if (articuloExistente) {
+      if (
+        (articuloExistente.descuento > 0 && this.monto_descuento === 0) ||
+        (articuloExistente.descuento === 0 && this.monto_descuento > 0)
+      ) {
+        this.toast.error(
+          'Validación',
+          'El artículo ya ha sido agregado con una condición de descuento diferente. No puede agregarlo nuevamente con otra condición.'
+        );
+        return;
+      }
+
+      // Validar si el descuento es el mismo
+      if (articuloExistente.descuento !== this.monto_descuento) {
+        this.toast.error(
+          'Validación',
+          'El artículo ya ha sido agregado con un descuento diferente. El descuento debe ser el mismo.'
+        );
+        return;
+      }
+    }
+
     // Validar el descuento solo si es mayor que 0
     if (this.monto_descuento > 0) {
       const descuento_maximo_real = (this.articulo.descuento_maximo * 0.01) * this.precio_general_articulo;
@@ -663,38 +745,57 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
     }
 
 
-    // Verificar si el artículo ya existe en detalle_factura
-    const articuloExistente = this.detalle_factura.find((detalle) =>
-      detalle.articulo_id === this.articulo.id && detalle.unidad_id === this.unidad_id_articulo
-    );
+    // Subtotal sin descuento
+    const subtotalBase = this.precio_general_articulo * this.cantidad_articulo;
+
+    // Total descuento
+    const totalDescuento = this.monto_descuento * this.cantidad_articulo;
+
+    // Subtotal con descuento aplicado
+    const subtotalConDescuento = subtotalBase - totalDescuento;
+
+    // Calcular IVA
+    let ivaTotal = 0;
+    if (this.articulo.impuesto === 2 && this.articulo.iva?.porcentaje) {
+      const porcentajeIVA = this.articulo.iva.porcentaje * 0.01;
+      ivaTotal = subtotalConDescuento * porcentajeIVA;
+    }
+
+    // Costo total
+    const costoTotal = subtotalConDescuento + ivaTotal;
 
     if (articuloExistente) {
-      // Si existe, actualizar la cantidad y recalcular totales
-      articuloExistente.cantidad_item += this.cantidad_articulo;
 
-      const precioConDescuento = this.precio_general_articulo - (this.monto_descuento || 0);
-      articuloExistente.sub_total = precioConDescuento * articuloExistente.cantidad_item;
+      // Actualizar valores
+      articuloExistente.cantidad_item += this.cantidad_articulo;
+      articuloExistente.sub_total += subtotalBase;
+      articuloExistente.total_descuento += totalDescuento;
+
+      // Recalcular IVA y Costo Total
+      const nuevoSubtotalConDescuento =
+        articuloExistente.sub_total - articuloExistente.total_descuento;
 
       if (this.articulo.impuesto === 2 && this.articulo.iva?.porcentaje) {
         const porcentajeIVA = this.articulo.iva.porcentaje * 0.01;
-        articuloExistente.total_iva = articuloExistente.sub_total * porcentajeIVA;
+        articuloExistente.total_iva = nuevoSubtotalConDescuento * porcentajeIVA;
       } else {
         articuloExistente.total_iva = 0;
       }
 
-      articuloExistente.total_precio = articuloExistente.sub_total + articuloExistente.total_iva;
+      articuloExistente.total_precio =
+        nuevoSubtotalConDescuento + articuloExistente.total_iva;
+
 
       this.toast.success('Artículo actualizado', 'La cantidad ha sido sumada');
     } else {
-      // Lógica adicional para agregar el artículo si pasa las validaciones
-
+      // Si no existe, agrega el artículo al detalle
       const unidad = this.articulo.unidades?.find((item: Unidad) => item.id === this.unidad_id_articulo);
 
       this.detalle_factura.push({
         id: 0,
         precio_item: this.precio_general_articulo,
-        total_precio: this.getTotalCosto(),
-        total_iva: this.iva,
+        total_precio: costoTotal,
+        total_iva: ivaTotal,
         cantidad_item: this.cantidad_articulo,
         factura_id: 0,
         articulo_id: this.articulo.id,
@@ -704,18 +805,21 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
         estado: 1,
         categoria_id: this.articulo.categoria?.id ?? 0,
         descuento: this.monto_descuento,
-        sub_total: this.getSubtotal(),
+        sub_total: subtotalBase,
         unidad_id: this.unidad_id_articulo,
         unidad: unidad,
-        articulo: this.articulo
+        total_descuento: totalDescuento,
+        articulo: this.articulo,
       });
 
       this.toast.success('Artículo agregado', 'El artículo ha sido agregado a la factura');
     }
-
+    this.focusField('.buscar-articulo-input');
     // Calcula los totales
     this.resetearArticulo();
+    this.resetearMetodoPago();
     this.calcularTotalesFactura();
+
   }
 
   resetearArticulo() {
@@ -769,6 +873,10 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
     this.iva = 0;
     this.bodegas_articulos = [];
     this.exist_bodegas = [];
+
+    setTimeout(() => {
+      this.focusField('.buscar-articulo-input');
+    }, 50);
     this.isLoadingProcess();
   }
 
@@ -810,17 +918,160 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
   }
 
   calcularTotalesFactura(): void {
+    // Calcula el subtotal sumando el sub_total de cada detalle
+    this.subtotal_factura = this.detalle_factura.reduce((subtotal, detalle) => subtotal + (detalle.sub_total || 0), 0);
+
     // Calcula el total del IVA sumando el total_iva de cada detalle
     this.total_iva_factura = this.detalle_factura.reduce((total, detalle) => total + (detalle.total_iva || 0), 0);
+
+    // Calcula el total de descuento sumando el descuento de cada detalle
+    this.total_descuento_factura = this.detalle_factura.reduce((descuento, detalle) => descuento + (detalle.total_descuento || 0), 0);
 
     // Calcula el costo total de la factura sumando el total_precio de cada detalle
     this.total_costo_factura = this.detalle_factura.reduce((total, detalle) => total + (detalle.total_precio || 0), 0);
 
+    // Ajusta la deuda
     this.deuda = this.total_costo_factura;
+
     this.isLoadingProcess();
   }
 
   // ARTICULOS
+
+  // LUGAR DE ENTREGA
+
+  onChangeSedeDeliverie(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement; // Asegura que el evento proviene de un <select>
+    const selectedId = Number(selectElement.value); // Obtiene el valor como número
+
+    // Busca la sede seleccionada
+    const selectedSede = this.sede_deliveries.find(
+      (item) => item.id === selectedId
+    );
+
+    // Verifica si el nombre incluye "domicilio"
+    this.isDomicilio = selectedSede?.nombre.toLowerCase().includes('domicilio') || false;
+  }
+
+  resetearLugarDeEntrega() {
+    this.sede_deliverie_id = 9999999;
+    this.direccion_deliverie = '';
+    this.agencia_deliverie = '';
+    this.encargado_deliverie = '';
+    this.documento_deliverie = '';
+    this.celular_deliverie = '';
+
+    this.departamento_id_deliverie = this.user.departamento_id;
+    this.municipio_id_deliverie = this.user.municipio_id;
+
+    const today = new Date();
+    this.fecha_deliverie = today.toISOString().split('T')[0];
+  }
+
+  // LUGAR DE ENTREGA
+
+  // METODO DE PAGO
+
+  onChangeMetodoPago(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement; // Asegura que el evento proviene de un <select>
+    const selectedId = Number(selectElement.value); // Obtiene el valor como númeroue sea un array, incluso si no se encuentra nada
+    const metodoSeleccionado = this.metodos_pagos.find((item) => item.id === this.metodo_pago_id);
+    this.metodos_pagos_seleccionado = metodoSeleccionado || null;
+
+    this.banco_id = 9999999;
+
+    if (this.metodo_pago_id === 9999999) {
+      this.monto_pago = 0; // Si el método de pago seleccionado es 9999999, el monto es 0
+    } else {
+      this.monto_pago = this.total_costo_factura; // Caso contrario, se usa el total de la factura
+    }
+
+  }
+
+  processFile($event: Event) {
+
+    const input = $event.target as HTMLInputElement;
+
+    // Asegúrate de que hay un archivo seleccionado
+    if (!input.files || input.files.length === 0) {
+      this.toast.warning("Validando", "No se ha seleccionado ningún archivo");
+      return;
+    }
+
+    // const file = $event.target.files[0];
+    const file = input.files[0];
+    if (!file || file.type.indexOf("image") < 0) {
+      this.toast.warning("Validando", "El archivo no es una imagen");
+      return;
+    }
+
+    this.file_name = file; // Asigna el archivo a this.file_name
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagen_previzualizada = reader.result as string;
+      this.isLoadingProcess();
+    };
+    reader.readAsDataURL(file);
+
+  }
+
+  cancelImage() {
+    this.file_name = null;
+    // Restablece la imagen a la predeterminada cuando se cancela
+    this.imagen_previzualizada = null;
+  }
+
+  removeImage() {
+    this.file_name = null;
+    // Restablece la imagen a la predeterminada cuando se elimina
+    this.imagen_previzualizada = null;
+  }
+
+  // Getter para obtener siempre un arreglo de bancos
+  get bancos(): Banco[] {
+    return this.metodos_pagos_seleccionado?.bancos || [];
+  }
+
+  resetearMetodoPago() {
+    this.efectivo_recibido = 0;
+    this.monto_pago = 0;
+    this.descuento_final = 0;
+    this.metodo_pago_id = 9999999;
+    this.banco_id = 9999999;
+    this.metodos_pagos_seleccionado = null;
+    this.file_name = null;
+    this.imagen_previzualizada = null;
+  }
+
+  onChangeEfectivo() {
+    // Verificar si el efectivo recibido es suficiente para cubrir el monto a pagar
+    if (this.efectivo_recibido >= this.monto_pago) {
+      this.vueltos = this.efectivo_recibido - this.monto_pago; // Calcular vueltos      
+    } else {
+      this.vueltos = 0; // Si el efectivo recibido es insuficiente, los vueltos son 0
+    }
+  }
+
+  onChangeDescuentoFinal(): void {
+    if (this.descuento_final >= 0 && this.descuento_final <= this.subtotal_factura) {
+      // Recalcular el monto pago restando el descuento final al total
+      this.monto_pago = this.total_costo_factura - this.descuento_final;
+
+      // Validar que el monto pago no sea negativo
+      if (this.monto_pago < 0) {
+        this.monto_pago = 0;
+      }
+    } else {
+      // Si el descuento es inválido, se restablece el monto pago
+      this.toast.error('Descuento inválido', 'El descuento no puede ser mayor al subtotal o negativo.');
+      this.descuento_final = 0;
+      this.monto_pago = this.total_costo_factura;
+    }
+  }
+
+  // METODO DE PAGO
+
   seleccionarTexto(event: FocusEvent): void {
     const input = event.target as HTMLInputElement;
     if (input && input.select) {
@@ -829,10 +1080,147 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
     this.isLoadingProcess();
   }
 
+  focusField(selector: string): void {
+    const element = document.querySelector(selector) as HTMLSelectElement;
+
+    if (element) {
+      element.focus();
+
+      if (element.tagName.toLowerCase() === 'select') {
+        // Expande el dropdown al configurar size
+        element.size = element.options.length;
+
+        // Colapsa el dropdown cuando se pierde el foco
+        element.addEventListener('blur', () => {
+          element.size = 0;
+        });
+      }
+    }
+  }
+
   isLoadingProcess() {
     this.facturaService.isLoadingSubject.next(true);
     setTimeout(() => {
       this.facturaService.isLoadingSubject.next(false);
     }, 50);
   }
+
+  save() {
+    if (this.cliente.id === 0) {
+      this.toast.error("Validando", "Necesitas seleccionar un cliente");
+      return;
+    }
+
+    if (this.detalle_factura.length === 0) {
+      this.toast.error("Validando", "Necesitas agregar por lo menos un articulo al detalle");
+      return;
+    }
+
+    if (this.isDomicilio) {
+      if (!this.direccion_deliverie || this.direccion_deliverie.trim() === '') {
+        this.toast.error("Validando", "La dirección de entrega es obligatoria");
+        return;
+      }
+      if (!this.fecha_deliverie) {
+        this.toast.error("Validando", "La fecha de entrega es obligatoria");
+        return;
+      }
+      if (this.departamento_id_deliverie === 9999999) {
+        this.toast.error("Validando", "Debes seleccionar un departamento");
+        return;
+      }
+      if (this.municipio_id_deliverie === 9999999) {
+        this.toast.error("Validando", "Debes seleccionar un municipio");
+        return;
+      }
+      if (!this.agencia_deliverie || this.agencia_deliverie.trim() === '') {
+        this.toast.error("Validando", "La agencia de envío es obligatoria");
+        return;
+      }
+      if (!this.encargado_deliverie || this.encargado_deliverie.trim() === '') {
+        this.toast.error("Validando", "El nombre del encargado es obligatorio");
+        return;
+      }
+      // if (!this.documento_deliverie || this.documento_deliverie.trim() === '') {
+      //   this.toast.error("Validando", "El documento del encargado es obligatorio");
+      //   return;
+      // }
+      if (!this.celular_deliverie || this.celular_deliverie.trim() === '') {
+        this.toast.error("Validando", "El celular del encargado es obligatorio");
+        return;
+      }
+    }
+
+    if (this.metodo_pago_id === 9999999) {
+      this.toast.error("Validando", "Necesitas seleccionar un metodo de pago");
+      return;
+    } else {
+      const metodoSeleccionado = this.metodos_pagos.find((item) => item.id === this.metodo_pago_id);
+
+      if (metodoSeleccionado && metodoSeleccionado.nombre.toLowerCase() === 'transferencia') {
+        if (this.banco_id === 9999999) {
+          this.toast.error("Validando", "Necesitas seleccionar un banco");
+          return;
+        }
+      }
+    }
+
+    if (!this.monto_pago) {
+      this.toast.error("Validando", "El monto de pago es requerido");
+      return;
+    }
+
+    //GUARDAR
+
+    let formData = new FormData();
+
+    formData.append("cliente_id", this.cliente.id.toString());
+    formData.append("segmento_cliente_id", this.cliente.segmento_cliente_id.toString());
+    formData.append("sub_total", this.subtotal_factura.toString());
+    formData.append("total_descuento", (this.descuento_final + this.total_descuento_factura).toString());
+    formData.append("total_iva", this.total_iva_factura.toString());
+    formData.append("total_venta", this.total_costo_factura.toString());
+    formData.append("deuda", (this.deuda - (this.monto_pago ? this.monto_pago : 0)) + '');
+    // formData.append("pago_out", (this.total_costo_factura + (this.monto_pago ? this.monto_pago : 0)) + '');
+    formData.append("pago_out", (this.monto_pago - (this.total_costo_factura - (this.descuento_final || 0))).toString());
+    formData.append("descripcion", this.descripcion);
+
+    formData.append('detalle_factura', JSON.stringify(this.detalle_factura));
+
+    formData.append("sede_deliverie_id", this.sede_deliverie_id.toString());
+    formData.append("fecha_entrega", this.fecha_deliverie.toString());
+    formData.append("departamento_id", this.departamento_id_deliverie.toString());
+    formData.append("municipio_id", this.municipio_id_deliverie.toString());
+    formData.append("direccion_deliverie", this.direccion_deliverie.toString());
+    formData.append("agencia_deliverie", this.agencia_deliverie.toString());
+    formData.append("encargado_deliverie", this.encargado_deliverie.toString());
+    formData.append("documento_deliverie", this.documento_deliverie.toString());
+    formData.append("celular_deliverie", this.celular_deliverie.toString());
+
+    formData.append("monto_pago", this.monto_pago.toString());
+    formData.append("metodo_pago_id", this.metodo_pago_id.toString());
+    formData.append("banco_id", this.banco_id.toString());
+    if (this.file_name) {
+      formData.append('imagen', this.file_name);
+    } else {
+      formData.append('imagen', ''); // O envía 'null' si el backend lo acepta
+    }
+
+    this.facturaService.create(formData).subscribe((resp) => {
+      if (resp.message === 403) {
+        this.toast.error('Validación', resp.message_text);
+
+        this.resetearMetodoPago();
+        this.descripcion = '';
+        this.efectivo_recibido = 0;
+        this.vueltos = 0;
+
+      } else {
+        this.toast.success('Exito', resp.message_text);
+        this.isLoadingProcess();
+      }
+    });
+
+  }
+
 }

@@ -52,3 +52,64 @@
     margin: 0 !important; /* Asegura que no haya márgenes en spans */
     padding: 0 !important; /* Asegura que no haya padding en spans */
 }
+
+
+.custom-file-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.custom-file-input {
+  display: none;
+}
+
+.custom-file-label {
+  cursor: pointer;
+}
+
+.file-name {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.image-preview img {
+  border: 1px solid #ddd;
+  padding: 5px;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.btn-icon-metodo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.btn-icon-metodo:hover {
+  background: rgba(0, 0, 0, 0.1);
+  // border-radius: 50%;
+}
+
+/* Asegura un tamaño fijo para las imágenes */
+.fixed-image-size {
+    width: 239.9px;
+    height: 191.167px;
+    object-fit: cover; /* Ajusta la imagen dentro del cuadro, recortando si es necesario */
+    border: 1px solid #ddd;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #f8f9fa; /* Fondo neutral para imágenes transparentes */
+}
+
+.img-thumbnail svg {
+  color: #6c757d; /* Color gris claro */
+}

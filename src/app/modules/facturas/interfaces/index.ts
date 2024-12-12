@@ -52,6 +52,7 @@ export interface DetalleFactura{
     descuento: number;
     sub_total: number;
     unidad_id: number;
+    total_descuento: number;
     
     articulo?: Articulo;
     empresa?: Empresa;
@@ -65,4 +66,17 @@ export interface ResponseGestionFactura {
     message: number;
     message_text: string;
     factura: Factura;
+}
+
+export interface ResponseGestionFactura {
+    message: number;
+    message_text: string;
+    factura: Factura;
+}
+
+export interface ResponseFactura {
+    total: number;
+    facturas: { // Ajuste para reflejar la estructura anidada
+        data: Factura[];
+    };
 }

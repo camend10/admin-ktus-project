@@ -5,6 +5,7 @@ import { URL_SERVICIOS } from 'src/app/config/config';
 import { AuthService } from 'src/app/modules/auth';
 import { Cliente, ResponseCliente, ResponseGestionCliente } from '../../clientes/interfaces';
 import { ResponseArticulo } from '../../articulos/interfaces';
+import { ResponseFactura, ResponseGestionFactura } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -74,4 +75,31 @@ export class FacturasService {
     );
   }
 
+  create(data: FormData): Observable<ResponseGestionFactura> {
+
+    this.isLoadingSubject.next(true);
+    console.log(data);
+    let URL = URL_SERVICIOS + "/facturas";
+
+    return this.http.post<ResponseGestionFactura>(URL, data).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
+
+  listar(page = 1, data: { buscar: string; segmento_cliente_id: number; tipo: number }): Observable<ResponseFactura> {
+    this.isLoadingSubject.next(true);
+
+    const params = {
+      buscar: data.buscar,
+      segmento_cliente_id: data.segmento_cliente_id.toString(),
+      tipo: data.tipo.toString()
+    };
+
+
+    let URL = URL_SERVICIOS + `/facturas/index?page=${page}`;
+
+    return this.http.post<ResponseFactura>(URL, params).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
 }

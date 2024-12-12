@@ -51,18 +51,6 @@
                     </div>
 
                     <div class="col-6">
-                        <!--begin::Input-->
-                        <input type="text" name="cantidad_articulo" class="form-control text-end" placeholder="Cantidad"
-                            appNumericInput [(ngModel)]="cantidad_articulo" (focus)="seleccionarTexto($event)" />
-                        <!--end::Input-->
-                        <!--begin::Description-->
-                        <div class="text-muted fs-7">Cantidad.
-                        </div>
-                        <!--end::Description-->
-                    </div>
-                </div>
-                <div class="row fv-row my-1 fv-plugins-icon-container">
-                    <div class="col-6">
                         <select class="form-select" name="unidad_id_articulo" placeholder="Select an option"
                             [(ngModel)]="unidad_id_articulo" (change)="changeUnidadArticulo($event.target)">
                             <option [ngValue]="9999999" selected>Seleccione Unidad</option>
@@ -78,6 +66,20 @@
                         </div>
                         <!--end::Description-->
                     </div>
+                </div>
+                <div class="row fv-row my-1 fv-plugins-icon-container">
+
+                    <div class="col-6">
+                        <!--begin::Input-->
+                        <input type="text" name="cantidad_articulo" class="form-control text-end text-end cantidad-input-edit" placeholder="Cantidad"
+                            appNumericInput [(ngModel)]="cantidad_articulo" (focus)="seleccionarTexto($event)" />
+                        <!--end::Input-->
+                        <!--begin::Description-->
+                        <div class="text-muted fs-7">Cantidad.
+                        </div>
+                        <!--end::Description-->
+                    </div>
+
                     <div class="col-6">
                         <select class="form-select" name="bodega_id_articulo" placeholder="Seleccione bodega"
                             [(ngModel)]="bodega_id_articulo">

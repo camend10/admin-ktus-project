@@ -1,6 +1,7 @@
 import { Bodega } from "../modules/configuracion/bodegas/interfaces";
 import { Categoria } from "../modules/configuracion/categorias/interfaces";
 import { Iva } from "../modules/configuracion/ivas/interfaces";
+import { MetodoPago } from "../modules/configuracion/metodo-pagos/interfaces";
 import { Proveedor } from "../modules/configuracion/proveedores/interfaces";
 import { SedeDeliverie } from "../modules/configuracion/sede-deliveries/interfaces";
 import { Sede } from "../modules/configuracion/sedes/interfaces";
@@ -20,6 +21,7 @@ export interface ResponseConfiguracion {
     arraySedes: Sede[];
     segmentos_clientes: SegmentoCliente[];
     sede_deliveries: SedeDeliverie[];
+    metodos_pagos: MetodoPago[];
 }
 
 export interface ResponseConfiguracionArticulos {

@@ -21,7 +21,6 @@ export class ArticulosService {
     this.isLoading$ = this.isLoadingSubject.asObservable();
   }
 
-
   registrar(articulo: Articulo, file_name: File | null, bodegas_articulos: BodegaArticulo[],
     articulos_wallets: ArticuloWallet[], especificaciones: Especificacion[]): Observable<ResponseGestionArticulo> {
 

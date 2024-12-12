@@ -14,7 +14,7 @@
             <form id="kt_ecommerce_edit_order_form" class="form d-flex flex-column flex-lg-row"
                 data-kt-redirect="apps/ecommerce/sales/listing.html">
                 <!--begin::Aside column-->
-                <div class="w-100 flex-lg-row-auto w-lg-300px mb-7 me-7 me-lg-10">
+                <div class="w-100 flex-lg-row-auto w-lg-250px mb-7 me-7 me-lg-10">
                     <!--begin::Order details-->
                     <div class="card card-flush py-4">
                         <!--begin::Card header-->
@@ -34,7 +34,7 @@
                                     <!--end::Input-->
                                     <!--begin::Label-->
                                     <!-- <label class="form-label"></label> -->
-                                    <div class="fw-bold fs-4">fecha: 2024-12-04</div>
+                                    <div class="fw-bold fs-4">fecha: {{ currentDate }}</div>
                                     <!--end::Label-->
                                 </div>
                                 <!--end::Input group-->
@@ -42,27 +42,32 @@
                                 <!--begin::Input group-->
                                 <div class="fv-row">
                                     <!--begin::Select2-->
-                                    <select class="form-select mb-2" placeholder="Metodo de pago" name="payment_method">
-                                        <option value="" selected>Metodo de pago</option>
-                                        <option value="cod">Cash on Delivery</option>
-                                        <option value="visa">Credit Card (Visa)</option>
-                                        <option value="mastercard">Credit Card (Mastercard)</option>
-                                        <option value="paypal">Paypal</option>
+                                    <select class="form-select mb-2" placeholder="Metodo de pago"
+                                        [(ngModel)]="metodo_pago_id" name="metodo_pago_id"
+                                        (change)="onChangeMetodoPago($event)">
+                                        <option [ngValue]="9999999" selected>Metodo de pago</option>
+
+                                        <ng-container *ngIf="metodos_pagos">
+                                            <ng-container *ngFor="let item of metodos_pagos">
+                                                <option [ngValue]="item.id">{{ item.nombre }}</option>
+                                            </ng-container>
+                                        </ng-container>
                                     </select>
                                     <!--end::Select2-->
                                 </div>
                                 <!--end::Input group-->
 
                                 <!--begin::Input group-->
-                                <div class="fv-row">
+                                <div class="fv-row" *ngIf="bancos.length > 0">
                                     <!--begin::Select2-->
-                                    <select class="form-select mb-2" placeholder="Selecciona el banco"
-                                        name="payment_method">
-                                        <option value="" selected>Selecciona el banco</option>
-                                        <option value="cod">Cash on Delivery</option>
-                                        <option value="visa">Credit Card (Visa)</option>
-                                        <option value="mastercard">Credit Card (Mastercard)</option>
-                                        <option value="paypal">Paypal</option>
+                                    <select class="form-select mb-2" placeholder="Metodo de pago" [(ngModel)]="banco_id"
+                                        name="banco_id">
+                                        <option [ngValue]="9999999" selected>Seleccione Banco</option>
+
+                                        <ng-container *ngFor="let item of bancos">
+                                            <option [ngValue]="item.id">{{ item.nombre }}</option>
+                                        </ng-container>
+
                                     </select>
                                     <!--end::Select2-->
                                 </div>
@@ -71,26 +76,122 @@
                                 <!--begin::Input group-->
                                 <div class="fv-row">
                                     <!--begin::Input-->
-                                    <input type="text" name="monto_pago" class="form-control mb-2" placeholder="Monto"
-                                        [(ngModel)]="monto_pago" />
+                                    <input type="text" name="monto_pago" class="form-control mb-2 text-end"
+                                        placeholder="Monto" [(ngModel)]="monto_pago" appNumericInput disabled
+                                        (focus)="seleccionarTexto($event)" />
                                     <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="fs-7 text-end">Monto.
+                                    </div>
+                                    <!--end::Description-->
                                 </div>
                                 <!--end::Input group-->
 
                                 <!--begin::Input group-->
                                 <div class="fv-row">
-                                    <label for="formFile" class="form-label">Comprobante</label>
-                                    <input class="form-control" type="file" id="formFile"
-                                        accept=".jpeg, .bmp, .jpg, .png, .gif, .webp">
+                                    <!--begin::Input-->
+                                    <input type="text" name="descuento_final" class="form-control mb-2 text-end"
+                                        placeholder="Descuento" [(ngModel)]="descuento_final" appNumericInput
+                                        (input)="onChangeDescuentoFinal()" (focus)="seleccionarTexto($event)" />
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="fs-7 text-end">Descuento.
+                                    </div>
+                                    <!--end::Description-->
                                 </div>
                                 <!--end::Input group-->
 
                                 <!--begin::Input group-->
-                                <div class="fv-row">
-                                    <button class="btn btn-primary btn-md">
-                                        <i class="ki-duotone ki-credit-cart fs-1"><span class="path1"></span><span
-                                                class="path2"></span></i>
+                                <div class="fv-row" *ngIf="bancos.length <= 0">
+                                    <!--begin::Input-->
+                                    <input type="text" name="efectivo_recibido" class="form-control mb-2 text-end"
+                                        placeholder="Efectivo recibido" [(ngModel)]="efectivo_recibido" appNumericInput
+                                        (focus)="seleccionarTexto($event)" (input)="onChangeEfectivo()" />
+                                    <!--end::Input-->
+                                    <!--begin::Description-->
+                                    <div class="fs-7 text-end">Efectivo recibido.
+                                    </div>
+                                    <!--end::Description-->
+                                </div>
+                                <!--end::Input group-->
+
+                                <!--begin::Input group-->
+                                <div class="fv-row fw-bold fs-4 totals-row" *ngIf="bancos.length <= 0">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Vueltos:</span>
+                                        <span class="text-end text-danger">
+                                            $ {{ vueltos | number:'1.2-2' }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <!--end::Input group-->
+
+                                <!--begin::Input group-->
+
+                                <div class="form-group">
+                                    <label for="fileInput" class="form-label">Comprobante</label>
+                                    <div class="custom-file-wrapper d-flex align-items-center">
+                                        <!-- Input invisible pero funcional -->
+                                        <input type="file" id="fileInput" class="custom-file-input"
+                                            accept=".jpeg, .bmp, .jpg, .png, .gif, .webp"
+                                            (change)="processFile($event)" />
+                                        <!-- Botón estilizado para seleccionar archivos -->
+                                        <label for="fileInput" class="custom-file-label btn btn-success w-100">
+                                            Seleccionar imagen
+                                        </label>
+                                        <span class="file-name ms-2 text-truncate">
+                                            {{ file_name?.name || "Ningún archivo seleccionado" }}
+                                        </span>
+                                        <button *ngIf="file_name" type="button"
+                                            class="btn btn-icon-metodo text-danger ms-2" (click)="removeImage()">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Vista previa de la imagen -->
+
+                                <div class="image-preview mt-3 d-flex justify-content-center">
+                                    <ng-container *ngIf="imagen_previzualizada; else defaultIcon">
+                                        <img [src]="imagen_previzualizada" alt="Previsualización de la imagen"
+                                            class="img-thumbnail fixed-image-size" style="object-fit: cover;" />
+                                    </ng-container>
+
+                                    <ng-template #defaultIcon>
+                                        <div class="img-thumbnail d-flex align-items-center justify-content-center"
+                                            style="max-width: 150px; max-height: 150px; background-color: #f8f9fa;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"
+                                                fill="currentColor" class="bi bi-image" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M4.002 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7.996a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4.002zm0 1h7.996c.554 0 1 .446 1 1v12c0 .554-.446 1-1 1H4.002c-.554 0-1-.446-1-1V2c0-.554.446-1 1-1zm2.5 2.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zM1 13.5c0-.8.283-1.402.879-2 .576-.576 1.147-.99 2.121-1.342.937-.331 1.933-.408 2.925-.408s1.988.077 2.925.408c.974.352 1.545.766 2.121 1.342.596.598.879 1.2.879 2v.5H1v-.5zm1-.5h10v-.5c0-.8-.283-1.402-.879-2-.576-.576-1.147-.99-2.121-1.342C8.188 9.077 7.192 9 6.2 9c-.993 0-1.988.077-2.925.408-.974.352-1.545.766-2.121 1.342-.596.598-.879 1.2-.879 2v.5z" />
+                                            </svg>
+                                        </div>
+                                    </ng-template>
+                                </div>
+
+
+                                <!--end::Input group-->
+
+                                <!--begin::Input group-->
+                                <div class="fv-row mt-3">
+                                    <!-- <button class="btn btn-primary btn-md w-100">
+                                        <i class="ki-duotone ki-credit-cart fs-1">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
                                         Agregar pago
+                                    </button> -->
+
+                                    <button type="button" (click)="save()" class="btn btn-primary btn-md w-100">
+                                        <i class="ki-duotone ki-credit-cart fs-1">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        <span class="indicator-label">Registrar Factura</span>
+                                        <span class="indicator-progress" *ngIf="isLoading$ | async">Espere por favor...
+                                            <span class="spinner-border spinner-border-sm align-middle ms-2"
+                                                *ngIf="isLoading$ | async"></span>
+                                        </span>
                                     </button>
                                 </div>
                                 <!--end::Input group-->
@@ -162,7 +263,8 @@
                                 <div class="col-6">
                                     <!--begin::Input-->
                                     <input type="text" (keyup.enter)="buscarCliente()" name="cliente_nombres"
-                                        class="form-control mb-2" placeholder="Cliente" [(ngModel)]="cliente.nombres" />
+                                        class="form-control mb-2 buscar-cliente-input" placeholder="Cliente"
+                                        [(ngModel)]="cliente.nombres" />
 
                                     <!--end::Input-->
                                 </div>
@@ -231,15 +333,15 @@
                                                 <span class="path2"></span>
                                             </i>
                                             <input type="text" data-kt-ecommerce-edit-order-filter="search"
-                                                class="form-control ps-12" placeholder="Buscar articulos"
-                                                (keyup.enter)="buscarArticulos()" [(ngModel)]="buscar_articulo"
-                                                name="buscar_articulo" />
+                                                class="form-control ps-12 buscar-articulo-input"
+                                                placeholder="Buscar articulos" (keyup.enter)="buscarArticulos()"
+                                                [(ngModel)]="buscar_articulo" name="buscar_articulo" />
                                         </div>
                                         <!--end::Search products-->
                                     </div>
 
                                     <div class="col-2">
-                                        <select class="form-select" name="unidad_id_articulo"
+                                        <select class="form-select unidad-id-articulo-select" name="unidad_id_articulo"
                                             placeholder="Select an option" [(ngModel)]="unidad_id_articulo"
                                             (change)="changeUnidadArticulo($event.target)">
                                             <option [ngValue]="9999999" selected>Seleccione</option>
@@ -270,8 +372,9 @@
 
                                     <div class="col-2">
                                         <!--begin::Input-->
-                                        <input type="text" name="cantidad_articulo" class="form-control text-end"
-                                            placeholder="Cantidad" appNumericInput [(ngModel)]="cantidad_articulo"
+                                        <input type="text" name="cantidad_articulo"
+                                            class="form-control text-end cantidad-input" placeholder="Cantidad"
+                                            appNumericInput [(ngModel)]="cantidad_articulo"
                                             (focus)="seleccionarTexto($event)" />
                                         <!--end::Input-->
                                         <!--begin::Description-->
@@ -311,7 +414,7 @@
                                         <input type="text" #descuento name="monto_descuento"
                                             class="form-control text-end" placeholder="Descuento" appNumericInput
                                             [(ngModel)]="monto_descuento" (focus)="seleccionarTexto($event)" />
-                                        <!-- (keyup)="verificarDescuento()"  -->
+
                                         <!--begin::Description-->
                                         <div class="text-muted fs-7">Descuento.
                                         </div>
@@ -376,7 +479,7 @@
 
                                     <div class="col-3">
                                         <span id="kt_ecommerce_edit_order_total_price">
-                                            $ {{ monto_descuento | number:'1.2-2' }}
+                                            $ {{ getTotalDescuento() | number:'1.2-2' }}
                                         </span>
                                     </div>
                                 </div>
@@ -423,7 +526,7 @@
                                         Detalle de la factura
                                     </h2>
                                 </div>
-                                
+
                             </div>
                         </div>
                         <!--end::Card header-->
@@ -441,10 +544,11 @@
                                                 <thead>
                                                     <tr class="fw-bold text-muted">
                                                         <th class="min-w-150px">Articulo</th>
-                                                        <th class="min-w-140px">Unidad</th>
                                                         <th class="min-w-120px text-end">Precio</th>
                                                         <th class="min-w-120px text-end">Cantidad</th>
-                                                        <th class="min-w-120px text-end">Sub Total</th>
+                                                        <th class="min-w-120px text-end">Subtotal</th>
+                                                        <th class="min-w-120px text-end">Iva</th>
+                                                        <th class="min-w-120px text-end">Descuento</th>
                                                         <th class="min-w-120px text-end">Total</th>
                                                         <th class="min-w-100px text-center">Acciones</th>
                                                     </tr>
@@ -455,19 +559,23 @@
                                                     <ng-container *ngFor="let item of detalle_factura; let i=index;">
                                                         <tr>
                                                             <td>
-                                                                <a href="#" onclick="return false;"
-                                                                    class="text-gray-900 fw-bold text-hover-primary fs-6 text-capitalize"
-                                                                    style="text-wrap: nowrap;">
-                                                                    {{ item.articulo?.nombre }}</a>
+                                                                <div class="d-flex align-items-center">
+                                                                    <div
+                                                                        class="d-flex justify-content-start flex-column">
+                                                                        <a style="text-transform: capitalize;" href="#"
+                                                                            onclick="return false;"
+                                                                            style="text-wrap: nowrap;"
+                                                                            class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">{{
+                                                                            item.articulo?.nombre }}</a>
+                                                                        <span
+                                                                            class="text-muted fw-semibold text-muted d-block fs-7">{{
+                                                                            item.unidad?.nombre
+                                                                            }}</span>
+
+                                                                    </div>
+                                                                </div>
                                                             </td>
-                                                            <td>
-                                                                <!-- <a href="#"
-                                                                    class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6 text-capitalize">Brasil</a> -->
-                                                                <span
-                                                                    class="text-gray-900 fw-bold text-hover-primary fs-6 text-capitalize"
-                                                                    style="text-wrap: nowrap;">{{
-                                                                    item.unidad?.nombre }}</span>
-                                                            </td>
+
                                                             <td>
                                                                 <a href="#" onclick="return false;"
                                                                     class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6 text-end">$
@@ -476,6 +584,7 @@
                                                                     class="text-muted fw-semibold text-muted d-block fs-7">Code:
                                                                     Paid</span> -->
                                                             </td>
+
                                                             <td>
                                                                 <a href="#" onclick="return false;"
                                                                     class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6 text-end">{{
@@ -484,16 +593,33 @@
                                                                     class="text-muted fw-semibold text-muted d-block fs-7">Web,
                                                                     UI/UX Design</span> -->
                                                             </td>
+
                                                             <td class="text-gray-900 fw-bold text-hover-primary fs-6 text-end"
                                                                 style="text-wrap: nowrap;">
                                                                 $ {{ item.sub_total | number:'1.2-2' }}</td>
-    
+
+                                                            <td>
+                                                                <a href="#" onclick="return false;"
+                                                                    class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6 text-end">$
+                                                                    {{
+                                                                    item.total_iva | number:'1.2-2'}}
+                                                                </a>
+                                                            </td>
+
+                                                            <td>
+                                                                <a href="#" onclick="return false;"
+                                                                    class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6 text-end">$
+                                                                    {{
+                                                                    item.total_descuento | number:'1.2-2'}}
+                                                                </a>
+                                                            </td>
+
                                                             <td class="text-gray-900 fw-bold text-hover-primary fs-6 text-end"
                                                                 style="text-wrap: nowrap;">
                                                                 $ {{ item.total_precio | number:'1.2-2' }}</td>
-    
+
                                                             <td class="text-center">
-    
+
                                                                 <a href="#" onclick="return false;"
                                                                     (click)="editarArticulo(item,i)"
                                                                     class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
@@ -523,59 +649,78 @@
                                         </div>
                                     </div>
                                 </div>
-    
+
                                 <div class="separator"></div>
-    
+
                                 <!--begin::Total price-->
-    
-                                <div class="row fw-bold fs-6 totals-row">
-                                    <div class="col-3">
-                                        Iva:
+                                <div class="row">
+                                    <!-- Columna izquierda: Contenido -->
+                                    <div class="col-5">
+                                        <div class="row fw-bold fs-6 mb-2">
+                                            <div class="col-4">Subtotal:</div>
+                                            <div class="col-4 text-end">
+                                                <span id="kt_ecommerce_edit_order_total_price">
+                                                    $ {{ subtotal_factura | number:'1.2-2' }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="row fw-bold fs-6 mb-2">
+                                            <div class="col-4">Iva:</div>
+                                            <div class="col-4 text-end">
+                                                <span id="kt_ecommerce_edit_order_total_price">
+                                                    $ {{ total_iva_factura | number:'1.2-2' }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="row fw-bold fs-6 mb-2">
+                                            <div class="col-4">Descuento:</div>
+                                            <div class="col-4 text-end">
+                                                <span id="kt_ecommerce_edit_order_total_price">
+                                                    $ {{ total_descuento_factura | number:'1.2-2' }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="row fw-bold fs-6 mb-2">
+                                            <div class="col-4">Costo Total:</div>
+                                            <div class="col-4 text-end">
+                                                <span id="kt_ecommerce_edit_order_total_price">
+                                                    $ {{ total_costo_factura | number:'1.2-2' }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="separator my-3"></div>
+
+                                        <div class="row fw-bold fs-6 mb-2">
+                                            <div class="col-4">Deuda:</div>
+                                            <div class="col-4 text-end">
+                                                <span id="kt_ecommerce_edit_order_total_price">
+                                                    $ {{ (deuda - (monto_pago ? monto_pago : 0) - (descuento_final ?
+                                                    descuento_final : 0)) | number:'1.2-2' }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="row fw-bold fs-6 mb-2">
+                                            <div class="col-4">Pagado:</div>
+                                            <div class="col-4 text-end">
+                                                <span id="kt_ecommerce_edit_order_total_price">
+                                                    $ {{ (pago_out + (monto_pago ? monto_pago : 0)) | number:'1.2-2' }}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
-    
-                                    <div class="col-3">
-                                        <span id="kt_ecommerce_edit_order_total_price">
-                                            $ {{ total_iva_factura | number:'1.2-2' }}
-                                        </span>
+
+                                    <!-- Columna derecha: Textarea -->
+                                    <div class="col-7">
+                                        <textarea [(ngModel)]="descripcion" class="form-control w-100"
+                                            name="descripcion" placeholder="Observaciones" rows="8"></textarea>
                                     </div>
                                 </div>
-    
-                                <div class="row fw-bold fs-6 totals-row">
-                                    <div class="col-3">
-                                        Costo Total:
-                                    </div>
-    
-                                    <div class="col-3">
-                                        <span id="kt_ecommerce_edit_order_total_price">
-                                            $ {{ total_costo_factura | number:'1.2-2' }}
-                                        </span>
-                                    </div>
-                                </div>
-    
-                                <div class="row fw-bold fs-6 totals-row">
-                                    <div class="col-3">
-                                        Deuda:
-                                    </div>
-    
-                                    <div class="col-3">
-                                        <span id="kt_ecommerce_edit_order_total_price">
-                                            $ {{ deuda | number:'1.2-2' }}
-                                        </span>
-                                    </div>
-                                </div>
-    
-                                <div class="row fw-bold fs-6 totals-row">
-                                    <div class="col-3">
-                                        Pagado:
-                                    </div>
-    
-                                    <div class="col-3">
-                                        <span id="kt_ecommerce_edit_order_total_price">
-                                            $ {{ pago_out | number:'1.2-2' }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <!--end::Total price-->
+
                             </div>
                         </div>
                     </div>
@@ -597,7 +742,8 @@
 
                                 <div class="col-9 d-flex justify-content-end">
 
-                                    <button class="btn btn-dark btn-icon" placement="top" ngbTooltip="Resetear">
+                                    <button class="btn btn-dark btn-icon" placement="top" ngbTooltip="Resetear"
+                                        (click)="resetearLugarDeEntrega()">
                                         <i class="ki-duotone ki-arrows-circle fs-2">
                                             <span class="path1"></span>
                                             <span class="path2"></span>
@@ -610,20 +756,22 @@
                         <!--begin::Card body-->
                         <div class="card-body pt-0">
                             <div class="row">
+
                                 <div class="col-4">
                                     <select class="form-select mb-2" name="sede_deliverie_id"
-                                        placeholder="Seleccione lugar de entrega" [(ngModel)]="sede_deliverie_id">
+                                        placeholder="Seleccione lugar de entrega" [(ngModel)]="sede_deliverie_id"
+                                        (change)="onChangeSedeDeliverie($event)">
                                         <option [ngValue]="9999999" selected>Lugar de entrega</option>
-
                                         <ng-container *ngFor="let item of sede_deliveries">
                                             <option [value]="item.id">{{ item.nombre }}</option>
                                         </ng-container>
                                     </select>
                                 </div>
 
-                                <div class="col-5">
-                                    <textarea type="text" name="descripcion_deliverie" class="form-control mb-3 mb-lg-0"
-                                        placeholder="Descripción" [(ngModel)]="descripcion_deliverie"></textarea>
+
+                                <div class="col-5" *ngIf="isDomicilio">
+                                    <textarea type="text" name="direccion_deliverie" class="form-control mb-3 mb-lg-0"
+                                        placeholder="Dirección" [(ngModel)]="direccion_deliverie"></textarea>
                                 </div>
 
                                 <div class="col-3">
@@ -636,60 +784,65 @@
                                     </div>
                                     <!--end::Description-->
                                 </div>
+
                             </div>
 
-                            <div class="row fv-row my-1 fv-plugins-icon-container">
-                                <div class="col-4">
-                                    <select class="form-select fw-bolder" name="departamento_id" data-control="select2"
-                                        placeholder="Departamento" [(ngModel)]="departamento_id_deliverie">
-                                        <option [ngValue]="9999999" selected>Departamento</option>
+                            <div *ngIf="isDomicilio">
+                                <div class="row fv-row my-1 fv-plugins-icon-container">
+                                    <div class="col-3">
+                                        <select class="form-select fw-bolder" name="departamento_id"
+                                            data-control="select2" placeholder="Departamento"
+                                            [(ngModel)]="departamento_id_deliverie">
+                                            <option [ngValue]="9999999" selected>Departamento</option>
 
-                                        <ng-container *ngFor="let item of departamentos ">
-                                            <option [value]="item.id">{{ item.nombre }}</option>
-                                        </ng-container>
-                                    </select>
+                                            <ng-container *ngFor="let item of departamentos ">
+                                                <option [value]="item.id">{{ item.nombre }}</option>
+                                            </ng-container>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-5">
+                                        <select class="form-select fw-bolder" name="municipio_id_deliverie"
+                                            data-control="select2" placeholder="Municipio"
+                                            [(ngModel)]="municipio_id_deliverie">
+                                            <option [ngValue]="9999999" selected>Municipio</option>
+
+                                            <ng-container
+                                                *ngFor="let item of $any(municipios[departamento_id_deliverie])">
+                                                <option [value]="item.id">{{ item.nombre }}</option>
+                                            </ng-container>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <!--begin::Input-->
+                                        <input type="text" name="agencia_deliverie" class="form-control mb-2"
+                                            placeholder="Agencia de envio" [(ngModel)]="agencia_deliverie" />
+                                        <!--end::Input-->
+                                    </div>
                                 </div>
 
-                                <div class="col-5">
-                                    <select class="form-select fw-bolder" name="municipio_id_deliverie"
-                                        data-control="select2" placeholder="Municipio"
-                                        [(ngModel)]="municipio_id_deliverie">
-                                        <option [ngValue]="9999999" selected>Municipio</option>
+                                <div class="row fv-row my-1 fv-plugins-icon-container">
+                                    <div class="col-4">
+                                        <!--begin::Input-->
+                                        <input type="text" name="encargado_deliverie" class="form-control mb-2"
+                                            placeholder="Nombre encargado" [(ngModel)]="encargado_deliverie" />
+                                        <!--end::Input-->
+                                    </div>
 
-                                        <ng-container *ngFor="let item of $any(municipios[cliente.departamento_id])">
-                                            <option [value]="item.id">{{ item.nombre }}</option>
-                                        </ng-container>
-                                    </select>
-                                </div>
+                                    <div class="col-4">
+                                        <!--begin::Input-->
+                                        <input type="text" name="documento_deliverie" class="form-control mb-2"
+                                            placeholder="Documento encargado" [(ngModel)]="documento_deliverie" />
+                                        <!--end::Input-->
+                                    </div>
 
-                                <div class="col-3">
-                                    <!--begin::Input-->
-                                    <input type="text" name="agencia_deliverie" class="form-control mb-2"
-                                        placeholder="Agencia de envio" [(ngModel)]="agencia_deliverie" />
-                                    <!--end::Input-->
-                                </div>
-                            </div>
-
-                            <div class="row fv-row my-1 fv-plugins-icon-container">
-                                <div class="col-4">
-                                    <!--begin::Input-->
-                                    <input type="text" name="encargado_deliverie" class="form-control mb-2"
-                                        placeholder="Nombre encargado" [(ngModel)]="encargado_deliverie" />
-                                    <!--end::Input-->
-                                </div>
-
-                                <div class="col-4">
-                                    <!--begin::Input-->
-                                    <input type="text" name="documento_deliverie" class="form-control mb-2"
-                                        placeholder="Documento encargado" [(ngModel)]="documento_deliverie" />
-                                    <!--end::Input-->
-                                </div>
-
-                                <div class="col-4">
-                                    <!--begin::Input-->
-                                    <input type="text" name="celular_deliverie" class="form-control mb-2"
-                                        placeholder="Celular encargado" [(ngModel)]="celular_deliverie" />
-                                    <!--end::Input-->
+                                    <div class="col-4">
+                                        <!--begin::Input-->
+                                        <input type="text" name="celular_deliverie" class="form-control mb-2"
+                                            placeholder="Celular encargado" [(ngModel)]="celular_deliverie" />
+                                        <!--end::Input-->
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -699,15 +852,11 @@
 
                     <div class="d-flex justify-content-end">
                         <!--begin::Button-->
-                        <a href="apps/ecommerce/catalog/products.html" id="kt_ecommerce_edit_order_cancel"
-                            class="btn btn-light me-5">Cancelar</a>
+                        <!-- <a href="apps/ecommerce/catalog/products.html" id="kt_ecommerce_edit_order_cancel"
+                            class="btn btn-light me-5">Cancelar</a> -->
                         <!--end::Button-->
                         <!--begin::Button-->
-                        <button type="submit" id="kt_ecommerce_edit_order_submit" class="btn btn-primary">
-                            <span class="indicator-label">Guardar</span>
-                            <span class="indicator-progress">Please wait...
-                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                        </button>
+
                         <!--end::Button-->
                     </div>
                 </div>

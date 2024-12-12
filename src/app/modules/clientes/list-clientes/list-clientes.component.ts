@@ -201,7 +201,6 @@ export class ListClientesComponent implements OnInit, OnDestroy {
     });
   }
 
-
   isPermission(permission: string) {
     return isPermission(permission);
   }

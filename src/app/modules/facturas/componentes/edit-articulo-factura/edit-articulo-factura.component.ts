@@ -130,7 +130,6 @@ export class EditArticuloFacturaComponent implements OnInit {
   }
 
   edit() {
-
     const articuloNoSeleccionado = this.articulo.id === 0;
     const articuloSinExistencias = this.unidad_id_articulo !== 9999999 && this.bodegas_articulos.length === 0;
     const bodegasSinExistencias = this.unidad_id_articulo !== 9999999 && this.bodegas_articulos.length > 0 && this.exist_bodegas.length === 0;
@@ -183,18 +182,54 @@ export class EditArticuloFacturaComponent implements OnInit {
     }
 
 
+    // const unidad = this.articulo.unidades?.find((item: Unidad) => item.id === this.unidad_id_articulo);
+
+    // this.detalle.descuento = this.monto_descuento;
+    // this.detalle.total_iva = this.iva;
+    // this.detalle.unidad = unidad;
+    // this.detalle.sub_total = this.getSubtotal();
+    // this.detalle.total_precio = this.getTotalCosto();
+    // this.detalle.cantidad_item = this.cantidad_articulo;
+    // this.detalle.unidad_id = this.unidad_id_articulo;
+    // this.detalle.total_descuento = this.getTotalDescuento();
+
+    // Actualización de los detalles
     const unidad = this.articulo.unidades?.find((item: Unidad) => item.id === this.unidad_id_articulo);
 
+    // Recalcular valores en función de la edición
+    const subtotalBase = this.precio_general_articulo * this.cantidad_articulo;
+    const totalDescuento = this.monto_descuento * this.cantidad_articulo;
+    const subtotalConDescuento = subtotalBase - totalDescuento;
+
+    let ivaTotal = 0;
+    if (this.articulo.impuesto === 2 && this.articulo.iva?.porcentaje) {
+      const porcentajeIVA = this.articulo.iva.porcentaje * 0.01;
+      ivaTotal = subtotalConDescuento * porcentajeIVA;
+    }
+
+    const costoTotal = subtotalConDescuento + ivaTotal;
+
+    // Actualizar el detalle con los nuevos valores
     this.detalle.descuento = this.monto_descuento;
-    this.detalle.total_iva = this.iva;
+    this.detalle.total_iva = ivaTotal;
     this.detalle.unidad = unidad;
-    this.detalle.sub_total = this.getSubtotal();
-    this.detalle.total_precio = this.getTotalCosto();
+    this.detalle.sub_total = subtotalBase;
+    this.detalle.total_precio = costoTotal;
     this.detalle.cantidad_item = this.cantidad_articulo;
     this.detalle.unidad_id = this.unidad_id_articulo;
+    this.detalle.total_descuento = totalDescuento;
+    this.detalle.precio_item = this.precio_general_articulo;
 
     this.DetalleS.emit(this.detalle);
     this.modal.close();
+  }
+
+  getTotalDescuento(): number {
+    if (this.monto_descuento && this.cantidad_articulo) {
+      // Multiplica el descuento unitario por la cantidad de productos
+      return this.monto_descuento * this.cantidad_articulo;
+    }
+    return 0; // Devuelve 0 si no hay datos suficientes
   }
 
   seleccionarTexto(event: FocusEvent): void {
@@ -231,7 +266,7 @@ export class EditArticuloFacturaComponent implements OnInit {
         this.precio_general_articulo = 0;
         this.bodega_id_articulo = 9999999;
       });
-    } 
+    }
     // Actualizar bodegas_articulos solo si la unidad es válida
 
     if (this.unidad_id_articulo !== 9999999) {
@@ -254,6 +289,7 @@ export class EditArticuloFacturaComponent implements OnInit {
       return false;
     }
 
+    this.focusField('.cantidad-input-edit');
     // Prioridad 1: Búsqueda por unidad, sede y segmento de cliente
     let precio_s = this.buscarPrecio(wallets, this.unidad_id_articulo, this.user.sede_id ?? null,
       this.cliente.segmento?.id ?? null);
@@ -330,8 +366,9 @@ export class EditArticuloFacturaComponent implements OnInit {
 
   getTotalCosto(): number {
     if (this.precio_general_articulo && this.cantidad_articulo) {
-      // Aplica el descuento al precio
-      const precioConDescuento = this.precio_general_articulo - (this.monto_descuento || 0);
+      // Aplica el descuento al precio unitario
+      const descuentoAplicado = this.monto_descuento || 0;
+      const precioConDescuento = this.precio_general_articulo - descuentoAplicado;
 
       // Subtotal sin IVA (precio con descuento multiplicado por cantidad)
       const subtotal = precioConDescuento * this.cantidad_articulo;
@@ -344,7 +381,6 @@ export class EditArticuloFacturaComponent implements OnInit {
         this.iva = 0; // Resetea el IVA si no aplica
       }
 
-      this.isLoadingProcess();
       // Total con IVA
       return subtotal + this.iva;
     }
@@ -355,8 +391,9 @@ export class EditArticuloFacturaComponent implements OnInit {
 
   getSubtotal(): number {
     if (this.precio_general_articulo && this.cantidad_articulo) {
-      // Calcula el subtotal como precio por cantidad sin descuento ni IVA
-      return this.precio_general_articulo * this.cantidad_articulo;
+      // Calcula el subtotal considerando el descuento
+      const descuentoAplicado = this.monto_descuento || 0;
+      return (this.precio_general_articulo - descuentoAplicado) * this.cantidad_articulo;
     }
     return 0; // Devuelve 0 si no hay datos suficientes
   }
@@ -387,8 +424,27 @@ export class EditArticuloFacturaComponent implements OnInit {
   get descuentoMinimoValor(): number {
     return (this.articulo.descuento_minimo * 0.01) * this.precio_general_articulo;
   }
-  
+
   get descuentoMaximoValor(): number {
     return (this.articulo.descuento_maximo * 0.01) * this.precio_general_articulo;
   }
+
+  focusField(selector: string): void {
+    const element = document.querySelector(selector) as HTMLSelectElement;
+
+    if (element) {
+      element.focus();
+
+      if (element.tagName.toLowerCase() === 'select') {
+        // Expande el dropdown al configurar size
+        element.size = element.options.length;
+
+        // Colapsa el dropdown cuando se pierde el foco
+        element.addEventListener('blur', () => {
+          element.size = 0;
+        });
+      }
+    }
+  }
+
 }

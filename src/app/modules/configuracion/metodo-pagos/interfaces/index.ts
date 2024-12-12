@@ -10,6 +10,7 @@ export interface MetodoPago {
     metodo_pago?: MetodoPago;
     metodo_pagos?: MetodoPago;
     created_format_at?: string;
+    bancos?: Banco[];
 }
 
 export interface ResponseMetodoPago {
@@ -18,7 +19,12 @@ export interface ResponseMetodoPago {
 }
 
 export interface ResponseGestionMetodoPago {
-    message:      number;
+    message: number;
     message_text: string;
-    metodoPago:         MetodoPago;
+    metodoPago: MetodoPago;
+}
+
+export interface Banco {
+    id: number;
+    nombre: string;
 }
