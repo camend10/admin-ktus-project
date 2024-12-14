@@ -22,6 +22,8 @@ export interface ResponseConfiguracion {
     segmentos_clientes: SegmentoCliente[];
     sede_deliveries: SedeDeliverie[];
     metodos_pagos: MetodoPago[];
+    categorias: Categoria[];
+    vendedores: User[];
 }
 
 export interface ResponseConfiguracionArticulos {

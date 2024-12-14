@@ -69,7 +69,7 @@ export class FacturasService {
     const link = queryString ? `?${queryString}` : '';
 
     let URL = URL_SERVICIOS + "/articulos/buscar-articulos" + link;
-    
+
     return this.http.get<ResponseArticulo>(URL).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
@@ -86,20 +86,36 @@ export class FacturasService {
     );
   }
 
-  listar(page = 1, data: { buscar: string; segmento_cliente_id: number; tipo: number }): Observable<ResponseFactura> {
+  listar(page = 1,
+    data: {
+      buscar: string;
+      segmento_cliente_id: number;
+      categoria_id: number,
+      vendedor_id: number,
+      cliente: string,
+      articulo: string,
+      fecha_inicio: string,
+      fecha_final: string,
+    }
+  ): Observable<ResponseFactura> {
+
     this.isLoadingSubject.next(true);
-
-    const params = {
-      buscar: data.buscar,
-      segmento_cliente_id: data.segmento_cliente_id.toString(),
-      tipo: data.tipo.toString()
-    };
-
 
     let URL = URL_SERVICIOS + `/facturas/index?page=${page}`;
 
-    return this.http.post<ResponseFactura>(URL, params).pipe(
+    return this.http.post<ResponseFactura>(URL, data).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }
+
+  showFactura(id: number): Observable<ResponseGestionFactura> {
+    this.isLoadingSubject.next(true);
+
+    let URL = URL_SERVICIOS + `/facturas/${id}`;
+
+    return this.http.get<ResponseGestionFactura>(URL).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
+
 }

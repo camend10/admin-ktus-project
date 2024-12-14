@@ -1,4 +1,4 @@
-import { Empresa } from "src/app/interfaces";
+import { Departamento, Empresa, Municipio } from "src/app/interfaces";
 import { User } from "../../users/interfaces";
 import { Cliente } from "../../clientes/interfaces";
 import { Sede } from "../../configuracion/sedes/interfaces";
@@ -6,6 +6,8 @@ import { SegmentoCliente } from "../../configuracion/segmento-clientes/interface
 import { Articulo } from "../../articulos/interfaces";
 import { Categoria } from "../../configuracion/categorias/interfaces";
 import { Unidad } from "../../configuracion/unidades/interfaces";
+import { SedeDeliverie } from "../../configuracion/sede-deliveries/interfaces";
+import { MetodoPago } from "../../configuracion/metodo-pagos/interfaces";
 
 export interface Factura {
     id: number;
@@ -24,16 +26,20 @@ export interface Factura {
     estado_pago: number;
     deuda: number;
     pago_out: number;
-    fecha_validacion: Date;
-    fecha_pago_total: Date;
-    descripcion?: string;
-    domicilio?: string;
+    fecha_validacion: Date | null; // Permite null
+    fecha_pago_total: Date | null; // Permite null
 
-    usuario?: User;
-    cliente?: Cliente;
+    cliente: Cliente;
+    usuario: User;
+    descripcion?: string;
+    created_format_at?: string;
+
     empresa?: Empresa;
     sede?: Sede;
     segmento?: SegmentoCliente;
+    detalles?: DetalleFactura[];
+    factura_deliverie?: FacturaDeliverie;
+    factura_pago?: FacturaPago[];
 }
 
 export interface DetalleFactura{
@@ -59,7 +65,53 @@ export interface DetalleFactura{
     sede?: Sede;
     categoria?: Categoria;
     unidad?: Unidad;
+    created_at?: string;
     
+}
+
+export interface FacturaDeliverie{
+
+    id: number;
+    sede_deliverie_id: number;
+    factura_id: number;
+    fecha_entrega: string;
+    direccion: string;
+    empresa_id: number;
+    sede_id: number;
+    estado: number;
+    fecha_envio: string;
+    departamento_id: number;
+    municipio_id: number;
+    agencia: string;
+    encargado: string;
+    documento: string;
+    celular: string;
+    
+    sede_deliverie?: SedeDeliverie;
+    empresa?: Empresa;
+    sede?: Sede;
+    departamento?: Departamento;
+    municipio?: Municipio;
+    
+}
+
+export interface FacturaPago{
+
+    id: number;
+    monto: number;
+    metodo_pago_id: number;
+    factura_id: number;
+    fecha_validacion: string;
+    n_transaccion: number;
+    empresa_id: number;
+    sede_id: number;
+    estado: number;
+    banco_id: number;
+    imagen: string;
+    metodo_pago: MetodoPago;
+    empresa?: Empresa;
+    sede?: Sede;
+    banco?: MetodoPago;
 }
 
 export interface ResponseGestionFactura {

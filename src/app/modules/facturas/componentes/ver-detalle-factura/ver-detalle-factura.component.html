@@ -1,0 +1,178 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
+
+
+<!--begin::Modal content CREATE-->
+<div class="modal-content">
+    <!--begin::Modal header-->
+    <div class="modal-header" id="kt_modal_add_user_header">
+        <!--begin::Modal title-->
+        <h2 class="fw-bolder">Factura Nº {{ formatFacturaId(factura.id) }}</h2>
+        <!--end::Modal title-->
+
+        <!--begin::Close-->
+        <div id="kt_modal_add_customer_close" class="btn btn-icon btn-sm btn-active-icon-primary"
+            (click)="modal.dismiss()">
+            <i class="ki-duotone ki-cross fs-1">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+        </div>
+        <!--end::Close-->
+    </div>
+    <!--end::Modal header-->
+    <!--begin::Modal body-->
+    <div class="modal-body py-10 px-lg-17 scroll-y mx-5 my-3">
+        <!--begin::Form-->
+        <form class="form fv-plugins-bootstrap5 fv-plugins-framework" action="#" id="kt_modal_add_customer_form">
+            <div class="row">
+                <div class="col-12">
+                    <div id="" class="table-responsive">
+                        <table class="table table-row-dashed table-row-gray-100 align-middle gs-0 gy-3 dataTable"
+                            id="kt_customers_table" style="width: 1150.9px;">
+
+                            <thead>
+                                <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                                    <th class="min-w-125px text-center">#</th>
+                                    <th class="min-w-125px">Articulo</th>
+                                    <th class="min-w-125px text-center">Cantidad</th>
+                                    <th class="min-w-125px text-end">Descuento</th>
+                                    <th class="min-w-125px text-end">Iva</th>
+                                    <th class="min-w-125px text-end">Subtotal</th>
+                                    <th class="min-w-125px text-end">Total</th>
+                                    <th class="min-w-125px">Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody class="fw-semibold text-gray-600">
+                                <ng-container *ngFor="let item of factura.detalles; let i=index;">
+                                    <tr>
+                                        <td style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                            class="text-center text-gray-900 fw-bold text-hover-primary">
+                                            {{ (i+1)}}
+                                        </td>
+
+                                        <td style="text-wrap: nowrap;">
+                                            <div class="d-flex align-items-center">
+                                                <div class="d-flex justify-content-start flex-column">
+                                                    <a style="text-transform: capitalize;" href="#"
+                                                        onclick="return false;"
+                                                        class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">
+                                                        {{item.articulo?.nombre }}
+                                                    </a>
+                                                    <span
+                                                        class="text-muted fw-semibold text-muted d-block fs-7 text-hover-primary">
+                                                        {{ item.categoria?.nombre }}
+                                                    </span>
+                                                    <span
+                                                        class="text-muted fw-semibold text-muted d-block fs-7 text-hover-primary">{{item.unidad?.nombre}}
+                                                    </span>
+                                                    <span
+                                                        class="text-muted fw-semibold text-muted d-block fs-7 text-hover-primary">$
+                                                        {{item.precio_item |
+                                                        number:'1.2-2'}}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                            class="text-gray-900 fw-bold text-hover-primary text-capitalize text-center">
+                                            {{
+                                            item.cantidad_item }}</td>
+
+                                        <td style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                            class="text-gray-900 fw-bold text-hover-primary text-end">
+                                            $ {{item.total_descuento |number:'1.2-2' }}
+                                        </td>
+
+                                        <td style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                            class="text-gray-900 fw-bold text-hover-primary text-end">
+                                            $ {{item.total_iva | number:'1.2-2' }}
+                                        </td>
+
+                                        <td style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                            class="text-gray-900 fw-bold text-hover-primary text-end">
+                                            $ {{item.sub_total | number:'1.2-2' }}
+                                        </td>
+
+                                        <td style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                            class="text-gray-900 fw-bold text-hover-primary text-end">
+                                            $ {{ (item.sub_total - item.total_descuento + item.total_iva) |
+                                            number:'1.2-2'}}</td>
+
+                                        <td style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                            class="text-gray-900 fw-bold text-hover-primary text-capitalize">
+                                            {{
+                                            item.created_at | date:'yyyy-MM-dd'}}</td>
+                                    </tr>
+
+                                    <!-- <div>
+                                        <pre>{{ item.articulo | json }}</pre>
+                                    </div> -->
+                                </ng-container>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                        class="text-gray-900 fw-bold text-hover-primary text-end fs-6" colspan="5">
+                                        Subtotal:
+                                    </th>
+                                    <th style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                        class="text-gray-900 fw-bold text-hover-primary text-end fs-6" colspan="2">$ {{
+                                        totals.subtotal |
+                                        number: '1.2-2' }}</th>
+                                </tr>
+                                <tr>
+                                    <th style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                        class="text-gray-900 fw-bold text-hover-primary text-end fs-6" colspan="5">
+                                        Total iva:
+                                    </th>
+                                    <th style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                        class="text-gray-900 fw-bold text-hover-primary text-end fs-6" colspan="2">$ {{
+                                        totals.totalIva |
+                                        number: '1.2-2' }}</th>
+                                </tr>
+                                <tr>
+                                    <th style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                        class="text-gray-900 fw-bold text-hover-primary text-end fs-6" colspan="5">
+                                        Descuento:
+                                    </th>
+                                    <th style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                        class="text-gray-900 fw-bold text-hover-primary text-end fs-6" colspan="2">$ {{
+                                        totals.totalDescuento |
+                                        number: '1.2-2' }}</th>
+                                </tr>
+                                <tr>
+                                    <th style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                        class="text-gray-900 fw-bold text-hover-primary text-end fs-6" colspan="5">
+                                        Total factura:
+                                    </th>
+                                    <th style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
+                                        class="text-gray-900 fw-bold text-hover-primary text-end fs-6" colspan="2">$ {{
+                                        totals.total |
+                                        number: '1.2-2' }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!--begin::Actions-->
+            <div class="text-center pt-15">
+                <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()"
+                    [disabled]="isLoading$ | async"> <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i> Cerrar</button>
+            </div>
+            <!--end::Actions-->
+        </form>
+        <!--end::Form-->
+    </div>
+    <!--end::Modal body-->
+</div>
+<!--end::Modal content CREATE-->

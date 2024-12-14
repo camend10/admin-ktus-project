@@ -18,6 +18,7 @@ import { BuscarClienteComponent } from './componentes/buscar-cliente/buscar-clie
 import { SharedModule } from 'src/app/_metronic/shared/shared.module';
 import { EditArticuloFacturaComponent } from './componentes/edit-articulo-factura/edit-articulo-factura.component';
 import { DeleteArticuloFacturaComponent } from './componentes/delete-articulo-factura/delete-articulo-factura.component';
+import { VerDetalleFacturaComponent } from './componentes/ver-detalle-factura/ver-detalle-factura.component';
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import { DeleteArticuloFacturaComponent } from './componentes/delete-articulo-fa
     BuscarArticuloComponent,
     BuscarClienteComponent,
     EditArticuloFacturaComponent,
-    DeleteArticuloFacturaComponent
+    DeleteArticuloFacturaComponent,
+    VerDetalleFacturaComponent
   ],
   imports: [
     CommonModule,

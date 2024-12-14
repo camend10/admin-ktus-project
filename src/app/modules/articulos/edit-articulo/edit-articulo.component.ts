@@ -607,6 +607,4 @@ export class EditArticuloComponent implements OnInit, OnDestroy {
       this.articulo.sku = '';
     }
   }
-
-
 }

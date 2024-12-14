@@ -13,6 +13,10 @@ import { SedeDeliverie } from '../../configuracion/sede-deliveries/interfaces';
 import { MetodoPago } from '../../configuracion/metodo-pagos/interfaces';
 import { DeleteFacturaComponent } from '../delete-factura/delete-factura.component';
 import { Factura } from '../interfaces';
+import { Categoria } from '../../configuracion/categorias/interfaces';
+import { Cliente } from '../../clientes/interfaces';
+import { Articulo } from '../../articulos/interfaces';
+import { VerDetalleFacturaComponent } from '../componentes/ver-detalle-factura/ver-detalle-factura.component';
 
 
 @Component({
@@ -34,16 +38,26 @@ export class ListFacturasComponent implements OnInit, OnDestroy {
   municipios: Municipio[] = [];
   tipodocumentos: TipoDoc[] = [];
   sedes: Sede[] = [];
-  segmentos: SegmentoCliente[] = [];
   generos: Genero[] = [];
   segmentos_clientes: SegmentoCliente[] = [];
   sede_deliveries: SedeDeliverie[] = [];
   metodos_pagos: MetodoPago[] = [];
+  categorias: Categoria[] = [];
+  vendedores: User[] = [];
 
   user: User;
 
   segmento_cliente_id: number = 9999999;
   tipo: number = 9999999;
+  categoria_id: number = 9999999;
+  vendedor_id: number = 9999999;
+
+  cliente: string = '';
+
+  articulo: string = ''
+
+  fecha_inicio: string = '';
+  fecha_final: string = '';
 
   constructor(
     public modalService: NgbModal,
@@ -60,8 +74,42 @@ export class ListFacturasComponent implements OnInit, OnDestroy {
     this.user = this.authService.user;
 
     this.cargarConfiguraciones();
+    // this.setCurrentDate();
     this.closeSidebar();
     this.listar();
+  }
+
+  setCurrentDate(): void {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mes con dos dígitos
+    const day = String(date.getDate()).padStart(2, '0'); // Día con dos dígitos
+
+    this.fecha_inicio = `${year}-${month}-${day}`;
+    this.fecha_final = `${year}-${month}-${day}`;
+  }
+
+  onFechaInicioChange(): void {
+    // Si la fecha final es menor que la fecha inicial, actualiza la fecha final
+    if (this.fecha_final < this.fecha_inicio) {
+      this.fecha_final = this.fecha_inicio;
+    }
+  }
+
+  onFechaFinalChange(): void {
+    // Si la fecha inicial es mayor que la fecha final, actualiza la fecha inicial
+    if (this.fecha_inicio > this.fecha_final) {
+      this.fecha_inicio = this.fecha_final;
+    }
+  }
+
+  capitalize(value: string): string {
+    if (!value) return '';
+    return value
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   ngOnDestroy(): void {
@@ -80,7 +128,12 @@ export class ListFacturasComponent implements OnInit, OnDestroy {
     let data = {
       buscar: this.buscar,
       segmento_cliente_id: this.segmento_cliente_id,
-      tipo: this.tipo
+      categoria_id: this.categoria_id,
+      vendedor_id: this.vendedor_id,
+      cliente: this.cliente,
+      articulo: this.articulo,
+      fecha_inicio: this.fecha_inicio,
+      fecha_final: this.fecha_final
     };
 
     this.facturaService.listar(page, data).subscribe((resp) => {
@@ -98,6 +151,10 @@ export class ListFacturasComponent implements OnInit, OnDestroy {
         console.error('Estructura inesperada en la respuesta del servidor:', resp);
       }
     });
+  }
+
+  formatFacturaId(id: number): string {
+    return `FAC-${id.toString().padStart(6, '0')}`;
   }
 
   loadPage($event: number) {
@@ -127,6 +184,20 @@ export class ListFacturasComponent implements OnInit, OnDestroy {
         this.segmentos_clientes = response.segmentos_clientes;
         this.generos = response.generos;
         this.metodos_pagos = response.metodos_pagos;
+        this.categorias = response.categorias;
+        this.vendedores = response.vendedores;
+
+        this.vendedores = this.vendedores.map(vendedor => {
+          return { ...vendedor, name: this.capitalize(vendedor.name) };
+        });
+
+        this.categorias = this.categorias.map(categoria => {
+          return { ...categoria, nombre: this.capitalize(categoria.nombre) };
+        });
+
+        this.segmentos_clientes = this.segmentos_clientes.map(segmentos => {
+          return { ...segmentos, nombre: this.capitalize(segmentos.nombre) };
+        });
         // this.isLoadingProcess();
       });
   }
@@ -134,7 +205,13 @@ export class ListFacturasComponent implements OnInit, OnDestroy {
   resetList() {
     this.buscar = '';
     this.segmento_cliente_id = 9999999;
-    this.tipo = 9999999;
+    this.categoria_id = 9999999;
+    this.vendedor_id = 9999999;
+    this.cliente = '';
+    this.articulo = '';
+
+    this.fecha_inicio = '';
+    this.fecha_final = '';
     this.listar();
   }
 
@@ -142,8 +219,15 @@ export class ListFacturasComponent implements OnInit, OnDestroy {
     const params = {
       buscar: this.buscar,
       segmento_cliente_id: this.segmento_cliente_id,
-      tipo: this.tipo,
+      categoria_id: this.categoria_id,
+      vendedor_id: this.vendedor_id,
+      cliente: this.cliente,
+      articulo: this.articulo,
+      fecha_inicio: this.fecha_inicio,
+      fecha_final: this.fecha_final,
       empresa_id: this.user.empresa_id,
+      sede_id: this.user.sede_id,
+      role_id: this.user.role_id,
     };
 
     // Filtrar las claves excepto 'buscar', que siempre se envía
@@ -155,7 +239,94 @@ export class ListFacturasComponent implements OnInit, OnDestroy {
     // Construir el enlace
     const link = queryString ? `?${queryString}` : '';
 
-    window.open(URL_SERVICIOS + '/excel/export-clientes' + link, '_BLANK');
+    window.open(URL_SERVICIOS + '/excel/export-factura' + link, '_BLANK');
+  }
+
+  download_detalle() {
+    const params = {
+      buscar: this.buscar,
+      segmento_cliente_id: this.segmento_cliente_id,
+      categoria_id: this.categoria_id,
+      vendedor_id: this.vendedor_id,
+      cliente: this.cliente,
+      articulo: this.articulo,
+      fecha_inicio: this.fecha_inicio,
+      fecha_final: this.fecha_final,
+      empresa_id: this.user.empresa_id,
+      sede_id: this.user.sede_id,
+      role_id: this.user.role_id,
+    };
+
+    // Filtrar las claves excepto 'buscar', que siempre se envía
+    const queryString = Object.entries(params)
+      .filter(([key, value]) => key === 'buscar' || (value !== undefined && value !== null && value !== ''))
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+
+    // Construir el enlace
+    const link = queryString ? `?${queryString}` : '';
+
+    window.open(URL_SERVICIOS + '/excel/export-detalle-factura' + link, '_BLANK');
+  }
+
+  getBadgeClass(estado: number): string {
+    switch (estado) {
+      case 1:
+        return 'badge badge-danger fs-7 fw-bold'; // Rojo
+      case 2:
+        return 'badge badge-warning fs-7 fw-bold'; // Amarillo
+      case 3:
+        return 'badge badge-success fs-7 fw-bold'; // Verde
+      default:
+        return 'badge badge-secondary fs-7 fw-bold'; // Gris (DESCONOCIDO)
+    }
+  }
+
+  getEstadoPagoText(estado: number): string {
+    switch (estado) {
+      case 1:
+        return 'PENDIENTE';
+      case 2:
+        return 'PARCIAL';
+      case 3:
+        return 'PAGADA';
+      default:
+        return 'DESCONOCIDO';
+    }
+  }
+
+  verFactura(factura: Factura) {
+    const modalRef = this.modalService.open(VerDetalleFacturaComponent, { centered: true, size: 'xl' });
+
+    modalRef.componentInstance.factura = factura;
+    modalRef.componentInstance.ArticuloS.subscribe((factura: Factura) => {
+
+      this.isLoadingProcess();
+      // this.toast.success('Exito', 'Se ha seleccionado el articulo');
+    });
+  }
+
+  imprimirFactura(factura: Factura) {
+    const params = {
+      id: factura.id,
+      empresa_id: this.user.empresa_id,
+      user_id: this.user.id
+    };
+
+    const queryString = Object.entries(params)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+
+    const link = queryString ? `?${queryString}` : '';
+
+    window.open(URL_SERVICIOS + '/facturas/imprimir-factura' + link, '_BLANK', "toolbar=no,scrollbars=no,resizable=no,width=400,height=800");
+  }
+
+  isLoadingProcess() {
+    this.facturaService.isLoadingSubject.next(true);
+    setTimeout(() => {
+      this.facturaService.isLoadingSubject.next(false);
+    }, 50);
   }
 
   isPermission(permission: string) {
