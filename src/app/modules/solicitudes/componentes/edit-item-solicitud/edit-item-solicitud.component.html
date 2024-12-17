@@ -1,0 +1,107 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
+
+
+<!--begin::Modal content CREATE-->
+<div class="modal-content">
+    <!--begin::Modal header-->
+    <div class="modal-header" id="kt_modal_add_user_header">
+        <!--begin::Modal title-->
+        <h2 class="fw-bolder">Editar articulo: <span class="text-capitalize">{{
+                detalle.articulo?.nombre }}</span></h2>
+        <!--end::Modal title-->
+
+        <!--begin::Close-->
+        <div id="kt_modal_add_customer_close" class="btn btn-icon btn-sm btn-active-icon-primary"
+            (click)="modal.dismiss()">
+            <i class="ki-duotone ki-cross fs-1">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+        </div>
+        <!--end::Close-->
+    </div>
+    <!--end::Modal header-->
+    <!--begin::Modal body-->
+    <div class="modal-body px-lg-17 scroll-y mx-5">
+        <!--begin::Form-->
+        <form class="form fv-plugins-bootstrap5 fv-plugins-framework" action="#" id="kt_modal_add_customer_form">
+            <!--begin::Scroll-->
+            <div class="scroll-y me-n7 pe-7" id="kt_modal_add_customer_scroll" data-kt-scroll="true"
+                data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto"
+                data-kt-scroll-dependencies="#kt_modal_add_customer_header"
+                data-kt-scroll-wrappers="#kt_modal_add_customer_scroll" data-kt-scroll-offset="300px"
+                style="max-height: 350px;">
+                <!--begin::Input group-->
+
+
+                <div class="row fv-row my-1 fv-plugins-icon-container">
+                    <div class="col-12">
+                        <!--begin::Input-->
+                        <input type="text" name="costo" class="form-control text-end" placeholder="Costo"
+                            appNumericInput [(ngModel)]="costo" />
+                        <!--end::Input-->
+                        <!--begin::Description-->
+                        <div class="text-muted fs-7 text-end">Costo.
+                        </div>
+                        <!--end::Description-->
+                    </div>
+
+                    <div class="col-12">
+                        <select class="form-select unidad-id-articulo-select" name="unidad_id"
+                            placeholder="Select an option" [(ngModel)]="unidad_id" (change)="changeUnidadArticulo()">
+                            <option [ngValue]="9999999" selected>Seleccione</option>
+
+                            <ng-container *ngFor="let item of unidades">
+                                <option [ngValue]="item.id">{{ item.nombre }}</option>
+                            </ng-container>
+                        </select>
+                        <!--begin::Description-->
+                        <div class="text-muted fs-7">Unidades
+                        </div>
+                        <!--end::Description-->
+                    </div>
+                </div>
+                <div class="row fv-row my-1 fv-plugins-icon-container">
+
+                    <div class="col-12">
+                        <!--begin::Input-->
+                        <input type="text" name="cantidad" class="form-control text-end" placeholder="Cantidad"
+                            appNumericInput [(ngModel)]="cantidad" (focus)="seleccionarTexto($event)" />
+                        <!--end::Input-->
+                        <!--begin::Description-->
+                        <div class="text-muted fs-7 text-end">Cantidad.
+                        </div>
+                        <!--end::Description-->
+                    </div>
+
+                </div>  
+
+            </div>
+            <!--end::Scroll-->
+
+
+            <!--begin::Actions-->
+            <div class="text-center pt-15">
+                <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()"
+                    [disabled]="isLoading$ | async"> <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i> Cerrar</button>
+                <button type="button" (click)="edit()" class="btn btn-primary" data-kt-users-modal-action="submit"
+                    [disabled]="isLoading$ | async">
+                    <span class="indicator-label">
+                        <i class="ki-duotone ki-check"></i>
+                        Editar</span>
+                </button>
+            </div>
+            <!--end::Actions-->
+        </form>
+        <!--end::Form-->
+    </div>
+    <!--end::Modal body-->
+</div>
+<!--end::Modal content CREATE-->

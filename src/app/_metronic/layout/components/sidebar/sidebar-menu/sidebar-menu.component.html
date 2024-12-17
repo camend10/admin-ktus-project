@@ -230,25 +230,98 @@
           </a>
         </div> -->
 
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
+        <!--begin:Menu item-->
+        <div data-kt-menu-trigger="{default:'click', lg: 'hover'}" data-kt-menu-placement="right-start"
+          class="menu-item menu-lg-down-accordion"
+          *ngIf="showMenu(['registrar_movimiento','ver_movimiento','editar_movimiento'])" routerLinkActive="here show">
+          <!--begin:Menu link-->
+          <span class="menu-link">
             <span class="menu-bullet">
               <span class="bullet bullet-dot"></span>
             </span>
-            <span class="menu-title">Movimientos
-            </span>
-          </a>
+            <span class="menu-title" data-link="/movimientos">Movimientos</span>
+            <span class="menu-arrow"></span>
+          </span>
+          <!--end:Menu link-->
+          <!--begin:Menu sub-->
+          <div
+            class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown menu-active-bg px-lg-2 py-lg-4 w-lg-225px"
+            routerLinkActive="menu-active-bg">
+            <!--begin:Menu item-->
+            <div class="menu-item" *ngIf="showMenu(['registrar_movimiento'])">
+              <!--begin:Menu link-->
+              <a class="menu-link" routerLinkActive="active" routerLink="/movimientos/registrar">
+                <span class="menu-bullet">
+                  <span class="bullet bullet-dot"></span>
+                </span>
+                <span class="menu-title">Registrar</span>
+              </a>
+              <!--end:Menu link-->
+            </div>
+            <!--end:Menu item-->
+            <!--begin:Menu item-->
+            <div class="menu-item" *ngIf="showMenu(['ver_movimiento','editar_movimiento'])">
+              <!--begin:Menu link-->
+              <a class="menu-link" routerLinkActive="active" routerLink="/movimientos/listado">
+                <span class="menu-bullet">
+                  <span class="bullet bullet-dot"></span>
+                </span>
+                <span class="menu-title">Listar</span>
+              </a>
+              <!--end:Menu link-->
+            </div>
+            <!--end:Menu item-->
+          </div>
+          <!--end:Menu sub-->
         </div>
+        <!--end:Menu item-->
 
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
+        
+        <!--begin:Menu item-->
+        <div data-kt-menu-trigger="{default:'click', lg: 'hover'}" data-kt-menu-placement="right-start"
+          class="menu-item menu-lg-down-accordion"
+          *ngIf="showMenu(['registrar_solicitud','ver_solicitud','editar_solicitud'])" routerLinkActive="here show">
+          <!--begin:Menu link-->
+          <span class="menu-link">
             <span class="menu-bullet">
               <span class="bullet bullet-dot"></span>
             </span>
-            <span class="menu-title">Solicitudes
-            </span>
-          </a>
+            <span class="menu-title" data-link="/solicitudes">Solicitudes</span>
+            <span class="menu-arrow"></span>
+          </span>
+          <!--end:Menu link-->
+          <!--begin:Menu sub-->
+          <div
+            class="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown menu-active-bg px-lg-2 py-lg-4 w-lg-225px"
+            routerLinkActive="menu-active-bg">
+            <!--begin:Menu item-->
+            <div class="menu-item" *ngIf="showMenu(['registrar_solicitud'])">
+              <!--begin:Menu link-->
+              <a class="menu-link" routerLinkActive="active" routerLink="/solicitudes/registrar">
+                <span class="menu-bullet">
+                  <span class="bullet bullet-dot"></span>
+                </span>
+                <span class="menu-title">Registrar</span>
+              </a>
+              <!--end:Menu link-->
+            </div>
+            <!--end:Menu item-->
+            <!--begin:Menu item-->
+            <div class="menu-item" *ngIf="showMenu(['ver_solicitud','editar_solicitud'])">
+              <!--begin:Menu link-->
+              <a class="menu-link" routerLinkActive="active" routerLink="/solicitudes/listado">
+                <span class="menu-bullet">
+                  <span class="bullet bullet-dot"></span>
+                </span>
+                <span class="menu-title">Listar</span>
+              </a>
+              <!--end:Menu link-->
+            </div>
+            <!--end:Menu item-->
+          </div>
+          <!--end:Menu sub-->
         </div>
+        <!--end:Menu item-->
 
         <div class="menu-item"
           *ngIf="showMenu(['registrar_cliente','editar_cliente','eliminar_cliente','ver_cliente'])">

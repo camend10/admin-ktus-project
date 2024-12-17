@@ -324,6 +324,56 @@ export const SIDEBAR: any = [
             }
         ]
     },
+    {
+        'name': 'Movimientos',
+        'permisos': [
+            {
+                name: 'Registrar',
+                permiso: 'registrar_movimiento',
+            },
+            {
+                name: 'Editar',
+                permiso: 'editar_movimiento',
+            },
+            {
+                name: 'Eliminar',
+                permiso: 'eliminar_movimiento',
+            },
+            {
+                name: 'Ver',
+                permiso: 'ver_movimiento',
+            },
+            {
+                name: 'Entrega',
+                permiso: 'entrega_movimiento',
+            },
+        ]
+    },
+    {
+        'name': 'Solicitudes',
+        'permisos': [
+            {
+                name: 'Registrar',
+                permiso: 'registrar_solicitud',
+            },
+            {
+                name: 'Editar',
+                permiso: 'editar_solicitud',
+            },
+            {
+                name: 'Eliminar',
+                permiso: 'eliminar_solicitud',
+            },
+            {
+                name: 'Ver',
+                permiso: 'ver_solicitud',
+            },
+            {
+                name: 'Entrega',
+                permiso: 'entrega_solicitud',
+            },
+        ]
+    },
     // {
     //     'name': 'Caja',
     //     'permisos': [

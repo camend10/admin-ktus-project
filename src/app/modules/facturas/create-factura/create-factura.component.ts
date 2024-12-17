@@ -22,10 +22,12 @@ import { debounceTime, fromEvent, Observable, Subscription } from 'rxjs';
 import { BuscarArticuloComponent } from '../componentes/buscar-articulo/buscar-articulo.component';
 import { User } from '../../users/interfaces';
 import { ArticuloWallet } from '../../articulos/interfaces/index';
-import { DetalleFactura } from '../interfaces';
+import { DetalleFactura, Factura } from '../interfaces';
 import { EditArticuloFacturaComponent } from '../componentes/edit-articulo-factura/edit-articulo-factura.component';
 import { DeleteArticuloFacturaComponent } from '../componentes/delete-articulo-factura/delete-articulo-factura.component';
 import { Banco, MetodoPago } from '../../configuracion/metodo-pagos/interfaces';
+import { URL_SERVICIOS } from 'src/app/config/config';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-factura',
@@ -68,6 +70,7 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
   exist_bodegas: BodegaArticulo[] = [];
   monto_descuento: number = 0;
   iva: number = 0;
+  is_gift: number = 1;
 
   total_iva_factura: number = 0;
   total_costo_factura: number = 0;
@@ -78,7 +81,6 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
   descripcion: string = '';
   deuda: number = 0;
   pago_out: number = 0;
-
 
   // LUGAR DE ENTREGA
   sede_deliverie_id: number = 9999999;
@@ -181,7 +183,8 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
     public facturaService: FacturasService,
     public authService: AuthService,
     public toast: ToastrService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router,
   ) {
 
   }
@@ -529,6 +532,9 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
 
     if (precio_s) {
       this.precio_general_articulo = precio_s.precio;
+      if (this.is_gift === 2) {
+        this.precio_general_articulo = 0;
+      }
       return false;
     }
 
@@ -538,16 +544,25 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
 
     if (precio_sba && precio_sbb) {
       this.precio_general_articulo = Math.min(precio_sba.precio, precio_sbb.precio);
+      if (this.is_gift === 2) {
+        this.precio_general_articulo = 0;
+      }
       return false;
     }
 
     if (precio_sba) {
       this.precio_general_articulo = precio_sba.precio;
+      if (this.is_gift === 2) {
+        this.precio_general_articulo = 0;
+      }
       return false;
     }
 
     if (precio_sbb) {
       this.precio_general_articulo = precio_sbb.precio;
+      if (this.is_gift === 2) {
+        this.precio_general_articulo = 0;
+      }
       return false;
     }
 
@@ -556,12 +571,17 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
 
     if (precio_st) {
       this.precio_general_articulo = precio_st.precio;
+      if (this.is_gift === 2) {
+        this.precio_general_articulo = 0;
+      }
       return false;
     }
 
     // Sin coincidencias: asignar precio base
     this.precio_general_articulo = this.articulo.precio_general;
-
+    if (this.is_gift === 2) {
+      this.precio_general_articulo = 0;
+    }
     this.isLoadingProcess();
     this.cdr.detectChanges();
   }
@@ -673,7 +693,12 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.precio_general_articulo === 0) {
+    if (this.articulo.disponibilidad !== 2) {
+      this.toast.error('Validación', 'No se puede vender el articulo sin disponibilidad');
+      return;
+    }
+
+    if (this.is_gift === 1 && this.precio_general_articulo === 0) {
       this.toast.error('Validación', 'No existe el precio del artículo');
       return;
     }
@@ -703,6 +728,32 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
     );
 
     if (articuloExistente) {
+
+      // Validación adicional para evitar condiciones conflictivas
+      if (
+        articuloExistente.descuento === 0 &&
+        articuloExistente.precio_item === 0 &&
+        this.precio_general_articulo > 0
+      ) {
+        this.toast.error(
+          'Validación',
+          'El artículo ya ha sido agregado como gratuito. No puede agregarse nuevamente con precio.'
+        );
+        return;
+      }
+
+      if (
+        articuloExistente.descuento === 0 &&
+        articuloExistente.precio_item > 0 &&
+        this.is_gift === 2
+      ) {
+        this.toast.error(
+          'Validación',
+          'El artículo ya ha sido agregado con precio. No puede agregarse nuevamente como gratuito.'
+        );
+        return;
+      }
+
       if (
         (articuloExistente.descuento > 0 && this.monto_descuento === 0) ||
         (articuloExistente.descuento === 0 && this.monto_descuento > 0)
@@ -816,6 +867,7 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
     }
     this.focusField('.buscar-articulo-input');
     // Calcula los totales
+
     this.resetearArticulo();
     this.resetearMetodoPago();
     this.calcularTotalesFactura();
@@ -873,6 +925,7 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
     this.iva = 0;
     this.bodegas_articulos = [];
     this.exist_bodegas = [];
+    this.is_gift = 1;
 
     setTimeout(() => {
       this.focusField('.buscar-articulo-input');
@@ -934,6 +987,18 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
     this.deuda = this.total_costo_factura;
 
     this.isLoadingProcess();
+  }
+
+  isGift() {
+    this.is_gift = this.is_gift === 1 ? 2 : 1;
+    if (this.is_gift === 2) {
+      this.precio_general_articulo = 0;
+    }
+
+    this.unidad_id_articulo = 9999999;
+    setTimeout(() => {
+      this.focusField('.unidad-id-articulo-select');
+    }, 50);
   }
 
   // ARTICULOS
@@ -1111,6 +1176,11 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (this.total_costo_factura === 0) {
+      this.toast.error("Validando", "Necesitas agregar por lo menos un articulo al detalle con un costo mayor a 0");
+      return;
+    }
+
     if (this.detalle_factura.length === 0) {
       this.toast.error("Validando", "Necesitas agregar por lo menos un articulo al detalle");
       return;
@@ -1218,9 +1288,28 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
       } else {
         this.toast.success('Exito', resp.message_text);
         this.isLoadingProcess();
+        this.imprimirFactura(resp.factura);
+        // Redirigir a la ruta '/facturas/listado'
+        this.router.navigate(['/facturas/listado']);
       }
     });
 
+  }
+
+  imprimirFactura(factura: Factura) {
+    const params = {
+      id: factura.id,
+      empresa_id: this.user.empresa_id,
+      user_id: this.user.id
+    };
+
+    const queryString = Object.entries(params)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+
+    const link = queryString ? `?${queryString}` : '';
+
+    window.open(URL_SERVICIOS + '/facturas/imprimir-factura' + link, '_BLANK', "toolbar=no,scrollbars=no,resizable=no,width=400,height=800");
   }
 
 }

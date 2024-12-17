@@ -35,6 +35,7 @@ export interface ResponseConfiguracionArticulos {
     ivas: Iva[];
     categorias: Categoria[];
     proveedores: Proveedor[];
+    vendedores: User[];
 }
 
 

@@ -5,7 +5,7 @@ import { URL_SERVICIOS } from 'src/app/config/config';
 import { AuthService } from 'src/app/modules/auth';
 import { Cliente, ResponseCliente, ResponseGestionCliente } from '../../clientes/interfaces';
 import { ResponseArticulo } from '../../articulos/interfaces';
-import { ResponseFactura, ResponseGestionFactura } from '../interfaces';
+import { Factura, ResponseFactura, ResponseGestionDetalle, ResponseGestionFactura } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -114,6 +114,40 @@ export class FacturasService {
     let URL = URL_SERVICIOS + `/facturas/${id}`;
 
     return this.http.get<ResponseGestionFactura>(URL).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
+
+  deleteItemDetalle(id: number): Observable<ResponseGestionDetalle> {
+    this.isLoadingSubject.next(true);
+    let data = {
+      id: id
+    }
+    let URL = URL_SERVICIOS + `/facturas/eliminar-detalle`;
+
+    return this.http.post<ResponseGestionDetalle>(URL, data).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
+
+  edit(data: FormData, id: number): Observable<ResponseGestionFactura> {
+
+    this.isLoadingSubject.next(true);
+
+    let URL = URL_SERVICIOS + `/facturas/editar/${id}`;
+
+    return this.http.post<ResponseGestionFactura>(URL, data).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
+
+  cambiarEstado(factura: Factura, nuevoEstado: number): Observable<ResponseGestionFactura> {
+
+    this.isLoadingSubject.next(true);
+
+    let URL = URL_SERVICIOS + `/facturas/${factura.id}/cambiar-estado`;
+
+    return this.http.patch<ResponseGestionFactura>(URL, { estado: nuevoEstado }).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }

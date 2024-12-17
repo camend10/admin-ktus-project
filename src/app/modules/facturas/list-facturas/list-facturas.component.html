@@ -94,7 +94,7 @@
                     <!--end::Description-->
                 </div>
 
-                <div class="col-2">
+                <div class="col-4">
                     <!--begin::Search-->
                     <div class="d-flex align-items-center position-relative my-1">
                         <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
@@ -102,7 +102,7 @@
                             <span class="path2"></span>
                         </i>
                         <input type="text" data-kt-customer-table-filter="search" [(ngModel)]="articulo" name="articulo"
-                            class="form-control w-200px ps-12" placeholder="Articulo" (keyup.enter)="listar()">
+                            class="form-control w-400px ps-12" placeholder="Articulo" (keyup.enter)="listar()">
                     </div>
                     <!--end::Search-->
                     <!--begin::Description-->
@@ -166,7 +166,7 @@
                     </button>
 
                     <!--begin::Add customer-->
-                    <a type="button" class="btn btn-primary" *ngIf="isPermission('ver_factura')" placement="top"
+                    <a type="button" class="btn btn-primary" *ngIf="isPermission('registrar_factura')" placement="top"
                         ngbTooltip="Crear Factura" routerLink="/facturas/crear">
                         <i class="ki-duotone ki-plus"></i>Crear Factura</a>
                     <!--end::Add customer-->
@@ -311,8 +311,8 @@
                                     </a>
 
                                     <a *ngIf="isPermission('editar_factura')"
-                                        [routerLink]="'/facturas/listado/editar/' + item.id" target="_blank"
-                                        placement="top" ngbTooltip="Edita factura"
+                                        [routerLink]="'/facturas/listado/editar/' + item.id" placement="top"
+                                        ngbTooltip="Edita factura"
                                         class="btn btn-icon btn-active-light-primary w-30px h-30px">
                                         <i class="ki-duotone ki-pencil fs-3"><span class="path1"></span><span
                                                 class="path2"></span></i>

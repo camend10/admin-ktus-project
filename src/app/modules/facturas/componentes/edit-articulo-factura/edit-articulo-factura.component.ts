@@ -94,7 +94,7 @@ export class EditArticuloFacturaComponent implements OnInit {
     this.user = this.authService.user;
     this.articulo = this.detalle.articulo ?? { ...this.articulo };
     this.unidad_id_articulo = this.detalle.unidad_id;
-    this.bodega_id_articulo
+    // this.bodega_id_articulo 
     this.cantidad_articulo = this.detalle.cantidad_item;
     this.precio_general_articulo = this.detalle.precio_item;
     this.monto_descuento = this.detalle.descuento;

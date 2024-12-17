@@ -104,12 +104,12 @@
                                 <!--begin::Input group-->
                                 <div class="fv-row" *ngIf="bancos.length <= 0">
                                     <!--begin::Input-->
-                                    <input type="text" name="efectivo_recibido" class="form-control mb-2 text-end"
+                                    <input type="text" name="efectivo_recibido" class="form-control mb-2 text-end is-invalid"
                                         placeholder="Efectivo recibido" [(ngModel)]="efectivo_recibido" appNumericInput
                                         (focus)="seleccionarTexto($event)" (input)="onChangeEfectivo()" />
                                     <!--end::Input-->
                                     <!--begin::Description-->
-                                    <div class="fs-7 text-end">Efectivo recibido.
+                                    <div class="fs-7 text-end text-danger">Efectivo recibido.
                                     </div>
                                     <!--end::Description-->
                                 </div>
@@ -329,7 +329,7 @@
                                 <!--begin::Separator-->
                                 <!-- <div class="separator"></div> -->
                                 <!--end::Separator-->
-                                <div class="row">
+                                <div class="row ">
                                     <div class="col-5">
                                         <!--begin::Search products-->
                                         <div class="d-flex align-items-center position-relative">
@@ -415,7 +415,9 @@
                                         <!--end::Description-->
                                     </div>
 
-                                    <div class="col-3" *ngIf="articulo.id!== 0 && articulo.is_discount === 2">
+                                    <div [class.col-3]="articulo.id!== 0 && articulo.is_discount === 2"
+                                        [class.d-none]="!(articulo.id!== 0 && articulo.is_discount === 2)"
+                                        style="flex: 1;">
                                         <input type="text" #descuento name="monto_descuento"
                                             class="form-control text-end" placeholder="Descuento" appNumericInput
                                             [(ngModel)]="monto_descuento" (focus)="seleccionarTexto($event)" />
@@ -427,7 +429,9 @@
                                     </div>
 
                                     <div class="col-4 d-flex flex-column"
-                                        *ngIf="articulo.id !== 0 && articulo.is_discount === 2">
+                                        [class.col-3]="articulo.id!== 0 && articulo.is_discount === 2"
+                                        [class.d-none]="!(articulo.id!== 0 && articulo.is_discount === 2)"
+                                        style="flex: 1;">
                                         <ul>
                                             <li>
                                                 Mínimo:
@@ -446,18 +450,38 @@
                                         </ul>
                                     </div>
 
-                                    <div class="col-5 d-flex flex-column">
+                                    <div [class.col-5]="unidad_id_articulo !== 9999999"
+                                        [class.d-none]="unidad_id_articulo === 9999999 || (bodegas_articulos.length === 0 && exist_bodegas.length === 0)"
+                                        class="d-flex flex-column" style="flex: 1;">
                                         <ul>
-                                            <li *ngIf="unidad_id_articulo!==9999999 && bodegas_articulos.length === 0"
+                                            <li *ngIf="unidad_id_articulo !== 9999999 && bodegas_articulos.length === 0"
                                                 class="text-danger">
                                                 No existe cantidad para esta unidad disponible en ninguna sede
                                             </li>
-                                            <li *ngIf="unidad_id_articulo!==9999999 && bodegas_articulos.length > 0 && exist_bodegas.length === 0"
+                                            <li *ngIf="unidad_id_articulo !== 9999999 && bodegas_articulos.length > 0 && exist_bodegas.length === 0"
                                                 class="text-danger">
                                                 No existe de esta unidad disponible en esta sede
                                             </li>
                                         </ul>
                                     </div>
+
+                                    <div [class.col-6]="articulo && articulo.is_gift === 2"
+                                        [class.d-none]="!(articulo && articulo.is_gift === 2)" style="flex: 1;">
+                                        <!--begin::Label-->
+                                        <label class="form-label">¿Es gratuito?</label>
+                                        <!--end::Label-->
+                                        <!--begin::Input-->
+                                        <div class="form-check form-check-custom form-check-solid mb-2">
+                                            <input class="form-check-input" type="checkbox" (click)="isGift()"
+                                                [checked]="is_gift === 2" />
+                                            <label class="form-check-label">Costo $0</label>
+                                        </div>
+                                        <!--end::Input-->
+                                        <!--begin::Description-->
+                                        <!-- <div class="text-muted fs-7">Es posible que el articulo no tenga ningun costo</div> -->
+                                        <!--end::Description-->
+                                    </div>
+
 
                                 </div>
 

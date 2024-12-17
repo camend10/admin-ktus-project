@@ -132,3 +132,8 @@ export interface ResponseFactura {
         data: Factura[];
     };
 }
+
+export interface ResponseGestionDetalle {
+    message: number;
+    message_text: string;
+}

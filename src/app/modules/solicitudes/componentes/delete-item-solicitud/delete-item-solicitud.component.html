@@ -10,7 +10,7 @@
     <div class="modal-header" id="kt_modal_add_user_header">
         <!--begin::Modal title-->
         <h2 class="fw-bolder">
-            {{ factura.estado === 0 ? 'Activar Factura:' : 'Eliminar Factura:' }} {{ formatFacturaId(FacturaSeleccionado.id) }}
+            Eliminar articulo: {{ detalle.articulo?.nombre }}
         </h2>
 
 
@@ -37,8 +37,7 @@
         <!--begin::Form-->
         <form id="kt_modal_add_user_form" class="form" action="#">
             <span class="indicator-label">
-                <p>{{ factura.estado === 0 ? '¿Estas seguro de activar esta factura?' : '¿Estas seguro de eliminar esta
-                    factura?' }}</p>
+                <p>¿Estas seguro de eliminar este articulo?</p>
             </span>
             <div class="text-center pt-15">
                 <button type="reset" class="btn btn-outline-secondary btn-close-modal me-2" (click)="modal.dismiss()"
@@ -48,16 +47,14 @@
                 </button>
 
 
-                <button type="button" (click)="cambiarEstado()" class="btn"
-                    [ngClass]="factura.estado === 0 ? 'btn-success' : 'btn-danger'" data-kt-users-modal-action="submit"
+                <button type="button" (click)="delete()" class="btn btn-danger" data-kt-users-modal-action="submit"
                     [disabled]="isLoading$ | async">
 
                     <span class="indicator-label">
-                        <i [ngClass]="factura.estado === 0 ? 'fas fa-check' : 'fas fa-trash'"></i>
-                        {{ factura.estado === 0 ? 'Activar' : 'Eliminar' }}
+                        <i class="fas fa-trash"></i>
+                        Eliminar
                     </span>
 
-                    <span class="spinner-border spinner-border-sm align-middle ms-2" *ngIf="isLoading$ | async"></span>
                 </button>
 
             </div>

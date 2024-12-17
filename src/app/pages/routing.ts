@@ -83,6 +83,16 @@ const Routing: Routes = [
     loadChildren: () => import('../modules/facturas/facturas.module').then((m) => m.FacturasModule),
   },  
   {
+    path: 'movimientos',
+    canActivate: [verificaTokenGuard],
+    loadChildren: () => import('../modules/movimientos/movimientos.module').then((m) => m.MovimientosModule),
+  },  
+  {
+    path: 'solicitudes',
+    canActivate: [verificaTokenGuard],
+    loadChildren: () => import('../modules/solicitudes/solicitudes.module').then((m) => m.SolicitudesModule),
+  },  
+  {
     path: '',
     redirectTo: '/dashboard',
     pathMatch: 'full',
