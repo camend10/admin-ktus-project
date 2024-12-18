@@ -344,8 +344,12 @@ export const SIDEBAR: any = [
                 permiso: 'ver_movimiento',
             },
             {
-                name: 'Entrega',
-                permiso: 'entrega_movimiento',
+                name: 'Entrada',
+                permiso: 'entrada_movimiento',
+            },
+            {
+                name: 'Salida',
+                permiso: 'salida_solicitud',
             },
         ]
     },

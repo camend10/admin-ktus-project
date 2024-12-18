@@ -36,7 +36,8 @@
                         <label class="required fs-6 fw-semibold mb-2">Bodegas</label>
                         <!--end::Label-->
                         <select class="form-select" name="bodega_id" placeholder="Seleccione bodega"
-                            [(ngModel)]="bodega_id">
+                            [(ngModel)]="bodega_id"
+                            [disabled]="movimiento && (movimiento.estado === 3 || movimiento.estado === 4)">
                             <option [ngValue]="9999999" selected>Seleccione Bodega</option>
 
                             <ng-container *ngFor="let item of bodegas">
@@ -297,7 +298,7 @@
                                             colspan="1">
                                             <a class="btn btn-primary" onclick="return false;" (click)="entregar()"
                                                 placement="top" ngbTooltip="Confirmar entrega"
-                                                *ngIf="movimiento && movimiento.estado !==4">
+                                                *ngIf="isPermission('entrega_solicitud') && (movimiento && movimiento.estado !==4)">
                                                 <i class="ki-duotone ki-check fs-3"><span class="path1"></span><span
                                                         class="path2"></span></i>
                                                 Entregar

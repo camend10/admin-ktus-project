@@ -17,6 +17,7 @@ import { Articulo } from '../../articulos/interfaces';
 import { BuscarArticuloComponent } from '../../facturas/componentes/buscar-articulo/buscar-articulo.component';
 import { EditItemSolicitudComponent } from '../componentes/edit-item-solicitud/edit-item-solicitud.component';
 import { DeleteItemSolicitudComponent } from '../componentes/delete-item-solicitud/delete-item-solicitud.component';
+import { isPermission } from 'src/app/config/config';
 
 
 @Component({
@@ -544,6 +545,7 @@ export class EditSolicitudComponent implements OnInit, OnDestroy {
     let data = {
       movimiento_id: Number(this.movimiento_id),
       deta_movi_ids: this.deta_movi,
+      observacion_entrega: this.observacion_entrega,
     }
 
     this.solicitudService.entregar(data).subscribe((resp) => {
@@ -561,5 +563,9 @@ export class EditSolicitudComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.solicitudService.isLoadingSubject.next(false);
     }, 50);
+  }
+
+  isPermission(permission: string) {
+    return isPermission(permission);
   }
 }

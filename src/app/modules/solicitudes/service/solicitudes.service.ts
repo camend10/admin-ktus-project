@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, finalize, map } from 'rxjs';
 import { AuthService } from '../../auth';
-import { Movimiento, ResponseGestionMovimiento, ResponseMovimiento } from '../interfaces';
 import { URL_SERVICIOS } from 'src/app/config/config';
+import { Movimiento, ResponseGestionMovimiento, ResponseMovimiento } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -82,10 +82,10 @@ export class SolicitudesService {
     );
   }
 
-  entregar(data: { movimiento_id: number; deta_movi_ids: number[] }): Observable<ResponseGestionMovimiento> {
+  entregar(data: { movimiento_id: number; deta_movi_ids: number[]; observacion_entrega: string }): Observable<ResponseGestionMovimiento> {
 
     this.isLoadingSubject.next(true);
-    
+
     let URL = URL_SERVICIOS + `/solicitudes/entrega`;
 
     return this.http.post<ResponseGestionMovimiento>(URL, data).pipe(

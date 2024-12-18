@@ -39,7 +39,6 @@
 
 
                 <div class="row fv-row my-1 fv-plugins-icon-container">
-
                     <div class="col-12">
                         <select class="form-select unidad-id-articulo-select" name="unidad_id"
                             placeholder="Select an option" [(ngModel)]="unidad_id" (change)="changeUnidadArticulo()">
@@ -57,21 +56,20 @@
 
                     <div class="col-12">
                         <!--begin::Input-->
-                        <input type="text" name="costo" class="form-control text-end costo-input-edit"
-                            placeholder="Costo" appNumericInput [(ngModel)]="costo" />
+                        <input type="text" name="costo" class="form-control text-end costo-input-edit" placeholder="Costo"
+                            appNumericInput [(ngModel)]="costo" />
                         <!--end::Input-->
                         <!--begin::Description-->
                         <div class="text-muted fs-7 text-end">Costo.
                         </div>
                         <!--end::Description-->
                     </div>
-                </div>
-                <div class="row fv-row my-1 fv-plugins-icon-container">
 
                     <div class="col-12">
                         <!--begin::Input-->
-                        <input type="text" name="cantidad" class="form-control text-end" placeholder="Cantidad"
-                            appNumericInput [(ngModel)]="cantidad" (focus)="seleccionarTexto($event)" />
+                        <input type="text" name="cantidad" class="form-control text-end"
+                            placeholder="Cantidad" appNumericInput [(ngModel)]="cantidad"
+                            (focus)="seleccionarTexto($event)" />
                         <!--end::Input-->
                         <!--begin::Description-->
                         <div class="text-muted fs-7 text-end">Cantidad.
@@ -83,7 +81,6 @@
 
             </div>
             <!--end::Scroll-->
-
 
             <!--begin::Actions-->
             <div class="text-center pt-15">

@@ -45,6 +45,19 @@ export interface ResponseMovimiento {
     };
 }
 
+export interface ResponseGestionMovimiento2 {
+    message: number;
+    message_text: string;
+    movimiento: Movimiento;
+}
+
+export interface ResponseMovimiento2 {
+    total: number;
+    movimientos: { // Ajuste para reflejar la estructura anidada
+        data: Movimiento[];
+    };
+}
+
 export interface DetalleMovimiento{
     id: number;
     cantidad: number;

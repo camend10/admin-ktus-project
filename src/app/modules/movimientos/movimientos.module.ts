@@ -13,6 +13,8 @@ import { CreateMovimientoComponent } from './create-movimiento/create-movimiento
 import { EditMovimientoComponent } from './edit-movimiento/edit-movimiento.component';
 import { DeleteMovimientoComponent } from './delete-movimiento/delete-movimiento.component';
 import { ListMovimientosComponent } from './list-movimientos/list-movimientos.component';
+import { EditDetalleMovimientoComponent } from './componentes/edit-detalle-movimiento/edit-detalle-movimiento.component';
+import { DeleteDetalleMovimientoComponent } from './componentes/delete-detalle-movimiento/delete-detalle-movimiento.component';
 
 
 @NgModule({
@@ -21,7 +23,9 @@ import { ListMovimientosComponent } from './list-movimientos/list-movimientos.co
     CreateMovimientoComponent,
     EditMovimientoComponent,
     DeleteMovimientoComponent,
-    ListMovimientosComponent
+    ListMovimientosComponent,
+    EditDetalleMovimientoComponent,
+    DeleteDetalleMovimientoComponent
   ],
   imports: [
     CommonModule,
