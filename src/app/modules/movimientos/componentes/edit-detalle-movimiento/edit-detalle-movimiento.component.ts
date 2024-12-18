@@ -7,7 +7,8 @@ import { ToastrService } from 'ngx-toastr';
 import { Unidad } from 'src/app/modules/configuracion/unidades/interfaces';
 import { MovimientosService } from '../../service/movimientos.service';
 import { DetalleMovimiento } from 'src/app/modules/solicitudes/interfaces';
-import { BodegaArticulo } from 'src/app/modules/articulos/interfaces';
+import { ArticuloWallet, BodegaArticulo } from 'src/app/modules/articulos/interfaces';
+import { User } from 'src/app/modules/users/interfaces';
 
 
 @Component({
@@ -21,6 +22,8 @@ export class EditDetalleMovimientoComponent implements OnInit {
 
   @Input() detalle: DetalleMovimiento;
   @Input() bodega_id: number;
+  @Input() user: User;
+  @Input() tipo_movimiento: number;
   unidades: Unidad[] = [];
   @Output() DetalleS: EventEmitter<DetalleMovimiento> = new EventEmitter;
 
@@ -55,18 +58,20 @@ export class EditDetalleMovimientoComponent implements OnInit {
 
   edit() {
 
-    const bodegaArticulo = this.detalle.articulo?.bodegas_articulos
-      ?.find(
-        (bodega: BodegaArticulo) =>
-          bodega.unidad.id === this.unidad_id && bodega.bodega.id === this.bodega_id
-      ) ?? null;
+    if (this.tipo_movimiento === 2) {
+      const bodegaArticulo = this.detalle.articulo?.bodegas_articulos
+        ?.find(
+          (bodega: BodegaArticulo) =>
+            bodega.unidad.id === this.unidad_id && bodega.bodega.id === this.bodega_id
+        ) ?? null;
 
-    if (bodegaArticulo && bodegaArticulo.cantidad < this.cantidad) {
-      this.toast.error(
-        'Validación',
-        `No puedes solicitar esa cantidad, porque no hay stock disponible (${bodegaArticulo.cantidad})`
-      );
-      return;
+      if (bodegaArticulo && bodegaArticulo.cantidad < this.cantidad) {
+        this.toast.error(
+          'Validación',
+          `No puedes solicitar esa cantidad, porque no hay stock disponible (${bodegaArticulo.cantidad})`
+        );
+        return;
+      }
     }
 
     if (this.unidad_id === 9999999) {
@@ -123,6 +128,40 @@ export class EditDetalleMovimientoComponent implements OnInit {
     this.focusField('.costo-input-edit');
     this.isLoadingProcess();
     this.cdr.detectChanges();
+
+    if (this.detalle.articulo && this.detalle.articulo.articulos_wallets) {
+      // Buscar coincidencia exacta en articulos_wallets
+      const wallet = this.detalle.articulo.articulos_wallets.find((wallet: ArticuloWallet) => {
+        return (
+          wallet.unidad.id === this.unidad_id &&
+          (wallet.sede_id_premul === this.user.sede_id || wallet.sede_id_premul === null)
+        );
+      });
+
+      if (!wallet) {
+        // Verificar posibles coincidencias parciales
+        const posiblesCoincidencias = this.detalle.articulo.articulos_wallets.filter((wallet: ArticuloWallet) => {
+          return wallet.unidad.id === this.unidad_id;
+        });
+
+        if (posiblesCoincidencias.length > 0) {
+          // Usar la primera coincidencia parcial como predeterminada
+          const primeraCoincidencia = posiblesCoincidencias[0];
+          // Asignar precio de la coincidencia parcial como fallback
+          this.costo = primeraCoincidencia.precio;
+        } else {
+          this.costo = this.detalle.costo; // Establecer un valor predeterminado
+        }
+        return;
+      }
+
+      // Si se encuentra una coincidencia exacta, usar el precio del wallet
+      this.costo = wallet.precio;
+    } else {
+      // Si no hay articulo o articulos_wallets, establecer un valor predeterminado
+      this.costo = this.detalle.costo;
+    }
+
   }
 
   seleccionarTexto(event: FocusEvent): void {

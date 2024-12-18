@@ -455,7 +455,7 @@ export class EditSolicitudComponent implements OnInit, OnDestroy {
     }
 
     this.movimiento = {
-      id: 0,
+      id: this.movimiento_id,
       fecha_emision: this.fecha_emision ? new Date(this.fecha_emision) : null,
       tipo_movimiento: this.tipo_movimiento,
       observacion: this.observacion,

@@ -38,6 +38,7 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
   bodegas: Bodega[] = [];
   proveedores: Proveedor[] = [];
   unidades: Unidad[] = [];
+  unidades_totales: Unidad[] = [];
   sedes: Sede[] = [];
 
   // ARTICULOS
@@ -103,7 +104,7 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.tipo_movimiento = 1;
+    // this.tipo_movimiento = 1;
     this.isLoading$ = this.movimientoService.isLoading$;
     this.user = this.authService.user;
 
@@ -139,7 +140,7 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
   cargarConfiguraciones() {
     this.generalService.cargarConfiguracionesArticulos(this.authService.user.empresa_id)
       .subscribe((response) => {
-        // this.unidades = response.unidades;
+        this.unidades_totales = response.unidades;
         this.bodegas = response.bodegas;
         this.proveedores = response.proveedores;
         this.sedes = response.sedes;
@@ -148,6 +149,12 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
   }
 
   listarArticulos() {
+
+    if (this.tipo_movimiento === 9999999) {
+      this.toast.error('Validación', 'Necesita seleccionar un tipo de movimiento');
+      return;
+    }
+
     if (!this.buscar_articulo) {
       this.toast.error('Validación', 'Necesitas ingresar el nombre ó el código del articulo');
       return false;
@@ -159,7 +166,7 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
     }
 
     this.facturaService.buscarArticulos(this.buscar_articulo).subscribe((resp) => {
-      console.log(resp.articulos.data[0].articulos_wallets);
+
       if (!resp || !resp.articulos || !resp.articulos.data || resp.articulos.data.length === 0) {
         this.toast.info('Validación', 'No hay coincidencia en la búsqueda');
         return false;  // Detener la ejecución si no se encontraron resultados
@@ -173,9 +180,22 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
       else if (resp.articulos.data.length === 1) {
         this.articulo = resp.articulos.data[0];
         this.buscar_articulo = this.articulo.nombre;
-        this.unidades = this.articulo.bodegas_articulos
-          ?.filter((bodega: BodegaArticulo) => bodega.bodega.id === this.bodega_id)
-          .map((bodega: BodegaArticulo) => bodega.unidad) || [];
+
+        if (this.tipo_movimiento === 2) {
+          this.unidades = this.articulo.bodegas_articulos
+            ?.filter((bodega: BodegaArticulo) => bodega.bodega.id === this.bodega_id)
+            .map((bodega: BodegaArticulo) => bodega.unidad) || [];
+
+          if (this.unidades.length <= 0) {
+            this.toast.error(
+              'Validación',
+              `No existe stock disponible para esta bodega`
+            );
+          }
+        } else {
+          this.unidades = this.unidades_totales;
+        }
+
 
         // this.costo = this.articulo.precio_general;
         setTimeout(() => {
@@ -195,9 +215,20 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
       this.articulo = articulo;
       this.buscar_articulo = this.articulo.nombre;
       // this.costo = this.articulo.precio_general;
-      this.unidades = this.articulo.bodegas_articulos
-        ?.filter((bodega: BodegaArticulo) => bodega.bodega.id === this.bodega_id)
-        .map((bodega: BodegaArticulo) => bodega.unidad) || [];
+      if (this.tipo_movimiento === 2) {
+        this.unidades = this.articulo.bodegas_articulos
+          ?.filter((bodega: BodegaArticulo) => bodega.bodega.id === this.bodega_id)
+          .map((bodega: BodegaArticulo) => bodega.unidad) || [];
+
+        if (this.unidades.length <= 0) {
+          this.toast.error(
+            'Validación',
+            `No existe stock disponible para esta bodega`
+          );
+        }
+      } else {
+        this.unidades = this.unidades_totales;
+      }
 
       setTimeout(() => {
         this.focusField('.unidad-id-articulo-select');
@@ -241,18 +272,20 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
 
     const unidad = this.unidades.find((item: Unidad) => item.id === this.unidad_id);
 
-    const bodegaArticulo = this.articulo.bodegas_articulos
-      ?.find(
-        (bodega: BodegaArticulo) =>
-          bodega.unidad.id === this.unidad_id && bodega.bodega.id === this.bodega_id
-      );
+    if (this.tipo_movimiento === 2) {
+      const bodegaArticulo = this.articulo.bodegas_articulos
+        ?.find(
+          (bodega: BodegaArticulo) =>
+            bodega.unidad.id === this.unidad_id && bodega.bodega.id === this.bodega_id
+        );
 
-    if (bodegaArticulo && bodegaArticulo.cantidad < this.cantidad) {
-      this.toast.error(
-        'Validación',
-        `No puedes solicitar esa cantidad, porque no hay stock disponible (${bodegaArticulo.cantidad})`
-      );
-      return;
+      if (bodegaArticulo && bodegaArticulo.cantidad < this.cantidad) {
+        this.toast.error(
+          'Validación',
+          `No puedes solicitar esa cantidad, porque no hay stock disponible (${bodegaArticulo.cantidad})`
+        );
+        return;
+      }
     }
 
     if (articuloExistente) {
@@ -305,10 +338,17 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
   }
 
   changeBodega() {
+    this.resetearArticulo();
+    this.calcularTotales();
+    this.unidades = [];
     if (this.articulo) {
-      this.unidades = this.articulo.bodegas_articulos
-        ?.filter((bodega: BodegaArticulo) => bodega.bodega.id === this.bodega_id)
-        .map((bodega: BodegaArticulo) => bodega.unidad) || [];
+      if (this.tipo_movimiento === 2) {
+        this.unidades = this.articulo.bodegas_articulos
+          ?.filter((bodega: BodegaArticulo) => bodega.bodega.id === this.bodega_id)
+          .map((bodega: BodegaArticulo) => bodega.unidad) || [];
+      } else {
+        this.unidades = this.unidades_totales;
+      }
     }
   }
 
@@ -414,6 +454,8 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
     const modalRef = this.modalService.open(EditDetalleMovimientoComponent, { centered: true, size: 'md' });
     modalRef.componentInstance.detalle = detalle;
     modalRef.componentInstance.bodega_id = this.bodega_id;
+    modalRef.componentInstance.user = this.user;
+    modalRef.componentInstance.tipo_movimiento = this.tipo_movimiento;
 
     modalRef.componentInstance.DetalleS.subscribe((detalleR: DetalleMovimiento) => {
 
@@ -537,5 +579,11 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.movimientoService.isLoadingSubject.next(false);
     }, 50);
+  }
+
+  changeTipo() {
+    this.resetearArticulo();
+    this.calcularTotales();
+    this.unidades = [];
   }
 }

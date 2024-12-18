@@ -36,7 +36,8 @@
                         <label class="required fs-6 fw-semibold mb-2">Bodegas</label>
                         <!--end::Label-->
                         <select class="form-select" name="bodega_id" placeholder="Seleccione bodega"
-                            [(ngModel)]="bodega_id" (change)="changeBodega()">
+                            [(ngModel)]="bodega_id" (change)="changeBodega()"
+                            [disabled]="detalle_movimiento.length > 0">
                             <option [ngValue]="9999999" selected>Seleccione Bodega</option>
 
                             <ng-container *ngFor="let item of bodegas">
@@ -87,7 +88,8 @@
                             movimiento</label>
                         <!--end::Select store template-->
                         <select class="form-select mb-2" name="tipo_movimiento"
-                            placeholder="Seleccione tipo de movimiento" [(ngModel)]="tipo_movimiento">
+                            placeholder="Seleccione tipo de movimiento" [(ngModel)]="tipo_movimiento"
+                            [disabled]="detalle_movimiento.length > 0" (change)="changeTipo()">
                             <option [ngValue]="9999999" selected>Movimiento</option>
                             <ng-container>
                                 <option [ngValue]="1">Entrada</option>

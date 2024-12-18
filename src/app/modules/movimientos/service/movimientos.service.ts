@@ -93,14 +93,4 @@ export class MovimientosService {
     );
   }
 
-  salida(data: { movimiento_id: number; deta_movi_ids: number[]; observacion_entrega: string }): Observable<ResponseGestionMovimiento2> {
-
-    this.isLoadingSubject.next(true);
-
-    let URL = URL_SERVICIOS + `/movimientos/salida`;
-
-    return this.http.post<ResponseGestionMovimiento2>(URL, data).pipe(
-      finalize(() => this.isLoadingSubject.next(false))
-    );
-  }
 }
