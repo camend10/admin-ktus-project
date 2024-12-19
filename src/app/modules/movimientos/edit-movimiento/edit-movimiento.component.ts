@@ -582,6 +582,7 @@ export class EditMovimientoComponent implements OnInit, OnDestroy {
     this.movimientoService.edit(this.movimiento, this.movimiento_id).subscribe((resp) => {
       if (resp.message === 403) {
         this.toast.error('Validación', resp.message_text);
+        this.showMovimiento(this.movimiento_id);
 
       } else {
         this.toast.success('Exito', resp.message_text);
@@ -629,4 +630,5 @@ export class EditMovimientoComponent implements OnInit, OnDestroy {
       this.movimientoService.isLoadingSubject.next(false);
     }, 50);
   }
+ 
 }
