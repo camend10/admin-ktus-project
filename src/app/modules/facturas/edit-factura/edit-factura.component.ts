@@ -230,7 +230,7 @@ export class EditFacturaComponent implements OnInit, OnDestroy {
 
     this.closeSidebar();
 
-    // this.cliente.nombres = 'SEDE';
+    // this.cliente.nombres = 'Cliente General';
     // this.buscarCliente();
 
     // this.buscar_articulo = 'carne';
@@ -506,14 +506,14 @@ export class EditFacturaComponent implements OnInit, OnDestroy {
     this.facturaService.buscarArticulos(this.buscar_articulo).subscribe((resp) => {
       if (!resp || !resp.articulos || !resp.articulos.data || resp.articulos.data.length === 0) {
         // Si no hay resultados, resetear el cliente y mostrar mensaje
-        // this.resetearCliente();
+
         this.toast.info('Validación', 'No hay coincidencia en la búsqueda');
         return false;  // Detener la ejecución si no se encontraron resultados
       }
 
       // Si se encuentran más de un cliente, abrir el listado de clientes seleccionados
       if (resp.articulos.data.length > 1) {
-        // this.resetearCliente();
+
         this.abrirArticulosSeleccionados(resp.articulos.data);
       }
       // Si solo se encuentra un cliente, asignarlo y concatenar los nombres si es necesario
@@ -596,8 +596,13 @@ export class EditFacturaComponent implements OnInit, OnDestroy {
       this.bodegas_articulos = this.articulo.bodegas_articulos?.filter(
         (bodega: BodegaArticulo) => bodega.unidad.id === this.unidad_id_articulo
       ) ?? [];
+
+      if (this.bodegas_articulos.length > 0) {
+        this.bodega_id_articulo = this.bodegas_articulos[0].bodega.id;
+      }
     } else {
       this.bodegas_articulos = [];
+      this.toast.error('Validación', 'El artículo no tiene existencia en esta bodega.');
     }
 
     if (this.cliente.id === 0) {
@@ -800,6 +805,11 @@ export class EditFacturaComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (this.bodega_id_articulo === 9999999) {
+      this.toast.error('Validación', 'No ha seleccionado la bodega del artículo');
+      return;
+    }
+
     if (this.cantidad_articulo === 0) {
       this.toast.error('Validación', 'No ha digitado la cantidad solicitada del artículo');
       return;
@@ -952,6 +962,7 @@ export class EditFacturaComponent implements OnInit, OnDestroy {
         unidad: unidad,
         total_descuento: totalDescuento,
         articulo: this.articulo,
+        bodega_id: this.bodega_id_articulo
       });
 
       this.toast.success('Artículo agregado', 'El artículo ha sido agregado a la factura');
@@ -1024,17 +1035,104 @@ export class EditFacturaComponent implements OnInit, OnDestroy {
 
   editarArticulo(detalle: DetalleFactura, index: number) {
     const modalRef = this.modalService.open(EditArticuloFacturaComponent, { centered: true, size: 'md' });
-    modalRef.componentInstance.detalle = detalle;
+    modalRef.componentInstance.detalle = JSON.parse(JSON.stringify(detalle));
     modalRef.componentInstance.cliente = this.cliente;
 
-    modalRef.componentInstance.DetalleS.subscribe((detalleR: DetalleFactura) => {
+    modalRef.componentInstance.DetalleS.subscribe((detalleR: any) => {
+      // Clonar detalleR para asegurarnos de que no altere referencias
+      const detalleClonado = JSON.parse(JSON.stringify(detalleR));
 
-      this.detalle_factura[index] = detalleR;
+      // Buscar si ya existe un artículo con el mismo ID y unidad, pero que no sea el mismo artículo editado
+      const articuloExistenteIndex = this.detalle_factura.findIndex(
+        (detalle, i) =>
+          detalle.articulo_id === detalleClonado.articulo?.id &&
+          detalle.unidad_id === detalleClonado.unidad_id &&
+          i !== index // Evitar consolidar consigo mismo
+      );
+
+      if (articuloExistenteIndex !== -1) {
+        const articuloDuplicado = this.detalle_factura[articuloExistenteIndex];
+
+        // Validación adicional para evitar condiciones conflictivas
+        if (
+          articuloDuplicado.descuento === 0 &&
+          articuloDuplicado.precio_item > 0 &&
+          detalleClonado.descuento === 2
+        ) {
+          this.toast.error(
+            'Validación',
+            'El artículo ya ha sido agregado con precio. No puede agregarse nuevamente como gratuito.'
+          );
+          return; // Detener completamente la ejecución
+        }
+
+        if (
+          articuloDuplicado.descuento === 0 &&
+          articuloDuplicado.precio_item === 0 &&
+          detalleClonado.precio_item > 0
+        ) {
+          this.toast.error(
+            'Validación',
+            'El artículo ya ha sido agregado como gratuito. No puede agregarse nuevamente con precio.'
+          );
+          return; // Detener completamente la ejecución
+        }
+
+        if (
+          (articuloDuplicado.descuento > 0 && detalleClonado.descuento === 0) ||
+          (articuloDuplicado.descuento === 0 && detalleClonado.descuento > 0)
+        ) {
+          this.toast.error(
+            'Validación',
+            'El artículo ya ha sido agregado con una condición de descuento diferente. No puede agregarlo nuevamente con otra condición.'
+          );
+          return; // Detener completamente la ejecución
+        }
+
+        if (articuloDuplicado.descuento !== detalleClonado.descuento) {
+          this.toast.error(
+            'Validación',
+            'El artículo ya ha sido agregado con un descuento diferente. El descuento debe ser el mismo.'
+          );
+          return; // Detener completamente la ejecución
+        }
+      }
+
+      if (articuloExistenteIndex !== -1) {
+        // Si ya existe, actualizar los valores del artículo existente
+        const articuloExistente = this.detalle_factura[articuloExistenteIndex];
+
+        articuloExistente.cantidad_item += detalleClonado.cantidad_item;
+        articuloExistente.sub_total += detalleClonado.sub_total;
+        articuloExistente.total_descuento += detalleClonado.total_descuento;
+
+        const nuevoSubtotalConDescuento =
+          articuloExistente.sub_total - articuloExistente.total_descuento;
+
+        if (detalleClonado.articulo?.impuesto === 2 && detalleClonado.articulo?.iva?.porcentaje) {
+          const porcentajeIVA = detalleClonado.articulo.iva.porcentaje * 0.01;
+          articuloExistente.total_iva = nuevoSubtotalConDescuento * porcentajeIVA;
+        } else {
+          articuloExistente.total_iva = 0;
+        }
+
+        articuloExistente.total_precio =
+          nuevoSubtotalConDescuento + articuloExistente.total_iva;
+
+        // Eliminar el artículo duplicado del arreglo
+        this.detalle_factura.splice(index, 1);
+
+        this.toast.success('Exito', 'Se han consolidado los valores del artículo.');
+      } else {
+        // Si no existe, simplemente actualizar el artículo en su índice correspondiente
+        this.detalle_factura[index] = detalleClonado;
+        this.toast.success('Exito', 'Se ha editado el artículo.');
+      }
+
       // Calcula los totales
       this.calcularTotalesFactura();
-      this.monto_pago = this.total_costo_factura;
       this.isLoadingProcess();
-      this.toast.success('Exito', 'Se ha editado el articulo');
+      // this.toast.success('Exito', 'Se ha editado el articulo');
     });
   }
 
@@ -1122,6 +1220,8 @@ export class EditFacturaComponent implements OnInit, OnDestroy {
 
     const today = new Date();
     this.fecha_deliverie = today.toISOString().split('T')[0];
+
+    this.isDomicilio = false;
   }
 
   // LUGAR DE ENTREGA
@@ -1197,6 +1297,8 @@ export class EditFacturaComponent implements OnInit, OnDestroy {
     this.metodos_pagos_seleccionado = null;
     this.file_name = null;
     this.imagen_previzualizada = null;
+
+    this.vueltos = 0;
   }
 
   onChangeEfectivo() {
@@ -1382,6 +1484,23 @@ export class EditFacturaComponent implements OnInit, OnDestroy {
         this.imprimirFactura(resp.factura);
         // Redirigir a la ruta '/facturas/listado'
         this.router.navigate(['/facturas/listado']);
+
+        // this.resetearCliente();
+        // this.cliente.nombres = 'Cliente General';
+        // this.buscarCliente();
+        // this.resetearMetodoPago();
+        // this.resetearArticulo();
+        // this.resetearLugarDeEntrega();
+        // this.detalle_factura = [];
+
+        // this.total_iva_factura = 0;
+        // this.total_costo_factura = 0;
+        // this.subtotal_factura = 0;
+        // this.total_descuento_factura = 0;
+
+        // this.descripcion = '';
+        // this.deuda = 0;
+        // this.pago_out = 0;
       }
     });
 

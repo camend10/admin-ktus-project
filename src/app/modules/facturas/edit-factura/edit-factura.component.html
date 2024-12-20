@@ -384,6 +384,7 @@
 
                                     <div class="col-1">
                                         <button (click)="agregarArticulo()" class="btn btn-success btn-icon me-1"
+                                        *ngIf="!factura_id"
                                             placement="top" ngbTooltip="Agregar">
                                             <i class="ki-duotone ki-plus fs-1">
                                                 <span class="path1"></span>
@@ -398,7 +399,8 @@
                                             <option [ngValue]="9999999" selected>Seleccione Bodega</option>
 
                                             <ng-container *ngFor="let item of bodegas_articulos">
-                                                <option [ngValue]="item.id">{{ item.bodega.nombre }} ({{ item.cantidad
+                                                <option [ngValue]="item.bodega.id">{{ item.bodega.nombre }} ({{
+                                                    item.cantidad
                                                     }})
                                                 </option>
                                             </ng-container>
@@ -644,6 +646,7 @@
 
                                                                 <a href="#" onclick="return false;"
                                                                     (click)="editarArticulo(item,i)"
+                                                                    *ngIf="item.estado === 1"
                                                                     class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                                                     <i class="ki-duotone ki-pencil fs-2">
                                                                         <span class="path1"></span>
@@ -652,6 +655,7 @@
                                                                 </a>
                                                                 <a href="#" onclick="return false;"
                                                                     (click)="eliminarArticulo(item,i)"
+                                                                    *ngIf="item.estado === 1"
                                                                     class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
                                                                     <i class="ki-duotone ki-trash fs-2">
                                                                         <span class="path1"></span>

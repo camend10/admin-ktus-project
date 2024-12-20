@@ -66,7 +66,7 @@ export interface DetalleFactura{
     categoria?: Categoria;
     unidad?: Unidad;
     created_at?: string;
-    
+    bodega_id?: number;    
 }
 
 export interface FacturaDeliverie{

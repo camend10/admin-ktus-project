@@ -78,7 +78,7 @@ export class FacturasService {
   create(data: FormData): Observable<ResponseGestionFactura> {
 
     this.isLoadingSubject.next(true);
-    console.log(data);
+    
     let URL = URL_SERVICIOS + "/facturas";
 
     return this.http.post<ResponseGestionFactura>(URL, data).pipe(

@@ -86,7 +86,7 @@
                             <option [ngValue]="9999999" selected>Seleccione Bodega</option>
 
                             <ng-container *ngFor="let item of bodegas_articulos">
-                                <option [ngValue]="item.id">{{ item.bodega.nombre }} ({{ item.cantidad
+                                <option [ngValue]="item.bodega.id">{{ item.bodega.nombre }} ({{ item.cantidad
                                     }})
                                 </option>
                             </ng-container>

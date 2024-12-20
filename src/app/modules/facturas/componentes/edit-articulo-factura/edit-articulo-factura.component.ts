@@ -94,6 +94,7 @@ export class EditArticuloFacturaComponent implements OnInit {
     this.user = this.authService.user;
     this.articulo = this.detalle.articulo ?? { ...this.articulo };
     this.unidad_id_articulo = this.detalle.unidad_id;
+    this.bodega_id_articulo = this.detalle.bodega_id ?? 9999999;
     // this.bodega_id_articulo 
     this.cantidad_articulo = this.detalle.cantidad_item;
     this.precio_general_articulo = this.detalle.precio_item;
@@ -151,6 +152,11 @@ export class EditArticuloFacturaComponent implements OnInit {
 
     if (this.cantidad_articulo === 0) {
       this.toast.error('Validación', 'No ha digitado la cantidad solicitada del artículo');
+      return;
+    }
+
+    if (this.bodega_id_articulo === 9999999) {
+      this.toast.error('Validación', 'No ha seleccionado la bodega del artículo');
       return;
     }
 
@@ -219,6 +225,7 @@ export class EditArticuloFacturaComponent implements OnInit {
     this.detalle.unidad_id = this.unidad_id_articulo;
     this.detalle.total_descuento = totalDescuento;
     this.detalle.precio_item = this.precio_general_articulo;
+    this.detalle.bodega_id = this.bodega_id_articulo
 
     this.DetalleS.emit(this.detalle);
     this.modal.close();

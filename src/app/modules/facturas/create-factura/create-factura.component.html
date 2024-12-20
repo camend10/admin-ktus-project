@@ -104,8 +104,9 @@
                                 <!--begin::Input group-->
                                 <div class="fv-row" *ngIf="bancos.length <= 0">
                                     <!--begin::Input-->
-                                    <input type="text" name="efectivo_recibido" class="form-control mb-2 text-end is-invalid"
-                                        placeholder="Efectivo recibido" [(ngModel)]="efectivo_recibido" appNumericInput
+                                    <input type="text" name="efectivo_recibido"
+                                        class="form-control mb-2 text-end is-invalid" placeholder="Efectivo recibido"
+                                        [(ngModel)]="efectivo_recibido" appNumericInput
                                         (focus)="seleccionarTexto($event)" (input)="onChangeEfectivo()" />
                                     <!--end::Input-->
                                     <!--begin::Description-->
@@ -401,10 +402,12 @@
                                     <div class="col-3">
                                         <select class="form-select" name="bodega_id_articulo"
                                             placeholder="Seleccione bodega" [(ngModel)]="bodega_id_articulo">
-                                            <option [ngValue]="9999999" selected>Seleccione Bodega</option>
+                                            <option [ngValue]="9999999" *ngIf="bodegas_articulos.length === 0">
+                                                Seleccione Bodega</option>
 
                                             <ng-container *ngFor="let item of bodegas_articulos">
-                                                <option [ngValue]="item.id">{{ item.bodega.nombre }} ({{ item.cantidad
+                                                <option [ngValue]="item.bodega.id">{{ item.bodega.nombre }} ({{
+                                                    item.cantidad
                                                     }})
                                                 </option>
                                             </ng-container>

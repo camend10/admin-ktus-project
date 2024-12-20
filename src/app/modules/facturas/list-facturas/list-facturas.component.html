@@ -264,10 +264,15 @@
                                             </span>
                                             <span
                                                 class="text-muted fw-semibold text-muted d-block text-hover-primary text-capitalize">
-                                                <span [ngClass]="getBadgeClass(item.estado_pago)+ ' small-badge'"
-                                                    style="font-size: 0.75rem !important; padding: 0.2em 0.4em !important;line-height: 1 !important;">
-                                                    {{ getEstadoPagoText(item.estado_pago) }}
+
+                                                <span
+                                                    [ngClass]="item.estado === 1 ? getBadgeClass(item.estado_pago) + ' small-badge' : 'badge badge-danger fs-7 fw-bold'"
+                                                    style="font-size: 0.75rem !important; padding: 0.2em 0.4em !important; line-height: 1 !important;">
+                                                    {{ item.estado === 1 ? getEstadoPagoText(item.estado_pago) : 'SIN
+                                                    PAGO' }}
                                                 </span>
+
+
                                             </span>
                                         </div>
                                     </div>
@@ -280,10 +285,10 @@
 
                                 <td class="text-center" style="text-wrap: nowrap;vertical-align: middle;">
                                     <span *ngIf="item?.estado === 1 " class="badge badge-success fs-7 fw-bold">
-                                        Activo
+                                        Activa
                                     </span>
                                     <span *ngIf="item?.estado === 0 " class="badge badge-danger fs-7 fw-bold">
-                                        Inactivo
+                                        Eliminada
                                     </span>
                                 </td>
 
@@ -310,7 +315,7 @@
                                         </i>
                                     </a>
 
-                                    <a *ngIf="isPermission('editar_factura')"
+                                    <a *ngIf="isPermission('editar_factura') && item.estado === 1"
                                         [routerLink]="'/facturas/listado/editar/' + item.id" placement="top"
                                         ngbTooltip="Edita factura"
                                         class="btn btn-icon btn-active-light-primary w-30px h-30px">
@@ -319,13 +324,12 @@
                                     </a>
 
                                     <a href="#" (click)="cambiarEstado(item)" onclick="return false;" placement="top"
-                                        ngbTooltip="Eliminar factura" *ngIf="isPermission('eliminar_factura')"
-                                        [title]="item.estado === 0? 'Activar':'Eliminar'"
+                                        ngbTooltip="Eliminar factura"
+                                        *ngIf="isPermission('eliminar_factura') && item.estado === 1" title="Eliminar"
                                         class="btn btn-icon btn-active-light-primary w-30px h-30px w-30px h-30px">
                                         <!-- Cambia el color del botón -->
 
-                                        <i class="ki-duotone" class="fs-3 ki-duotone"
-                                            [ngClass]="item.estado === 0 ? 'ki-check' : 'ki-trash'">
+                                        <i class="ki-duotone" class="fs-3 ki-duotone ki-trash">
                                             <!-- Icono de check para activar y trash para eliminar -->
                                             <span class="path1"></span><span class="path2"></span>
                                             <span class="path3"></span><span class="path4"></span>
