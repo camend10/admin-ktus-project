@@ -1038,7 +1038,7 @@ export class EditFacturaComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.detalle = JSON.parse(JSON.stringify(detalle));
     modalRef.componentInstance.cliente = this.cliente;
 
-    modalRef.componentInstance.DetalleS.subscribe((detalleR: any) => {
+    modalRef.componentInstance.DetalleS.subscribe((detalleR: DetalleFactura) => {
       // Clonar detalleR para asegurarnos de que no altere referencias
       const detalleClonado = JSON.parse(JSON.stringify(detalleR));
 

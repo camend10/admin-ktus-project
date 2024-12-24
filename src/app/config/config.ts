@@ -343,14 +343,6 @@ export const SIDEBAR: any = [
                 name: 'Ver',
                 permiso: 'ver_movimiento',
             },
-            {
-                name: 'Entrada',
-                permiso: 'entrada_movimiento',
-            },
-            {
-                name: 'Salida',
-                permiso: 'salida_solicitud',
-            },
         ]
     },
     {
@@ -375,6 +367,27 @@ export const SIDEBAR: any = [
             {
                 name: 'Entrega',
                 permiso: 'entrega_solicitud',
+            },
+        ]
+    },
+    {
+        'name': 'Plantillas',
+        'permisos': [
+            {
+                name: 'Registrar',
+                permiso: 'registrar_plantilla',
+            },
+            {
+                name: 'Editar',
+                permiso: 'editar_plantilla',
+            },
+            {
+                name: 'Eliminar',
+                permiso: 'eliminar_plantilla',
+            },
+            {
+                name: 'Ver',
+                permiso: 'ver_plantilla',
             },
         ]
     },

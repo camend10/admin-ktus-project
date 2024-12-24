@@ -1,32 +1,27 @@
 import { Component, EventEmitter, OnInit, Output, Input, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
-
 import { AuthService } from 'src/app/modules/auth';
 import { ToastrService } from 'ngx-toastr';
 import { Unidad } from 'src/app/modules/configuracion/unidades/interfaces';
-import { MovimientosService } from '../../service/movimientos.service';
-import { DetalleMovimiento } from 'src/app/modules/solicitudes/interfaces';
-import { ArticuloWallet, BodegaArticulo } from 'src/app/modules/articulos/interfaces';
+import { DetallePlantilla } from '../../interfaces';
+import { PlantillasService } from '../../service/plantillas.service';
+import { Articulo, ArticuloWallet } from 'src/app/modules/articulos/interfaces';
 import { User } from 'src/app/modules/users/interfaces';
 
-
 @Component({
-  selector: 'app-edit-detalle-movimiento',
-  templateUrl: './edit-detalle-movimiento.component.html',
-  styleUrl: './edit-detalle-movimiento.component.scss'
+  selector: 'app-edit-detalle-plantilla',
+  templateUrl: './edit-detalle-plantilla.component.html',
+  styleUrl: './edit-detalle-plantilla.component.scss'
 })
-export class EditDetalleMovimientoComponent implements OnInit {
+export class EditDetallePlantillaComponent implements OnInit {
 
   isLoading$: Observable<boolean>;
 
-  @Input() detalle: DetalleMovimiento;
-  @Input() bodega_id: number;
   @Input() user: User;
-  @Input() tipo_movimiento: number;
-  @Input() unidades_totales: Unidad[] = [];
-  unidades: Unidad[] = [];
-  @Output() DetalleS: EventEmitter<DetalleMovimiento> = new EventEmitter;
+  @Input() detalle: DetallePlantilla;
+  @Input() unidades: Unidad[] = [];
+  @Output() DetalleS: EventEmitter<DetallePlantilla> = new EventEmitter;
 
   unidad_id: number = 9999999;
   costo: number = 0;
@@ -34,7 +29,7 @@ export class EditDetalleMovimientoComponent implements OnInit {
 
   constructor(
     public modal: NgbActiveModal,
-    public movimientoService: MovimientosService,
+    public plantillaService: PlantillasService,
     public authService: AuthService,
     private cdr: ChangeDetectorRef,
     public toast: ToastrService,
@@ -43,47 +38,13 @@ export class EditDetalleMovimientoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isLoading$ = this.movimientoService.isLoading$;
+    this.isLoading$ = this.plantillaService.isLoading$;
     this.unidad_id = this.detalle.unidad_id;
     this.cantidad = this.detalle.cantidad;
     this.costo = this.detalle.costo;
-    this.bodega_id = this.bodega_id;
-
-
-    if (this.tipo_movimiento === 2) {
-      if (this.detalle.articulo && this.detalle.articulo.bodegas_articulos) {
-
-        this.unidades = this.detalle.articulo.bodegas_articulos
-          .filter((bodega: BodegaArticulo) => bodega.bodega.id === this.bodega_id)
-          .map((bodega: BodegaArticulo) => bodega.unidad);
-          
-      } else {
-        this.unidades = this.unidades_totales;
-      }
-    } else {
-      this.unidades = this.unidades_totales;
-    }
-
-    this.isLoadingProcess();
   }
 
   edit() {
-
-    if (this.tipo_movimiento === 2) {
-      const bodegaArticulo = this.detalle.articulo?.bodegas_articulos
-        ?.find(
-          (bodega: BodegaArticulo) =>
-            bodega.unidad.id === this.unidad_id && bodega.bodega.id === this.bodega_id
-        ) ?? null;
-
-      if (bodegaArticulo && bodegaArticulo.cantidad < this.cantidad) {
-        this.toast.error(
-          'Validación',
-          `No puedes solicitar esa cantidad, porque no hay stock disponible (${bodegaArticulo.cantidad})`
-        );
-        return;
-      }
-    }
 
     if (this.unidad_id === 9999999) {
       this.toast.error('Validación', 'No ha seleccionado la unidad del artículo');
@@ -110,7 +71,7 @@ export class EditDetalleMovimientoComponent implements OnInit {
     this.detalle.unidad_id = this.unidad_id;
     this.detalle.unidad = unidad;
     this.detalle.costo = this.costo;
-    this.detalle.total = costoTotal;
+    this.detalle.total_costo = costoTotal;
 
     this.DetalleS.emit(this.detalle);
     this.modal.close();
@@ -172,7 +133,6 @@ export class EditDetalleMovimientoComponent implements OnInit {
       // Si no hay articulo o articulos_wallets, establecer un valor predeterminado
       this.costo = this.detalle.costo;
     }
-
   }
 
   seleccionarTexto(event: FocusEvent): void {
@@ -184,9 +144,9 @@ export class EditDetalleMovimientoComponent implements OnInit {
   }
 
   isLoadingProcess() {
-    this.movimientoService.isLoadingSubject.next(true);
+    this.plantillaService.isLoadingSubject.next(true);
     setTimeout(() => {
-      this.movimientoService.isLoadingSubject.next(false);
+      this.plantillaService.isLoadingSubject.next(false);
     }, 50);
   }
 }

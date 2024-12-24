@@ -6,39 +6,41 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GeneralesService } from 'src/app/services/generales.service';
 import { AuthService } from '../../auth';
 import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
-import { Bodega } from '../../configuracion/bodegas/interfaces';
-import { Proveedor } from '../../configuracion/proveedores/interfaces';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Unidad } from '../../configuracion/unidades/interfaces';
 import { FacturasService } from '../../facturas/service/facturas.service';
-import { Articulo, ArticuloWallet, BodegaArticulo } from '../../articulos/interfaces';
+import { Articulo, ArticuloWallet } from '../../articulos/interfaces';
 import { BuscarArticuloComponent } from '../../facturas/componentes/buscar-articulo/buscar-articulo.component';
-import { MovimientosService } from '../service/movimientos.service';
-import { DetalleMovimiento, Movimiento } from '../../solicitudes/interfaces';
-import { EditDetalleMovimientoComponent } from '../componentes/edit-detalle-movimiento/edit-detalle-movimiento.component';
-import { DeleteDetalleMovimientoComponent } from '../componentes/delete-detalle-movimiento/delete-detalle-movimiento.component';
+import { DetallePlantilla, Plantilla } from '../interfaces';
+import { PlantillasService } from '../service/plantillas.service';
+import { DeleteDetallePlantillaComponent } from '../componentes/delete-detalle-plantilla/delete-detalle-plantilla.component';
+import { EditDetallePlantillaComponent } from '../componentes/edit-detalle-plantilla/edit-detalle-plantilla.component';
+
 
 @Component({
-  selector: 'app-create-movimiento',
-  templateUrl: './create-movimiento.component.html',
-  styleUrl: './create-movimiento.component.scss'
+  selector: 'app-edit-plantilla',
+  templateUrl: './edit-plantilla.component.html',
+  styleUrl: './edit-plantilla.component.scss'
 })
-export class CreateMovimientoComponent implements OnInit, OnDestroy {
-
+export class EditPlantillaComponent implements OnInit, OnDestroy {
   isLoading$: Observable<boolean>;
   user: User;
 
-  movimiento: Movimiento;
-  bodega_id: number = 9999999;
-  proveedor_id: number = 9999999;
-  fecha_emision: string = '';
-  tipo_movimiento: number = 9999999;
+  plantilla: Plantilla = {
+    id: 0,
+    codigo: '',
+    nombre: '',
+    observacion: '',
+    empresa_id: 0,
+    sede_id: 0,
+    user_id: 0,
+    estado: 1,
+    detalles_plantillas: []
+  };
+
   observacion: string = '';
 
-  bodegas: Bodega[] = [];
-  proveedores: Proveedor[] = [];
   unidades: Unidad[] = [];
-  unidades_totales: Unidad[] = [];
   sedes: Sede[] = [];
 
   // ARTICULOS
@@ -46,7 +48,7 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
   unidad_id: number = 9999999;
   costo: number = 0;
   cantidad: number = 0;
-  detalle_movimiento: DetalleMovimiento[] = [];
+  detalle_plantilla: DetallePlantilla[] = [];
   articulo: Articulo = {
     id: 0,
     sku: '',
@@ -86,12 +88,11 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
       imagen: '',
     }
   }
-  total_factura: number = 0;
-  total_cantidad: number = 0;
-  total_costo: number = 0;
+
+  plantilla_id: number = 0;
 
   constructor(
-    public movimientoService: MovimientosService,
+    public plantillaService: PlantillasService,
     public facturaService: FacturasService,
     public modalService: NgbModal,
     public generalService: GeneralesService,
@@ -99,25 +100,58 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
     public toast: ToastrService,
     private cdr: ChangeDetectorRef,
     private router: Router,
+    public activateRoute: ActivatedRoute,
   ) {
 
   }
 
   ngOnInit(): void {
-    // this.tipo_movimiento = 1;
-    this.isLoading$ = this.movimientoService.isLoading$;
+    this.isLoading$ = this.plantillaService.isLoading$;
     this.user = this.authService.user;
+
+    this.plantilla.user_id = this.user.id;
+    this.plantilla.empresa_id = this.user.empresa_id;
+    this.plantilla.sede_id = this.user.sede_id ?? 0;
 
     this.cargarConfiguraciones();
 
-    const today = new Date();
-    this.fecha_emision = today.toISOString().split('T')[0];
-    // this.setNombreSede();
     this.closeSidebar();
+
+    this.activateRoute.params.subscribe(params => {
+      let id = params['id'];
+      this.plantilla_id = id;
+      this.showPlantilla(this.plantilla_id);
+    });
 
     this.isLoadingProcess();
     this.cdr.detectChanges();
   }
+
+  showPlantilla(id: number) {
+    this.plantillaService.showMovimiento(id).subscribe((resp) => {
+
+      if (resp.message === 403) {
+        this.toast.error('Validación', resp.message_text);
+      } else {
+        this.plantilla = resp.plantilla;
+
+        this.detalle_plantilla = this.plantilla.detalles_plantillas ?? [];
+        this.resetearArticulo();
+
+        this.user.name = this.plantilla.usuario?.name ?? '';
+        this.user.nombre_sede = this.plantilla.sede?.nombre ?? '';
+
+        this.observacion = this.plantilla.observacion;
+        this.detalle_plantilla = Array.isArray(this.plantilla.detalles_plantillas)
+          ? this.plantilla.detalles_plantillas
+          : []; // Asegura que sea un arreglo
+
+        this.isLoadingProcess();
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
 
   ngOnDestroy(): void {
     // Quitar el atributo cuando el componente se destruye
@@ -129,44 +163,22 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
     bodyTag.setAttribute('data-kt-app-sidebar-minimize', 'on');
   }
 
-  setNombreSede(): void {
-    // Buscar la sede por ID
-    const sedeEncontrada = this.sedes.find(sede => sede.id === this.user.sede_id);
-    if (sedeEncontrada) {
-      this.user.nombre_sede = sedeEncontrada.nombre;
-    }
-  }
-
   cargarConfiguraciones() {
     this.generalService.cargarConfiguracionesArticulos(this.authService.user.empresa_id)
       .subscribe((response) => {
-        this.unidades_totales = response.unidades;
-        this.bodegas = response.bodegas;
-        this.proveedores = response.proveedores;
+        this.unidades = response.unidades;
         this.sedes = response.sedes;
         this.isLoadingProcess();
       });
   }
 
   listarArticulos() {
-
-    if (this.tipo_movimiento === 9999999) {
-      this.toast.error('Validación', 'Necesita seleccionar un tipo de movimiento');
-      return;
-    }
-
     if (!this.buscar_articulo) {
       this.toast.error('Validación', 'Necesitas ingresar el nombre ó el código del articulo');
       return false;
     }
 
-    if (this.bodega_id === 9999999) {
-      this.toast.error('Validación', 'Necesita seleccionar una bodega');
-      return;
-    }
-
     this.facturaService.buscarArticulos(this.buscar_articulo).subscribe((resp) => {
-
       if (!resp || !resp.articulos || !resp.articulos.data || resp.articulos.data.length === 0) {
         this.toast.info('Validación', 'No hay coincidencia en la búsqueda');
         return false;  // Detener la ejecución si no se encontraron resultados
@@ -180,24 +192,6 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
       else if (resp.articulos.data.length === 1) {
         this.articulo = resp.articulos.data[0];
         this.buscar_articulo = this.articulo.nombre;
-
-        if (this.tipo_movimiento === 2) {
-          this.unidades = this.articulo.bodegas_articulos
-            ?.filter((bodega: BodegaArticulo) => bodega.bodega.id === this.bodega_id)
-            .map((bodega: BodegaArticulo) => bodega.unidad) || [];
-
-          if (this.unidades.length <= 0) {
-            this.toast.error(
-              'Validación',
-              `No existe stock disponible para esta bodega`
-            );
-          }
-        } else {
-          this.unidades = this.unidades_totales;
-        }
-
-
-        // this.costo = this.articulo.precio_general;
         setTimeout(() => {
           this.focusField('.unidad-id-articulo-select');
         }, 50);
@@ -214,21 +208,6 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
 
       this.articulo = articulo;
       this.buscar_articulo = this.articulo.nombre;
-      // this.costo = this.articulo.precio_general;
-      if (this.tipo_movimiento === 2) {
-        this.unidades = this.articulo.bodegas_articulos
-          ?.filter((bodega: BodegaArticulo) => bodega.bodega.id === this.bodega_id)
-          .map((bodega: BodegaArticulo) => bodega.unidad) || [];
-
-        if (this.unidades.length <= 0) {
-          this.toast.error(
-            'Validación',
-            `No existe stock disponible para esta bodega`
-          );
-        }
-      } else {
-        this.unidades = this.unidades_totales;
-      }
 
       setTimeout(() => {
         this.focusField('.unidad-id-articulo-select');
@@ -261,7 +240,7 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
     }
 
     // Validar si el artículo ya existe con descuento o sin descuento
-    const articuloExistente = this.detalle_movimiento.find(
+    const articuloExistente = this.detalle_plantilla.find(
       (detalle) =>
         detalle.articulo_id === this.articulo.id &&
         detalle.unidad_id === this.unidad_id
@@ -269,24 +248,6 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
 
     // Subtotal sin descuento
     const costoTotal = this.costo * this.cantidad;
-
-    const unidad = this.unidades.find((item: Unidad) => item.id === this.unidad_id);
-
-    if (this.tipo_movimiento === 2) {
-      const bodegaArticulo = this.articulo.bodegas_articulos
-        ?.find(
-          (bodega: BodegaArticulo) =>
-            bodega.unidad.id === this.unidad_id && bodega.bodega.id === this.bodega_id
-        );
-
-      if (bodegaArticulo && bodegaArticulo.cantidad < this.cantidad) {
-        this.toast.error(
-          'Validación',
-          `No puedes solicitar esa cantidad, porque no hay stock disponible (${bodegaArticulo.cantidad})`
-        );
-        return;
-      }
-    }
 
     if (articuloExistente) {
       // Validar si el costo es diferente
@@ -299,30 +260,30 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
       }
       // Actualizar valores
       articuloExistente.cantidad += this.cantidad;
-      articuloExistente.total += costoTotal;
+      articuloExistente.total_costo += costoTotal;
 
 
       this.toast.success('Artículo actualizado', 'La cantidad ha sido sumada');
     } else {
       // Si no existe, agrega el artículo al detalle
-      // const unidad = this.articulo.unidades?.find((item: Unidad) => item.id === this.unidad_id_articulo);
 
-      this.detalle_movimiento.push({
+      const unidad = this.unidades.find((item: Unidad) => item.id === this.unidad_id);
+
+      this.detalle_plantilla.push({
         id: 0,
-        articulo: this.articulo,
-        unidad: unidad,
+        costo: this.costo,
+        total_costo: costoTotal,
         cantidad: this.cantidad,
         cantidad_recibida: this.cantidad,
-        total: costoTotal,
-        movimiento_id: 0,
+        plantilla_id: 0,
         articulo_id: this.articulo.id,
         empresa_id: this.user.empresa_id,
         sede_id: this.user.sede_id ?? 0,
         estado: 1,
         unidad_id: this.unidad_id,
-        costo: this.costo,
-        user_id: this.user.id,
-        fecha_entrega: null,
+
+        articulo: this.articulo,
+        unidad: unidad
       });
 
       this.toast.success('Artículo agregado', 'El artículo ha sido agregado al detalle');
@@ -333,23 +294,6 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
     // Calcula los totales
 
     this.resetearArticulo();
-    this.calcularTotales();
-    this.unidades = [];
-  }
-
-  changeBodega() {
-    this.resetearArticulo();
-    this.calcularTotales();
-    this.unidades = [];
-    if (this.articulo) {
-      if (this.tipo_movimiento === 2) {
-        this.unidades = this.articulo.bodegas_articulos
-          ?.filter((bodega: BodegaArticulo) => bodega.bodega.id === this.bodega_id)
-          .map((bodega: BodegaArticulo) => bodega.unidad) || [];
-      } else {
-        this.unidades = this.unidades_totales;
-      }
-    }
   }
 
   resetearArticulo() {
@@ -405,21 +349,12 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
     this.isLoadingProcess();
   }
 
-  calcularTotales(): void {
-
-    this.total_factura = this.detalle_movimiento.reduce((total, detalle) => total + (detalle.total || 0), 0);
-
-    this.total_cantidad = this.detalle_movimiento.reduce((cantidad, detalle) => cantidad + (detalle.cantidad || 0), 0);
-
-    this.total_costo = this.detalle_movimiento.reduce((costo, detalle) => costo + (detalle.costo || 0), 0);
-
-    this.isLoadingProcess();
-  }
-
   changeUnidadArticulo() {
+
     this.focusField('.costo-input');
     this.isLoadingProcess();
     this.cdr.detectChanges();
+
     // Buscar coincidencia exacta en articulos_wallets
     const wallet = this.articulo.articulos_wallets?.find((wallet: ArticuloWallet) => {
       return (
@@ -450,21 +385,19 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
     this.costo = wallet.precio;
   }
 
-  editarArticulo(detalle: DetalleMovimiento, index: number) {
-    const modalRef = this.modalService.open(EditDetalleMovimientoComponent, { centered: true, size: 'md' });
+  editarArticulo(detalle: DetallePlantilla, index: number) {
+    const modalRef = this.modalService.open(EditDetallePlantillaComponent, { centered: true, size: 'md' });
     modalRef.componentInstance.detalle = JSON.parse(JSON.stringify(detalle));
-    modalRef.componentInstance.bodega_id = this.bodega_id;
     modalRef.componentInstance.user = this.user;
-    modalRef.componentInstance.tipo_movimiento = this.tipo_movimiento;
-    modalRef.componentInstance.unidades_totales = this.unidades_totales;
+    modalRef.componentInstance.unidades = this.unidades;
 
-    modalRef.componentInstance.DetalleS.subscribe((detalleR: DetalleMovimiento) => {
+    modalRef.componentInstance.DetalleS.subscribe((detalleR: DetallePlantilla) => {
 
       // Clonar detalleR para asegurarnos de que no altere referencias
       const detalleClonado = JSON.parse(JSON.stringify(detalleR));
 
       // Buscar si ya existe un artículo con el mismo ID y unidad, pero que no sea el mismo artículo editado
-      const articuloExistenteIndex = this.detalle_movimiento.findIndex(
+      const articuloExistenteIndex = this.detalle_plantilla.findIndex(
         (detalle, i) =>
           detalle.articulo_id === detalleClonado.articulo?.id &&
           detalle.unidad_id === detalleClonado.unidad_id &&
@@ -472,7 +405,7 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
       );
 
       if (articuloExistenteIndex !== -1) {
-        const articuloDuplicado = this.detalle_movimiento[articuloExistenteIndex];
+        const articuloDuplicado = this.detalle_plantilla[articuloExistenteIndex];
 
         // Validar si el costo es diferente
         if (articuloDuplicado.costo !== detalleClonado.costo) {
@@ -484,32 +417,29 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
         }
 
         articuloDuplicado.cantidad += detalleClonado.cantidad;
-        articuloDuplicado.total += detalleClonado.total;
+        articuloDuplicado.total_costo += detalleClonado.total_costo;
 
-        this.detalle_movimiento.splice(index, 1);
+        this.detalle_plantilla.splice(index, 1);
 
         this.toast.success('Artículo actualizado', 'La cantidad ha sido sumada');
       } else {
-        this.detalle_movimiento[index] = detalleClonado;
+        this.detalle_plantilla[index] = detalleClonado;
         this.toast.success('Exito', 'Se ha editado el articulo');
       }
 
-      // Calcula los totales
-      this.calcularTotales();
       this.isLoadingProcess();
 
     });
   }
 
-  eliminarArticulo(detalle: DetalleMovimiento, index: number) {
-    const modalRef = this.modalService.open(DeleteDetalleMovimientoComponent, { centered: true, size: 'md' });
+  eliminarArticulo(detalle: DetallePlantilla, index: number) {
+    const modalRef = this.modalService.open(DeleteDetallePlantillaComponent, { centered: true, size: 'md' });
     modalRef.componentInstance.detalle = detalle;
 
     modalRef.componentInstance.DetalleD.subscribe((resp: string) => {
 
-      this.detalle_movimiento.splice(index, 1);
-      // Calcula los totales
-      this.calcularTotales();
+      this.detalle_plantilla.splice(index, 1);
+
       this.isLoadingProcess();
       this.toast.success('Exito', 'Se ha eliminado el articulo');
     });
@@ -517,67 +447,46 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
 
   store() {
 
-    if (this.bodega_id === 9999999) {
-      this.toast.error("Validando", "Necesitas seleccionar un almacen");
+    if (!this.plantilla.codigo) {
+      this.toast.error("Validando", "Necesitas digitar el codigo");
       return;
     }
 
-    if (this.proveedor_id === 9999999) {
-      this.toast.error("Validando", "Necesitas seleccionar un proveedor");
+    if (!this.plantilla.nombre) {
+      this.toast.error("Validando", "Necesitas digitar el nombre");
       return;
     }
 
-    if (this.fecha_emision === '') {
-      this.toast.error("Validando", "Necesitas seleccionar una fecha");
+    if (!this.plantilla.empresa_id) {
+      this.toast.error("Validando", "Necesitas seleccionar la empresa");
       return;
     }
 
-    if (this.tipo_movimiento === 9999999) {
-      this.toast.error("Validando", "Necesitas seleccionar un tipo de movimiento");
+    if (!this.plantilla.empresa_id) {
+      this.toast.error("Validando", "Necesitas seleccionar la sede");
       return;
     }
 
-    if (this.detalle_movimiento.length === 0) {
+    if (!this.plantilla.user_id) {
+      this.toast.error("Validando", "Necesitas seleccionar el usuario");
+      return;
+    }
+
+    if (this.detalle_plantilla.length === 0) {
       this.toast.error("Validando", "Necesitas agregar por lo menos un articulo al detalle");
       return;
     }
 
-    this.movimiento = {
-      id: 0,
-      fecha_emision: this.fecha_emision ? new Date(this.fecha_emision) : null,
-      tipo_movimiento: this.tipo_movimiento,
-      observacion: this.observacion,
-      destino: 'Movimiento',
-      total: this.total_factura,
-      user_id: this.user.id,
-      bodega_id: this.bodega_id,
-      plantilla_id: 0,
-      proveedor_id: this.proveedor_id,
-      empresa_id: this.user.empresa_id,
-      sede_id: this.user?.sede_id ?? 0, // Usa 0 si sede_id es undefined
-      estado: 1,
-      fecha_entrega: null,
-      observacion_entrega: '',
-      detalles_movimientos: this.detalle_movimiento
-    }
+    this.plantilla.observacion = this.observacion;
+    this.plantilla.detalles_plantillas = this.detalle_plantilla;
 
-    this.movimientoService.create(this.movimiento).subscribe((resp) => {
+    this.plantillaService.edit(this.plantilla, this.plantilla_id).subscribe((resp) => {
       if (resp.message === 403) {
         this.toast.error('Validación', resp.message_text);
 
       } else {
         this.toast.success('Exito', resp.message_text);
-
-        this.resetearArticulo();
-
-        this.bodega_id = 9999999;
-        this.proveedor_id = 9999999;
-        this.observacion = '';
-        const today = new Date();
-        this.fecha_emision = today.toISOString().split('T')[0];
-        this.tipo_movimiento = 1;
-        this.detalle_movimiento = [];
-        this.calcularTotales();
+        this.router.navigate(['/plantillas/listado']);
       }
     });
   }
@@ -609,15 +518,9 @@ export class CreateMovimientoComponent implements OnInit, OnDestroy {
   }
 
   isLoadingProcess() {
-    this.movimientoService.isLoadingSubject.next(true);
+    this.plantillaService.isLoadingSubject.next(true);
     setTimeout(() => {
-      this.movimientoService.isLoadingSubject.next(false);
+      this.plantillaService.isLoadingSubject.next(false);
     }, 50);
-  }
-
-  changeTipo() {
-    this.resetearArticulo();
-    this.calcularTotales();
-    this.unidades = [];
   }
 }

@@ -33,90 +33,33 @@
 
                     <div class="col-3">
                         <!--begin::Label-->
-                        <label class="required fs-6 fw-semibold mb-2">Bodegas</label>
+                        <label class="required fs-6 fw-semibold mb-2">Código</label>
                         <!--end::Label-->
-                        <select class="form-select" name="bodega_id" placeholder="Seleccione bodega"
-                            [(ngModel)]="bodega_id">
-                            <option [ngValue]="9999999" selected>Seleccione Bodega</option>
-
-                            <ng-container *ngFor="let item of bodegas">
-                                <option [ngValue]="item.id">{{ item.nombre }}
-                                </option>
-                            </ng-container>
-                        </select>
+                        <!--begin::Input-->
+                        <input type="text" name="codigo" class="form-control mb-3 mb-lg-0"
+                            placeholder="Responsable de la solicitud" [(ngModel)]="plantilla.codigo" />
+                        <!--end::Input-->
                     </div>
 
                     <div class="col-3">
-                        <!--begin::Select store template-->
-                        <label for="kt_ecommerce_add_product_store_template" class="form-label">Proveedor</label>
-                        <!--end::Select store template-->
-                        <select class="form-select mb-2" name="proveedor_id" placeholder="Seleccione Proveedor"
-                            [(ngModel)]="proveedor_id">
-                            <option [ngValue]="9999999" selected>Proveedor</option>
-
-                            <ng-container *ngFor="let item of proveedores">
-                                <option [value]="item.id" class="text-capitalize">
-                                    {{ item.identificacion | number:'1.0-0' }}
-                                    <ng-container *ngIf="item.tipo_identificacion === 6">
-                                        - {{ item.dv }}
-                                    </ng-container>
-                                    :
-                                    {{ item.nombres }} {{ item.apellidos && item.apellidos !==
-                                    'null' ? item.apellidos : '' }}
-                                </option>
-                            </ng-container>
-                        </select>
+                        <!--begin::Label-->
+                        <label class="required fs-6 fw-semibold mb-2">Nombre de la plantilla</label>
+                        <!--end::Label-->
+                        <!--begin::Input-->
+                        <input type="text" name="nombre" class="form-control mb-3 mb-lg-0" placeholder="Sede"
+                            [(ngModel)]="plantilla.nombre" />
+                        <!--end::Input-->
                     </div>
                 </div>
 
                 <div class="row">
 
-                    <div class="col-2">
-                        <!--begin::Label-->
-                        <label class="required fs-6 fw-semibold mb-2">Fecha</label>
-                        <!--end::Label-->
-                        <div class="input-group ">
-                            <input type="date" name="fecha_emision" class="form-control form-control-lg "
-                                [(ngModel)]="fecha_emision" />
-                        </div>
-                    </div>
-
-                    <div class="col-3">
-                        <!--begin::Select store template-->
-                        <label for="kt_ecommerce_add_product_store_template" class="form-label">Tipo de
-                            movimiento</label>
-                        <!--end::Select store template-->
-                        <select class="form-select mb-2" disabled name="tipo_movimiento"
-                            placeholder="Seleccione tipo de movimiento" [(ngModel)]="tipo_movimiento">
-                            <option [ngValue]="9999999" selected>Movimiento</option>
-                            <ng-container>
-                                <option [ngValue]="1">Entrada</option>
-                                <option [ngValue]="2">Salida</option>
-                            </ng-container>
-                        </select>
-                    </div>
-
-                    <div class="col-4">
+                    <div class="col-6">
                         <!--begin::Select store template-->
                         <label for="kt_ecommerce_add_product_store_template" class="form-label">Observaciones</label>
                         <!--end::Select store template-->
                         <textarea [(ngModel)]="observacion" class="form-control w-100" name="observacion"
                             placeholder="Observaciones" rows="3"></textarea>
-                    </div>
-
-                    <div class="col-3">
-                        <!--begin::Label-->
-                        <label class="required fs-6 fw-semibold mb-2">Plantillas</label>
-                        <!--end::Label-->
-                        <select class="form-select" name="plantilla_id" placeholder="Seleccione Plantilla"
-                            [(ngModel)]="plantilla_id" (change)="changePlantilla()">
-                            <option [ngValue]="9999999" selected>Seleccione Plantilla</option>
-
-                            <ng-container *ngFor="let item of plantillas">
-                                <option [ngValue]="item.id">{{ item.nombre }}
-                                </option>
-                            </ng-container>
-                        </select>
                     </div>
                 </div>
 
@@ -204,7 +147,7 @@
                                 <!--end::Table head-->
                                 <!--begin::Table body-->
                                 <tbody>
-                                    <ng-container *ngFor="let item of detalle_movimiento; let i=index;">
+                                    <ng-container *ngFor="let item of detalle_plantilla; let i=index;">
                                         <tr>
                                             <td style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
                                                 class="text-center text-gray-900 fw-bold text-hover-primary">
@@ -245,7 +188,7 @@
 
                                             <td class="text-gray-900 fw-bold text-hover-primary fs-6 text-end"
                                                 style="text-wrap: nowrap;">
-                                                $ {{ item.total | number:'1.2-2' }}
+                                                $ {{ item.total_costo | number:'1.2-2' }}
                                             </td>
 
                                             <td class="text-center">
@@ -271,31 +214,6 @@
                                         </tr>
                                     </ng-container>
                                 </tbody>
-
-                                <tfoot>
-                                    <tr>
-                                        <th style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
-                                            class="text-gray-900 fw-bold text-hover-primary text-end fs-6" colspan="5">
-                                            Total :
-                                        </th>
-                                        <th style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
-                                            class="text-gray-900 fw-bold text-hover-primary text-end fs-6" colspan="1">
-                                            $ {{total_factura |number: '1.2-2' }}
-                                        </th>
-                                    </tr>
-
-                                    <tr>
-                                        <th style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
-                                            class="text-gray-900 fw-bold text-hover-primary text-end fs-6" colspan="5">
-                                            Cantidad Total :
-                                        </th>
-                                        <th style='font-weight: bold;vertical-align: middle;text-wrap: nowrap;'
-                                            class="text-gray-900 fw-bold text-hover-primary text-end fs-6" colspan="1">
-                                            {{total_cantidad |number: '1.0-2' }}
-                                        </th>
-                                    </tr>
-
-                                </tfoot>
                                 <!--end::Table body-->
                             </table>
                             <!--end::Table-->
@@ -306,7 +224,7 @@
 
             <!--begin::Actions-->
             <div class="text-center pt-15">
-                <a routerLink="/solicitudes/listado" class="btn btn-danger btn-md mx-2">
+                <a routerLink="/plantillas/listado" class="btn btn-danger btn-md mx-2">
                     <i class="ki-duotone ki-black-left"></i>
                     Volver</a>
 

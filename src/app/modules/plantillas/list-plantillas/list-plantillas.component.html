@@ -1,0 +1,155 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
+
+
+<div class="card">
+    <!--begin::Card header-->
+    <div class="card-header border-0 pt-6">
+        <!--begin::Card title-->
+        <div class="card-title">
+            <!--begin::Search-->
+            <div class="d-flex align-items-center position-relative my-1">
+                <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
+                <input type="text" data-kt-customer-table-filter="search" [(ngModel)]="buscar" name="buscar"
+                    (keyup.enter)="listar()" class="form-control form-control-solid w-400px ps-12"
+                    placeholder="Buscar plantillas (Enter para iniciar la busqueda)">
+            </div>
+            <!--end::Search-->
+        </div>
+        <!--begin::Card title-->
+        <!-- <span class="spinner-border spinner-border-sm align-middle ms-2" *ngIf="isLoading$ | async"></span> -->
+        <!--begin::Card toolbar-->
+        <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
+            <!--begin::Toolbar-->
+            <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+
+                <!--begin::Add customer-->
+                <a type="button" class="btn btn-primary" *ngIf="isPermission('registrar_plantilla')" placement="top"
+                    ngbTooltip="Crear Plantilla" routerLink="/plantillas/registrar">
+                    <i class="ki-duotone ki-plus"></i>Crear Plantilla</a>
+                <!--end::Add customer-->
+            </div>
+            <!--end::Toolbar-->
+
+        </div>
+        <!--end::Card toolbar-->
+    </div>
+    <!--end::Card header-->
+
+
+    <!--begin::Card body-->
+    <div class="card-body pt-0">
+        <!--begin::Table-->
+        <div id="kt_customers_table_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
+            <div id="" class="table-responsive">
+                <table class="table table-row-dashed table-row-gray-100 align-middle gs-0 gy-3 dataTable"
+                    id="kt_customers_table" style="width: 1150.9px;">
+
+                    <thead>
+                        <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                            <th class="min-w-125px text-center">#</th>
+                            <th class="min-w-125px">Código</th>
+                            <th class="min-w-125px">Plantilla</th>
+                            <th class="min-w-125px">Empresa</th>
+                            <th class="min-w-125px">Sede</th>
+                            <th class="min-w-125px text-center">Estado</th>
+                            <th class="text-center min-w-70px"
+                                *ngIf="isPermission('editar_plantilla') || isPermission('eliminar_plantilla')">Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="fw-semibold text-gray-600">
+                        <ng-container *ngFor="let item of plantillas; let i=index;">
+                            <tr>
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-center text-gray-900 fw-bold text-hover-primary">
+                                    {{ (i+1)}}
+                                </td>
+
+                                <td style='font-weight: bold;text-wrap: nowrap;vertical-align: middle;'
+                                    class="text-gray-900 fw-bold text-hover-primary text-capitalize"
+                                    style="text-wrap: nowrap;">
+                                    {{ item.codigo }}
+                                </td>
+
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-gray-900 fw-bold text-hover-primary text-capitalize"
+                                    style="text-wrap: nowrap;">{{
+                                    item.nombre}}
+                                </td>
+
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-gray-900 fw-bold text-hover-primary text-capitalize"
+                                    style="text-wrap: nowrap;">{{
+                                    item.empresa?.nombre }}</td>
+
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-gray-900 fw-bold text-hover-primary text-capitalize"
+                                    style="text-wrap: nowrap;">{{
+                                    item.sede?.nombre }}</td>
+
+                                <td class="text-center">
+                                    <span *ngIf="item?.estado === 1 " class="badge badge-success fs-7 fw-bold">
+                                        Activo
+                                    </span>
+                                    <span *ngIf="item?.estado === 0 " class="badge badge-danger fs-7 fw-bold">
+                                        Inactivo
+                                    </span>
+                                </td>
+
+                                <td class="text-center"
+                                    *ngIf="isPermission('editar_plantilla') || isPermission('eliminar_plantilla')">
+
+                                    <a href="#" onclick="return false"
+                                        [routerLink]="'/plantillas/listado/editar/' + item.id" title="Editar"
+                                        onclick="return false;" *ngIf="isPermission('editar_plantilla')"
+                                        class="btn btn-icon btn-active-light-primary w-30px h-30px me-3">
+                                        <i class="ki-duotone ki-pencil fs-3"><span class="path1"></span><span
+                                                class="path2"></span></i>
+                                    </a>
+                                    <a href="#" onclick="return false" (click)="cambiarEstado(item)"
+                                        onclick="return false;"
+                                        *ngIf="isPermission('eliminar_plantilla') && (item.estado !==3 && item.estado !==4)"
+                                        [title]="item.estado === 0? 'Activar':'Eliminar'"
+                                        class="btn btn-icon btn-active-light-primary w-30px h-30px w-30px h-30px">
+                                        <!-- Cambia el color del botón -->
+
+                                        <i class="ki-duotone" class="fs-3 ki-duotone"
+                                            [ngClass]="item.estado === 0 ? 'ki-check' : 'ki-trash'">
+                                            <!-- Icono de check para activar y trash para eliminar -->
+                                            <span class="path1"></span><span class="path2"></span>
+                                            <span class="path3"></span><span class="path4"></span>
+                                            <span class="path5"></span>
+                                        </i>
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        </ng-container>
+                        <ng-container *ngIf="plantillas && plantillas.length <= 0">
+                            <tr>
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-center fs-2 fw-bold text-hover-primary" colspan="10">
+                                    No existen plantillas
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                    </tbody>
+                    <tfoot></tfoot>
+                </table>
+            </div>
+            <ngb-pagination [collectionSize]="totalPages" [(page)]="currentPage" [pageSize]="20" [rotate]="true"
+                [boundaryLinks]="true" (pageChange)="loadPage($event)"></ngb-pagination>
+        </div>
+        <!--end::Table-->
+    </div>
+    <!--end::Card body-->
+</div>

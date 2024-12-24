@@ -93,6 +93,11 @@ const Routing: Routes = [
     loadChildren: () => import('../modules/solicitudes/solicitudes.module').then((m) => m.SolicitudesModule),
   },  
   {
+    path: 'plantillas',
+    canActivate: [verificaTokenGuard],
+    loadChildren: () => import('../modules/plantillas/plantillas.module').then((m) => m.PlantillasModule),
+  },  
+  {
     path: '',
     redirectTo: '/dashboard',
     pathMatch: 'full',

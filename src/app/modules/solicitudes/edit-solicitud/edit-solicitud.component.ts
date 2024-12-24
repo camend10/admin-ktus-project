@@ -18,6 +18,7 @@ import { BuscarArticuloComponent } from '../../facturas/componentes/buscar-artic
 import { EditItemSolicitudComponent } from '../componentes/edit-item-solicitud/edit-item-solicitud.component';
 import { DeleteItemSolicitudComponent } from '../componentes/delete-item-solicitud/delete-item-solicitud.component';
 import { isPermission } from 'src/app/config/config';
+import { DetallePlantilla, Plantilla } from '../../plantillas/interfaces';
 
 
 @Component({
@@ -37,11 +38,13 @@ export class EditSolicitudComponent implements OnInit, OnDestroy {
   tipo_movimiento: number = 9999999;
   observacion: string = '';
   observacion_entrega: string = '';
+  plantilla_id: number = 9999999;
 
   bodegas: Bodega[] = [];
   proveedores: Proveedor[] = [];
   unidades: Unidad[] = [];
   sedes: Sede[] = [];
+  plantillas: Plantilla[] = [];
 
   // ARTICULOS
   buscar_articulo: string = '';
@@ -127,7 +130,7 @@ export class EditSolicitudComponent implements OnInit, OnDestroy {
       let id = params['id'];
       this.movimiento_id = id;
       this.showMovimiento(this.movimiento_id);
-    })
+    });
 
     this.isLoadingProcess();
     this.cdr.detectChanges();
@@ -158,6 +161,7 @@ export class EditSolicitudComponent implements OnInit, OnDestroy {
         this.estado = this.movimiento.estado ?? 9999999;
         this.bodega_id = this.movimiento.bodega_id ?? 9999999;
         this.proveedor_id = this.movimiento.proveedor_id ?? 9999999;
+        this.plantilla_id = this.movimiento.plantilla_id ?? 9999999;
         this.user.name = this.movimiento.usuario?.name ?? '';
         this.user.nombre_sede = this.movimiento.sede?.nombre ?? '';
         this.fecha_emision = this.movimiento.fecha_emision
@@ -192,6 +196,7 @@ export class EditSolicitudComponent implements OnInit, OnDestroy {
         this.bodegas = response.bodegas;
         this.proveedores = response.proveedores;
         this.sedes = response.sedes;
+        this.plantillas = response.plantillas;
         this.isLoadingProcess();
       });
   }
@@ -310,7 +315,7 @@ export class EditSolicitudComponent implements OnInit, OnDestroy {
         fecha_entrega: null,
       });
 
-      this.toast.success('Artículo agregado', 'El artículo ha sido agregado a la factura');
+      this.toast.success('Artículo agregado', 'El artículo ha sido agregado al detalle');
     }
     setTimeout(() => {
       this.focusField('.buscar-articulo-input');
@@ -395,16 +400,52 @@ export class EditSolicitudComponent implements OnInit, OnDestroy {
 
   editarArticulo(detalle: DetalleMovimiento, index: number) {
     const modalRef = this.modalService.open(EditItemSolicitudComponent, { centered: true, size: 'md' });
-    modalRef.componentInstance.detalle = detalle;
+    modalRef.componentInstance.detalle = JSON.parse(JSON.stringify(detalle));
+    modalRef.componentInstance.bodega_id = this.bodega_id;
+    modalRef.componentInstance.user = this.user;
+    modalRef.componentInstance.tipo_movimiento = this.tipo_movimiento;
     modalRef.componentInstance.unidades = this.unidades;
 
     modalRef.componentInstance.DetalleS.subscribe((detalleR: DetalleMovimiento) => {
 
-      this.detalle_movimiento[index] = detalleR;
+      // Clonar detalleR para asegurarnos de que no altere referencias
+      const detalleClonado = JSON.parse(JSON.stringify(detalleR));
+
+      // Buscar si ya existe un artículo con el mismo ID y unidad, pero que no sea el mismo artículo editado
+      const articuloExistenteIndex = this.detalle_movimiento.findIndex(
+        (detalle, i) =>
+          detalle.articulo_id === detalleClonado.articulo?.id &&
+          detalle.unidad_id === detalleClonado.unidad_id &&
+          i !== index // Evitar consolidar consigo mismo
+      );
+
+      if (articuloExistenteIndex !== -1) {
+        const articuloDuplicado = this.detalle_movimiento[articuloExistenteIndex];
+
+        // Validar si el costo es diferente
+        if (articuloDuplicado.costo !== detalleClonado.costo) {
+          this.toast.error(
+            'Validación',
+            'El artículo ya existe con un costo diferente. No se puede agregar.'
+          );
+          return;
+        }
+
+        articuloDuplicado.cantidad += detalleClonado.cantidad;
+        articuloDuplicado.total += detalleClonado.total;
+
+        this.detalle_movimiento.splice(index, 1);
+
+        this.toast.success('Artículo actualizado', 'La cantidad ha sido sumada');
+      } else {
+        this.detalle_movimiento[index] = detalleClonado;
+        this.toast.success('Exito', 'Se ha editado el articulo');
+      }
+
       // Calcula los totales
       this.calcularTotales();
       this.isLoadingProcess();
-      this.toast.success('Exito', 'Se ha editado el articulo');
+
     });
   }
 
@@ -463,7 +504,7 @@ export class EditSolicitudComponent implements OnInit, OnDestroy {
       total: this.total_factura,
       user_id: this.user.id,
       bodega_id: this.bodega_id,
-      plantilla_id: 0,
+      plantilla_id: this.plantilla_id,
       proveedor_id: this.proveedor_id,
       empresa_id: this.user.empresa_id,
       sede_id: this.movimiento.sede_id ?? 0, // Usa 0 si sede_id es undefined
@@ -567,5 +608,41 @@ export class EditSolicitudComponent implements OnInit, OnDestroy {
 
   isPermission(permission: string) {
     return isPermission(permission);
+  }
+
+  changePlantilla() {
+    if (this.plantilla_id !== 9999999) {
+      const plantilla = this.plantillas.find((item) => item.id === this.plantilla_id);
+      if (plantilla) {
+        this.detalle_movimiento = [];
+        plantilla.detalles_plantillas?.forEach((deta: DetallePlantilla) => {
+
+          const nuevoDetalle: DetalleMovimiento = {
+            id: 0,
+            articulo: deta.articulo,
+            unidad: deta.unidad,
+            cantidad: deta.cantidad,
+            cantidad_recibida: deta.cantidad,
+            total: deta.total_costo,
+            movimiento_id: 0,
+            articulo_id: deta.articulo_id,
+            empresa_id: this.user.empresa_id,
+            sede_id: this.user.sede_id ?? 0,
+            estado: 1,
+            unidad_id: deta.unidad_id,
+            costo: deta.costo,
+            user_id: this.user.id,
+            fecha_entrega: null,
+          };
+
+          // Hacer push del nuevo detalle al arreglo
+          this.detalle_movimiento.push(nuevoDetalle);
+        });
+        // this.detalle_movimiento = plantilla.detalles_plantillas;
+        this.calcularTotales();
+      }
+
+      this.isLoadingProcess();
+    }
   }
 }

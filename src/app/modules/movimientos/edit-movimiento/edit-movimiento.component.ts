@@ -370,7 +370,7 @@ export class EditMovimientoComponent implements OnInit, OnDestroy {
         fecha_entrega: null,
       });
 
-      this.toast.success('Artículo agregado', 'El artículo ha sido agregado a la factura');
+      this.toast.success('Artículo agregado', 'El artículo ha sido agregado al detalle');
     }
     setTimeout(() => {
       this.focusField('.buscar-articulo-input');
@@ -494,18 +494,52 @@ export class EditMovimientoComponent implements OnInit, OnDestroy {
 
   editarArticulo(detalle: DetalleMovimiento, index: number) {
     const modalRef = this.modalService.open(EditDetalleMovimientoComponent, { centered: true, size: 'md' });
-    modalRef.componentInstance.detalle = detalle;
+    modalRef.componentInstance.detalle = JSON.parse(JSON.stringify(detalle));
     modalRef.componentInstance.bodega_id = this.bodega_id;
     modalRef.componentInstance.user = this.user;
     modalRef.componentInstance.tipo_movimiento = this.tipo_movimiento;
+    modalRef.componentInstance.unidades_totales = this.unidades_totales;
 
     modalRef.componentInstance.DetalleS.subscribe((detalleR: DetalleMovimiento) => {
 
-      this.detalle_movimiento[index] = detalleR;
+      // Clonar detalleR para asegurarnos de que no altere referencias
+      const detalleClonado = JSON.parse(JSON.stringify(detalleR));
+
+      // Buscar si ya existe un artículo con el mismo ID y unidad, pero que no sea el mismo artículo editado
+      const articuloExistenteIndex = this.detalle_movimiento.findIndex(
+        (detalle, i) =>
+          detalle.articulo_id === detalleClonado.articulo?.id &&
+          detalle.unidad_id === detalleClonado.unidad_id &&
+          i !== index // Evitar consolidar consigo mismo
+      );
+
+      if (articuloExistenteIndex !== -1) {
+        const articuloDuplicado = this.detalle_movimiento[articuloExistenteIndex];
+
+        // Validar si el costo es diferente
+        if (articuloDuplicado.costo !== detalleClonado.costo) {
+          this.toast.error(
+            'Validación',
+            'El artículo ya existe con un costo diferente. No se puede agregar.'
+          );
+          return;
+        }
+
+        articuloDuplicado.cantidad += detalleClonado.cantidad;
+        articuloDuplicado.total += detalleClonado.total;
+
+        this.detalle_movimiento.splice(index, 1);
+
+        this.toast.success('Artículo actualizado', 'La cantidad ha sido sumada');
+      } else {
+        this.detalle_movimiento[index] = detalleClonado;
+        this.toast.success('Exito', 'Se ha editado el articulo');
+      }
+
       // Calcula los totales
       this.calcularTotales();
       this.isLoadingProcess();
-      this.toast.success('Exito', 'Se ha editado el articulo');
+
     });
   }
 
@@ -630,5 +664,5 @@ export class EditMovimientoComponent implements OnInit, OnDestroy {
       this.movimientoService.isLoadingSubject.next(false);
     }, 50);
   }
- 
+
 }

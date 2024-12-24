@@ -7,6 +7,7 @@ import { SedeDeliverie } from "../modules/configuracion/sede-deliveries/interfac
 import { Sede } from "../modules/configuracion/sedes/interfaces";
 import { SegmentoCliente } from "../modules/configuracion/segmento-clientes/interfaces";
 import { Unidad } from "../modules/configuracion/unidades/interfaces";
+import { Plantilla } from "../modules/plantillas/interfaces";
 import { User } from "../modules/users/interfaces";
 
 export interface ResponseConfiguracion {
@@ -36,6 +37,7 @@ export interface ResponseConfiguracionArticulos {
     categorias: Categoria[];
     proveedores: Proveedor[];
     vendedores: User[];
+    plantillas: Plantilla[];
 }
 
 
@@ -79,6 +81,7 @@ export interface Empresa {
     telefono: number;
     web: string;
     celular: number;
+    sedes?: Sede[];
 }
 
 export interface ResponseAuth {

@@ -58,9 +58,9 @@ export class AuthService implements OnDestroy {
   }
 
   // public methods
-  login(email: string, password: string): Observable<any> {
+  login(email: string, password: string, empresa_id: number, sede_id: number): Observable<any> {
     this.isLoadingSubject.next(true);
-    return this.http.post(URL_SERVICIOS + "/auth/login", { email, password }).pipe(
+    return this.http.post(URL_SERVICIOS + "/auth/login", { email, password, empresa_id, sede_id }).pipe(
       map((auth: any) => {
         const result = this.setAuthFromLocalStorage(auth);
         return result;
@@ -114,7 +114,7 @@ export class AuthService implements OnDestroy {
       map(() => {
         this.isLoadingSubject.next(false);
       }),
-      switchMap(() => this.login(user.email, user.password)),
+      switchMap(() => this.login(user.email, user.password, 0, 0)),
       catchError((err) => {
         console.error('err', err);
         return of(undefined);
@@ -237,7 +237,21 @@ export class AuthService implements OnDestroy {
   estaLogueado(): boolean {
     return this.token && this.token.length > 5 ? true : false;
   }
-  
+
+  verificarUsuario(email: string): Observable<any> {
+    this.isLoadingSubject.next(true);
+    return this.http.post(URL_SERVICIOS + "/auth/verificar", { email }).pipe(
+      map((resp: any) => {
+        return resp;
+      }),
+      // switchMap(() => this.getUserByToken()),
+      catchError((err) => {
+        console.error('err', err);
+        return of(undefined);
+      }),
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
 
   ngOnDestroy() {
     this.unsubscribe.forEach((sb) => sb.unsubscribe());

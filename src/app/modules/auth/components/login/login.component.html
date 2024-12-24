@@ -4,11 +4,11 @@
   <!--begin::Heading-->
   <div class="text-center mb-11">
     <h1 class="text-gray-900 fw-bolder mb-3">
-      Sign In
+      Iniciar sesión
     </h1>
     <!--begin::Subtitle-->
     <div class="text-gray-500 fw-semibold fs-6">
-      Your Social Campaigns
+      K - TUS
     </div>
     <!--end::Subtitle--->
     <!-- <div class="text-gray-500 fw-bold fs-4">
@@ -28,11 +28,11 @@
     <!--begin::Col-->
     <div class="col-md-6">
       <!--begin::Google link--->
-      <a href="#"
+      <!-- <a href="#"
         class="btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100">
         <img alt="Logo" src="./assets/media/svg/brand-logos/google-icon.svg" class="h-15px me-3" />
-        Sign in with Google
-      </a>
+        Iniciar sesión con Google
+      </a> -->
       <!--end::Google link--->
     </div>
     <!--end::Col-->
@@ -40,12 +40,12 @@
     <!--begin::Col-->
     <div class="col-md-6">
       <!--begin::Google link--->
-      <a href="#"
+      <!-- <a href="#"
         class="btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100">
         <img alt="Logo" src="./assets/media/svg/brand-logos/apple-black.svg" class="theme-light-show h-15px me-3" />
         <img alt="Logo" src="./assets/media/svg/brand-logos/apple-black-dark.svg" class="theme-dark-show h-15px me-3" />
-        Sign in with Apple
-      </a>
+        Iniciar sesión con Apple
+      </a> -->
       <!--end::Google link--->
     </div>
     <!--end::Col-->
@@ -54,40 +54,40 @@
 
   <!--begin::Separator-->
   <div class="separator separator-content my-14">
-    <span class="w-125px text-gray-500 fw-semibold fs-7">Or with email</span>
+    <span class="w-125px text-gray-500 fw-semibold fs-7">Ó con email</span>
   </div>
   <!--end::Separator-->
 
   <!-- begin::Alert info-->
-  <ng-container *ngIf="!hasError">
+  <!-- <ng-container *ngIf="!hasError">
     <div class="mb-10 bg-light-info p-8 rounded">
       <div class="text-info">
         Use account <strong>{{ defaultAuth.email }}</strong> and password
         <strong>{{ defaultAuth.password }}</strong> to continue.
       </div>
     </div>
-  </ng-container>
+  </ng-container> -->
   <!-- end::Alert info-->
 
 
   <!-- begin::Alert error-->
-  <ng-container *ngIf="hasError">
+  <ng-container *ngIf="hasError && !bandera">
     <div class="mb-lg-15 alert alert-danger">
       <div class="alert-text font-weight-bold">
-        The login details are incorrect
+        Los datos de inicio de sesión son incorrectos.
       </div>
     </div>
   </ng-container>
   <!-- end::Alert error-->
 
   <!--begin::Form group-->
-  <div class="fv-row mb-8">
+  <div class="fv-row mb-8 g-3">
     <label class="form-label fs-6 fw-bolder text-gray-900">Email</label>
     <input class="form-control bg-transparent" type="email" name="email" formControlName="email" autocomplete="off"
       [ngClass]="{
         'is-invalid': loginForm.controls['email'].invalid,
         'is-valid': loginForm.controls['email'].valid
-      }" />
+      }" (change)="verificarUsuario()" (input)="limpiarEmpresasYSedes()" />
     <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{
         validation: 'required',
         message: 'Email is required',
@@ -112,7 +112,7 @@
   <!--end::Form group-->
 
   <!--begin::Form group-->
-  <div class="fv-row mb-3">
+  <div class="fv-row mb-3 g-3">
 
     <label class="form-label fw-bolder text-gray-900 fs-6 mb-0">Password</label>
 
@@ -138,6 +138,39 @@
       }"></ng-container>
 
   </div>
+
+  <div class="row fv-row my-1 g-3" *ngIf="role_id ===1 && f.email.value !== ''">
+    <div class="col-12">
+      <!--begin::Label-->
+      <label class="fs-6 fw-semibold mb-2">Empresa</label>
+      <!--end::Label-->
+      <select class="form-select fw-bolder" name="emprea_id" data-control="select2"
+        data-placeholder="Seleccione Empresa" placeholder="Seleccione Empresa" formControlName="empresa_id"
+        (change)="verificarEmpresa()">
+        <option [ngValue]="9999999" selected>Seleccione Empresa</option>
+
+        <ng-container *ngFor="let item of empresas">
+          <option [ngValue]="item.id">{{ item.nombre }}</option>
+        </ng-container>
+      </select>
+    </div>
+  </div>
+
+  <div class="row fv-row my-1 g-3" *ngIf="sedes && sedes.length > 0 && f.email.value !== ''">
+    <div class="col-12">
+      <!--begin::Label-->
+      <label class="fs-6 fw-semibold mb-2">Sede</label>
+      <!--end::Label-->
+      <select class="form-select fw-bolder" name="sede_id" data-control="select2" data-placeholder="Seleccione Sede"
+        placeholder="Seleccione Sede" formControlName="sede_id" (change)="verificarSede()">
+        <option [ngValue]="9999999" selected>Seleccione Sede</option>
+
+        <ng-container *ngFor="let item of sedes">
+          <option [ngValue]="item.id">{{ item.nombre }}</option>
+        </ng-container>
+      </select>
+    </div>
+  </div>
   <!--end::Form group-->
 
   <!--begin::Wrapper-->
@@ -145,19 +178,20 @@
     <div></div>
 
     <!--begin::Link-->
-    <a routerLink="/auth/forgot-password" class="link-primary">
-      Forgot Password ?
-    </a>
+    <!-- <a routerLink="/auth/forgot-password" class="link-primary">
+      Olvidó Password ?
+    </a> -->
     <!--end::Link-->
   </div>
   <!--end::Wrapper-->
 
   <!--begin::Action-->
-  <div class="d-grid mb-10">
-    <button type="submit" id="kt_sign_in_submit" class="btn btn-primary" [disabled]="loginForm.invalid">
+  <div class="d-grid mb-10 ">
+    <button type="submit" id="kt_sign_in_submit" class="btn btn-primary"
+      [disabled]="loginForm.invalid || loginForm.get('sede_id')?.value === 9999999 || !bandera">
       <ng-container *ngIf="isLoading$ | async">
         <span class="indicator-progress" [style.display]="'block'">
-          Please wait...
+          Espere por favor...
           <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
         </span>
       </ng-container>
@@ -167,13 +201,13 @@
     </button>
   </div>
 
-  <div class="text-gray-500 text-center fw-semibold fs-6">
-    Not a Member yet?
+  <!-- <div class="text-gray-500 text-center fw-semibold fs-6">
+    ¿Aún no eres miembro?
 
     <a routerLink="/auth/registration" class="link-primary">
-      Sign up
+      Registrarse
     </a>
-  </div>
+  </div> -->
 
   <!--end::Action-->
 </form>
