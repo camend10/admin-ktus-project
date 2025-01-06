@@ -38,15 +38,17 @@ export class SidebarComponent implements OnInit, OnDestroy {
   toggleType: string;
   toggleState: string;
 
-  constructor(private layout: LayoutService) {}
+  constructor(private layout: LayoutService) { }
 
   ngOnInit(): void {
     const subscr = this.layout.layoutConfigSubject
       .asObservable()
       .subscribe((config: ILayout) => {
         this.updateProps(config);
+
       });
     this.unsubscribe.push(subscr);
+
   }
 
   updateProps(config: ILayout) {
@@ -69,6 +71,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         'app.sidebar.default.minimize.desktop.default',
         config
       ) as boolean;
+
       if (this.appSidebarDefaultMinimizeDesktopDefault) {
         document.body.setAttribute('data-kt-app-sidebar-minimize', 'on');
       }
@@ -196,6 +199,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
       this.appSidebarDefaultFixedDesktop.toString()
     );
   }
+
+  // Getter para determinar si está minimizado
+  get isSidebarMinimized(): boolean {    
+    return this.toggleEnabled;
+  }
+
 
   ngOnDestroy() {
     this.unsubscribe.forEach((sb) => sb.unsubscribe());

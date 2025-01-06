@@ -1,7 +1,8 @@
 <!--begin::Logo image-->
 <a routerLink="/dashboard">
   <ng-container *ngIf="currentLayoutType === 'dark-sidebar'">
-    <img alt="Logo" src="./assets/media/logos/default-dark.svg" class="h-25px app-sidebar-logo-default" />
+    <img alt="Logo" src="./assets/media/logos/default.svg" class="h-25px app-sidebar-logo-default" />
+    <!-- <img alt="Logo" src="./assets/media/logos/default-dark.svg" class="h-25px app-sidebar-logo-default" /> -->
   </ng-container>
   <ng-container *ngIf="currentLayoutType !== 'dark-sidebar'">
     <img alt="Logo" src="./assets/media/logos/default.svg" class="h-25px app-sidebar-logo-default theme-light-show" />
@@ -20,7 +21,7 @@
     class="app-sidebar-toggle btn btn-icon btn-shadow btn-sm btn-color-muted btn-active-color-primary body-bg h-30px w-30px position-absolute top-50 start-100 translate-middle rotate"
     [ngClass]="toggleButtonClass" data-kt-toggle="true" [attr.data-kt-toggle-state]="toggleState"
     data-kt-toggle-target="body" [attr.data-kt-toggle-name]="toggleAttr">
-    <app-keenicon name="double-left" class="fs-2 rotate-180"></app-keenicon>
+    <app-keenicon name="double-left" class="fs-2 rotate-180 text-dark"></app-keenicon>
   </div>
   <!--end::Sidebar toggle-->
 </ng-container>

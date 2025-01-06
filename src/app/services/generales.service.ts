@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { URL_SERVICIOS } from '../config/config';
 import { Observable, BehaviorSubject, finalize, map } from 'rxjs';
-import { Departamento, Genero, Municipio, TipoDoc, Role, Empresa, ResponseConfiguracion, ResponseConfiguracionArticulos } from '../interfaces';
+import { Departamento, Genero, Municipio, TipoDoc, Role, Empresa, ResponseConfiguracion, ResponseConfiguracionArticulos, ResponseConfiguracionConversion } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -124,6 +124,20 @@ export class GeneralesService {
     };
 
     return this.http.post<ResponseConfiguracionArticulos>(url, data)
+      .pipe(
+        finalize(() => this.isLoadingSubject.next(false))
+      );
+  }
+
+  cargarConfiguracionesConversiones(empresa_id: number): Observable<ResponseConfiguracionConversion> {
+    this.isLoadingSubject.next(true);
+    let url = URL_SERVICIOS + '/generales/configuraciones/conversiones';
+
+    let data = {
+      empresa_id: empresa_id
+    };
+
+    return this.http.post<ResponseConfiguracionConversion>(url, data)
       .pipe(
         finalize(() => this.isLoadingSubject.next(false))
       );

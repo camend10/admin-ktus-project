@@ -90,3 +90,10 @@ export interface ResponseAuth {
     expires_in: number;
     user: User;
 }
+
+
+export interface ResponseConfiguracionConversion {
+    unidades: Unidad[];
+    bodegas: Bodega[];
+    empresas: Empresa[];
+}

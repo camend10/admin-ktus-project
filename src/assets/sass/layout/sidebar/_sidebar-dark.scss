@@ -18,7 +18,8 @@
 
         .btn-custom {
             @include button-custom-variant(
-                $color:#B5B5C3, 
+                // $color:#B5B5C3, 
+                $color:#000000, 
                 $icon-color: #B5B5C3, 
                 $border-color: null, 
                 $bg-color: rgba(63, 66, 84, 0.35), 
@@ -36,10 +37,17 @@
                 }
 
                 @include menu-link-default-state( 
-                    $title-color: $gray-700-dark, 
-                    $icon-color:  $gray-400-dark, 
-                    $bullet-color:$gray-400-dark,  
-                    $arrow-color: $gray-400-dark,  
+                    // $title-color: $gray-700-dark, 
+                    // $icon-color:  $gray-400-dark, 
+                    // $bullet-color:$gray-400-dark,  
+                    // $arrow-color: $gray-400-dark,  
+                    // $bg-color: null,
+                    // $all-links: true 
+
+                    $title-color: #000000, 
+                    $icon-color:  #000000, 
+                    $bullet-color: #000000,  
+                    $arrow-color: #000000,  
                     $bg-color: null,
                     $all-links: true 
                 );
@@ -48,7 +56,8 @@
                     $title-color: $gray-900-dark,
                     $icon-color: $gray-900-dark, 
                     $bullet-color: $gray-900-dark,
-                    $arrow-color: $gray-900-dark, 
+                    // $arrow-color: $gray-900-dark, 
+                    $arrow-color: #000000, 
                     $bg-color: null,
                     $all-links: true
                 );
@@ -57,17 +66,20 @@
                     $title-color: $gray-900-dark,
                     $icon-color: $gray-900-dark, 
                     $bullet-color: $gray-900-dark,
-                    $arrow-color: $gray-900-dark,
+                    // $arrow-color: $gray-900-dark,
+                    $arrow-color: #000000,
                     $bg-color: null,
                     $all-links: true
                 );
                 
                 @include menu-link-hover-state( 
+                    // $title-color: $gray-900-dark,
                     $title-color: $gray-900-dark,
                     $icon-color: $gray-900-dark, 
                     $bullet-color: $gray-900-dark,
                     $arrow-color: $gray-900-dark,
-                    $bg-color: null,
+                    // $bg-color: null,
+                    $bg-color:  rgba(0, 0, 0, 0.2),
                     $all-links: true
                 );
                 

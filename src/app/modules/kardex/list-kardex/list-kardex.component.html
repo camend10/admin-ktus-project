@@ -1,0 +1,242 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
+
+<div class="card">
+    <div class="card-body pt-0">
+        <div class="row">
+
+            <div class="col-2">
+                <!--begin::Select2-->
+                <select class="form-select" name="bodega_id" placeholder="Seleccione bodega" [(ngModel)]="bodega_id">
+                    <option [ngValue]="9999999" selected>Bodegas</option>
+
+                    <ng-container *ngFor="let item of bodegas">
+                        <option [value]="item.id">{{ item.nombre }}</option>
+                    </ng-container>
+                </select>
+                <!--end::Select2-->
+                <!--begin::Description-->
+                <div class="text-muted fs-7">Bodegas.</div>
+                <!--end::Description-->
+            </div>
+
+            <div class="col-4">
+                <!--begin::Search-->
+                <div class="d-flex align-items-center position-relative">
+                    <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                    <input type="text" data-kt-customer-table-filter="search" [(ngModel)]="articulo" name="articulo"
+                        class="form-control w-400px ps-12" placeholder="Articulo" (keyup.enter)="listar()">
+                </div>
+                <!--end::Search-->
+                <!--begin::Description-->
+                <div class="text-muted fs-7">Articulo</div>
+                <!--end::Description-->
+            </div>
+
+            <div class="col-2">
+                <select class="form-select fw-bolder" name="year" placeholder="Filtrar por Año" [(ngModel)]="year">
+                    <option [ngValue]="9999999" selected>Años</option>
+                    <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+                </select>
+                <small class="form-text text-muted"><b>Filtrar</b> por Año</small>
+            </div>
+
+            <div class="col-2">
+                <select class="form-select fw-bolder" name="month" placeholder="Filtrar por Mes" [(ngModel)]="month">
+                    <option [ngValue]="9999999" selected>Meses</option>
+                    <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
+                </select>
+                <small class="form-text text-muted"><b>Filtrar</b> por Mes</small>
+            </div>
+
+            <div class="col-2 ">
+                <button (click)="listar()" class="btn btn-primary btn-icon me-2" placement="top" ngbTooltip="Buscar">
+                    <i class="ki-duotone ki-magnifier fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </button>
+
+                <button (click)="reset()" class="btn btn-dark btn-icon me-2" placement="top" ngbTooltip="Resetear">
+                    <i class="ki-duotone ki-arrows-circle fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </button>
+
+                <button class="btn btn-success btn-icon me-2" placement="top-start" ngbTooltip="Exportar Kardex"
+                    (click)="exportKardex()">
+                    <i class="ki-duotone ki-folder-down fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </button>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <ng-container *ngIf="kardexs && kardexs.length > 0; else noData">
+                <ng-container *ngFor="let item of kardexs; let i=index;">
+                    <div class="col-12 py-5">
+                        <div id="kt_customers_table_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
+                            <div id="" class="table-responsive">
+                                <table class="py-2">
+                                    <tr><b>ARTICULO: {{ item.nombre }}</b></tr>
+                                    <tr><b>CODIGO: {{ item.sku }}</b></tr>
+                                    <tr><b>CATEGORIA: {{ item.categoria }}</b></tr>
+                                </table>
+                                <table>
+
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="1" colspan="2"></th>
+                                            <th colspan="3" class="entrada">Entrada</th>
+                                            <th colspan="3" class="salida">Salida</th>
+                                            <th colspan="3" class="existencias">Existencias</th>
+                                        </tr>
+                                        <tr>
+                                            <th rowspan="2">Fecha</th>
+                                            <th rowspan="2">Detalle</th>
+                                            <th colspan="9" class="subheader">{{ item.unidad_first.nombre }}</th>
+                                            <!-- <th colspan="3" class="subheader">UNIDAD</th>
+                                            <th colspan="3" class="subheader">UNIDAD</th> -->
+                                        </tr>
+                                        <tr>
+                                            <th>Cantidad</th>
+                                            <th>V/Unitario</th>
+                                            <th>V/Total</th>
+                                            <th>Cantidad</th>
+                                            <th>V/Unitario</th>
+                                            <th>V/Total</th>
+                                            <th>Cantidad</th>
+                                            <th>V/Unitario</th>
+                                            <th>V/Total</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <ng-container *ngFor="let mov_uni of item.movimiento_unidades">
+                                            <ng-container *ngIf="mov_uni.unidad_id === item.unidad_first.id">
+                                                <tr *ngFor="let movimiento of mov_uni.movimientos">
+                                                    <td>{{ movimiento.fecha }}</td>
+                                                    <td>{{ movimiento.detalle }}</td>
+
+                                                    <ng-container *ngIf="movimiento.ingreso">
+                                                        <td>{{ movimiento.ingreso.cantidad }}</td>
+                                                        <td>$ {{ movimiento.ingreso.precio |
+                                                            number:'1.2-2' }}</td>
+                                                        <td>$ {{ movimiento.ingreso.total |
+                                                            number:'1.2-2' }}</td>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="!movimiento.ingreso">
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </ng-container>
+
+                                                    <ng-container *ngIf="movimiento.salida">
+                                                        <td>{{ movimiento.salida.cantidad }}</td>
+                                                        <td>$ {{ movimiento.salida.precio |
+                                                            number:'1.2-2' }}</td>
+                                                        <td>$ {{ movimiento.salida.total |
+                                                            number:'1.2-2' }}</td>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="!movimiento.salida">
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </ng-container>
+
+                                                    <td>{{ movimiento.existencia.cantidad }}</td>
+                                                    <td>$ {{ movimiento.existencia.precio |
+                                                        number:'1.2-2' }}</td>
+                                                    <td>$ {{ movimiento.existencia.total |
+                                                        number:'1.2-2' }}</td>
+                                                </tr>
+                                            </ng-container>
+                                        </ng-container>
+
+                                        <ng-container *ngFor="let mov_uni of item.movimiento_unidades">
+                                            <ng-container *ngIf="mov_uni.unidad_id !== item.unidad_first.id">
+                                                <tr class="new-row">
+                                                    <td colspan="2"></td>
+                                                    <td colspan="9"><b>{{ getNombreUnidad(item,mov_uni.unidad_id) }}</b>
+                                                    </td>
+                                                    <!-- <td colspan="3"><b>CAJA</b></td>
+                                                    <td colspan="3"><b>CAJA</b></td> -->
+                                                </tr>
+                                                <tr class="new-row">
+                                                    <td><b>Fecha</b></td>
+                                                    <td><b>Detalle</b></td>
+                                                    <td><b>Cantidad</b></td>
+                                                    <td><b>V/Unitario</b></td>
+                                                    <td><b>V/Total</b></td>
+                                                    <td><b>Cantidad</b></td>
+                                                    <td><b>V/Unitario</b></td>
+                                                    <td><b>V/Total</b></td>
+                                                    <td><b>Cantidad</b></td>
+                                                    <td><b>V/Unitario</b></td>
+                                                    <td><b>V/Total</b></td>
+                                                </tr>
+
+                                                <tr *ngFor="let movimiento of mov_uni.movimientos">
+                                                    <td>{{ movimiento.fecha }}</td>
+                                                    <td>{{ movimiento.detalle }}</td>
+
+                                                    <ng-container *ngIf="movimiento.ingreso">
+                                                        <td>{{ movimiento.ingreso.cantidad }}</td>
+                                                        <td>$ {{ movimiento.ingreso.precio |
+                                                            number:'1.2-2' }}</td>
+                                                        <td>$ {{ movimiento.ingreso.total |
+                                                            number:'1.2-2' }}</td>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="!movimiento.ingreso">
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </ng-container>
+
+                                                    <ng-container *ngIf="movimiento.salida">
+                                                        <td>{{ movimiento.salida.cantidad }}</td>
+                                                        <td>$ {{ movimiento.salida.precio |
+                                                            number:'1.2-2' }}</td>
+                                                        <td>$ {{ movimiento.salida.total |
+                                                            number:'1.2-2' }}</td>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="!movimiento.salida">
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </ng-container>
+
+                                                    <td>{{ movimiento.existencia.cantidad }}</td>
+                                                    <td>$ {{ movimiento.existencia.precio |
+                                                        number:'1.2-2' }}</td>
+                                                    <td>$ {{ movimiento.existencia.total |
+                                                        number:'1.2-2' }}</td>
+                                                </tr>
+                                            </ng-container>
+                                        </ng-container>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-container>
+
+            <!-- Plantilla para cuando no hay datos -->
+            <ng-template #noData>
+                <div class="col-12 text-center py-5">
+                    <h4>No hay datos disponibles para mostrar.</h4>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

@@ -86,11 +86,19 @@ $app-sidebar-light-header-menu-link-bg-color-active: #F7F8FB;
 $app-sidebar-light-header-menu-link-bg-color-active-dark: $gray-100-dark;
 
 // Sidebar dark
-$app-sidebar-dark-bg-color: $coal-500;
-$app-sidebar-dark-separator-color: $light-light-dark;
+// $app-sidebar-dark-bg-color: $coal-500;
+// $app-sidebar-dark-separator-color: $light-light-dark;
+// $app-sidebar-dark-scrollbar-color-hover: lighten($app-sidebar-dark-separator-color, 2%);
+// $app-sidebar-dark-menu-heading-color: $gray-500-dark;
+// $app-sidebar-dark-menu-sub-link-color: $gray-600-dark;;
+// $app-sidebar-dark-menu-link-bg-color-active: #1C1C21;
+
+$app-sidebar-dark-bg-color: #ffffff;
+// $app-sidebar-dark-bg-color: #9757a1;
+$app-sidebar-dark-separator-color: #1C1C21;
 $app-sidebar-dark-scrollbar-color-hover: lighten($app-sidebar-dark-separator-color, 2%);
-$app-sidebar-dark-menu-heading-color: $gray-500-dark;
-$app-sidebar-dark-menu-sub-link-color: $gray-600-dark;;
+$app-sidebar-dark-menu-heading-color: #1C1C21;
+$app-sidebar-dark-menu-sub-link-color: #1C1C21;
 $app-sidebar-dark-menu-link-bg-color-active: #1C1C21;
 
 // Aside base

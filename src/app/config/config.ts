@@ -391,6 +391,36 @@ export const SIDEBAR: any = [
             },
         ]
     },
+    {
+        'name': 'Conversiones',
+        'permisos': [
+            {
+                name: 'Registrar',
+                permiso: 'registrar_conversion',
+            },
+            {
+                name: 'Editar',
+                permiso: 'editar_conversion',
+            },
+            {
+                name: 'Eliminar',
+                permiso: 'eliminar_conversion',
+            },
+            {
+                name: 'Ver',
+                permiso: 'ver_conversion',
+            },
+        ]
+    },
+    {
+        'name': 'Kardex',
+        'permisos': [           
+            {
+                name: 'Ver',
+                permiso: 'ver_kardex',
+            },
+        ]
+    },
     // {
     //     'name': 'Caja',
     //     'permisos': [

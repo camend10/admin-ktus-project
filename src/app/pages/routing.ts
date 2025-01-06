@@ -96,6 +96,16 @@ const Routing: Routes = [
     path: 'plantillas',
     canActivate: [verificaTokenGuard],
     loadChildren: () => import('../modules/plantillas/plantillas.module').then((m) => m.PlantillasModule),
+  },
+  {
+    path: 'conversiones',
+    canActivate: [verificaTokenGuard],
+    loadChildren: () => import('../modules/conversiones/conversiones.module').then((m) => m.ConversionesModule),
+  },  
+  {
+    path: 'kardex',
+    canActivate: [verificaTokenGuard],
+    loadChildren: () => import('../modules/kardex/kardex.module').then((m) => m.KardexModule),
   },  
   {
     path: '',

@@ -198,8 +198,12 @@
 	&.hover:not(.here) > .menu-link:not(.disabled):not(.active):not(.here),
 	#{$sel}.menu-link:hover:not(.disabled):not(.active):not(.here) {
 		transition: $transition-link;
-
-		@include menu-link-theme($title-color, $icon-color, $bullet-color, $arrow-color, $bg-color);
+		// $title-color : "#1e067e";
+		// $bg-color: "#0E0EE5";
+		// $bullet-color: "#0E0EE5";
+		// $icon-color: "#0E0EE5";
+		// $arrow-color: "#0E0EE5";
+		@include menu-link-theme("#1e067e", $icon-color, $bullet-color, $arrow-color, $bg-color);
 	}
 }
 
@@ -224,7 +228,7 @@
 	&.show > .menu-link {
 		transition: $transition-link;
 
-		@include menu-link-theme($title-color, $icon-color, $bullet-color, $arrow-color, $bg-color);
+		@include menu-link-theme("#1e067e", $icon-color, $bullet-color, $arrow-color, "#1e067e");
 	}
 }
 
@@ -233,7 +237,7 @@
 	&.here > .menu-link {
 		transition: $transition-link;
 
-		@include menu-link-theme($title-color, $icon-color, $bullet-color, $arrow-color, $bg-color);
+		@include menu-link-theme("#1e067e", $icon-color, $bullet-color, $arrow-color, $bg-color);
 	}
 }
 
