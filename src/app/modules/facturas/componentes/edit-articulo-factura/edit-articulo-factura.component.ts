@@ -101,9 +101,10 @@ export class EditArticuloFacturaComponent implements OnInit {
     this.monto_descuento = this.detalle.descuento;
 
     this.bodegas_articulos = this.articulo.bodegas_articulos?.filter(
-      (bodega: BodegaArticulo) => bodega.unidad.id === this.unidad_id_articulo
+      (bodega: BodegaArticulo) => bodega.unidad.id === this.unidad_id_articulo &&
+        Number(bodega.bodega.sede_id) === Number(this.user.sede_id)
     ) ?? [];
-    this.exist_bodegas = this.bodegas_articulos.filter((bod_art: BodegaArticulo) => bod_art.bodega.sede_id === this.user.sede_id);
+    this.exist_bodegas = this.bodegas_articulos.filter((bod_art: BodegaArticulo) => Number(bod_art.bodega.sede_id) === Number(this.user.sede_id));
 
     setTimeout(() => {
       this.initKeyupDescuento();
@@ -278,13 +279,14 @@ export class EditArticuloFacturaComponent implements OnInit {
 
     if (this.unidad_id_articulo !== 9999999) {
       this.bodegas_articulos = this.articulo.bodegas_articulos?.filter(
-        (bodega: BodegaArticulo) => bodega.unidad.id === this.unidad_id_articulo
+        (bodega: BodegaArticulo) => bodega.unidad.id === this.unidad_id_articulo &&
+          Number(bodega.bodega.sede_id) === Number(this.user.sede_id)
       ) ?? [];
     } else {
       this.bodegas_articulos = [];
     }
 
-    this.exist_bodegas = this.bodegas_articulos.filter((bod_art: BodegaArticulo) => bod_art.bodega.sede_id === this.user.sede_id);
+    this.exist_bodegas = this.bodegas_articulos.filter((bod_art: BodegaArticulo) => Number(bod_art.bodega.sede_id) === Number(this.user.sede_id));
     const wallets = this.articulo.articulos_wallets;
 
     setTimeout(() => {

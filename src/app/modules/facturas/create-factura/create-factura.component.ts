@@ -495,16 +495,22 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
 
     if (this.unidad_id_articulo !== 9999999) {
       this.bodegas_articulos = this.articulo.bodegas_articulos?.filter(
-        (bodega: BodegaArticulo) => bodega.unidad.id === this.unidad_id_articulo
+        (bodega: BodegaArticulo) => bodega.unidad.id === this.unidad_id_articulo &&
+          Number(bodega.bodega.sede_id) === Number(this.user.sede_id)
       ) ?? [];
+
 
       if (this.bodegas_articulos.length > 0) {
         this.bodega_id_articulo = this.bodegas_articulos[0].bodega.id;
+      } else {
+        this.toast.error('Validación', 'El artículo no tiene existencia en esta bodega.');
+        return;
       }
+
     } else {
       this.bodegas_articulos = [];
-
-      this.toast.error('Validación', 'El artículo no tiene existencia en esta bodega.');
+      this.toast.error('Validación', 'El artículo no tiene existencia en esta sede.');
+      return;
     }
 
     if (this.cliente.id === 0) {
@@ -522,7 +528,8 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
     }
 
 
-    this.exist_bodegas = this.bodegas_articulos.filter((bod_art: BodegaArticulo) => bod_art.bodega.sede_id === this.user.sede_id);
+    this.exist_bodegas = this.bodegas_articulos.filter((bod_art: BodegaArticulo) => Number(bod_art.bodega.sede_id) === Number(this.user.sede_id));
+
     const wallets = this.articulo.articulos_wallets;
 
     if (!Array.isArray(wallets)) {
@@ -1129,7 +1136,7 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
 
     const today = new Date();
     this.fecha_deliverie = today.toISOString().split('T')[0];
-  
+
     this.isDomicilio = false;
   }
 
@@ -1207,7 +1214,7 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
     this.metodos_pagos_seleccionado = null;
     this.file_name = null;
     this.imagen_previzualizada = null;
-    
+
     this.vueltos = 0;
   }
 
@@ -1406,9 +1413,9 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
         this.total_costo_factura = 0;
         this.subtotal_factura = 0;
         this.total_descuento_factura = 0;
-      
+
         this.descripcion = '';
-        this. deuda = 0;
+        this.deuda = 0;
         this.pago_out = 0;
       }
     });

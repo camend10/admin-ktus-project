@@ -594,12 +594,17 @@ export class EditFacturaComponent implements OnInit, OnDestroy {
 
     if (this.unidad_id_articulo !== 9999999) {
       this.bodegas_articulos = this.articulo.bodegas_articulos?.filter(
-        (bodega: BodegaArticulo) => bodega.unidad.id === this.unidad_id_articulo
+        (bodega: BodegaArticulo) => bodega.unidad.id === this.unidad_id_articulo &&
+          Number(bodega.bodega.sede_id) === Number(this.user.sede_id)
       ) ?? [];
 
       if (this.bodegas_articulos.length > 0) {
         this.bodega_id_articulo = this.bodegas_articulos[0].bodega.id;
+      } else {
+        this.toast.error('Validación', 'El artículo no tiene existencia en esta bodega.');
+        return;
       }
+
     } else {
       this.bodegas_articulos = [];
       this.toast.error('Validación', 'El artículo no tiene existencia en esta bodega.');
@@ -620,7 +625,7 @@ export class EditFacturaComponent implements OnInit, OnDestroy {
     }
 
 
-    this.exist_bodegas = this.bodegas_articulos.filter((bod_art: BodegaArticulo) => bod_art.bodega.sede_id === this.user.sede_id);
+    this.exist_bodegas = this.bodegas_articulos.filter((bod_art: BodegaArticulo) => Number(bod_art.bodega.sede_id) === Number(this.user.sede_id));
     const wallets = this.articulo.articulos_wallets;
 
     if (!Array.isArray(wallets)) {

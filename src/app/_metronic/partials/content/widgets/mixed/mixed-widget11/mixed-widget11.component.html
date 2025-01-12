@@ -1,40 +1,42 @@
-<div
-  class="
+<div class="
     card-body
     p-0
     d-flex
     justify-content-between
     flex-column
     overflow-hidden
-  "
->
+  ">
   <div class="d-flex flex-stack flex-wrap flex-grow-1 px-9 pt-9 pb-3">
     <div class="me-2">
-      <span class="fw-bolder text-gray-800 d-block fs-3">Sales</span>
+      <span class="fw-bolder text-gray-800 d-block fs-3">Ventas por año</span>
 
-      <span class="text-gray-500 fw-bold">Oct 8 - Oct 26 2021</span>
+      <!-- <span class="text-gray-500 fw-bold">Oct 8 - Oct 26 2021</span> -->
+
+      <div class="px-3">
+        <select class="form-select fw-bolder" name="year" placeholder="Filtrar por Año" 
+        [(ngModel)]="year"
+        (change)="ventasXMesDelYear()"
+        >
+          <option [ngValue]="9999999" selected>Años</option>
+          <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+        </select>
+        <!-- <small class="form-text text-muted"><b>Filtrar</b> por Año</small> -->
+      </div>
+
     </div>
 
     <div class="fw-bolder fs-3" [ngClass]="'fs-3 text-' + chartColor">
-      $15,300
+     $ {{ total_venta_year_actual | number:'1.2-2'}}
     </div>
   </div>
 
-  <div #chartRef class="mixed-widget-10-chart" [style.height]="chartHeight">
-    <apx-chart
-      [series]="chartOptions.series"
-      [chart]="chartOptions.chart"
-      [xaxis]="chartOptions.xaxis"
-      [yaxis]="chartOptions.yaxis"
-      [dataLabels]="chartOptions.dataLabels"
-      [stroke]="chartOptions.stroke"
-      [legend]="chartOptions.legend"
-      [fill]="chartOptions.fill"
-      [states]="chartOptions.states"
-      [tooltip]="chartOptions.tooltip"
-      [colors]="chartOptions.colors"
-      [markers]="chartOptions.markers"
-      [plotOptions]="chartOptions.plotOptions"
-    ></apx-chart>
-  </div>
+  <ng-container *ngIf="ventas_x_mes_del_year">
+    <div #chartRef class="mixed-widget-10-chart" [style.height]="chartHeight">
+      <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis"
+        [yaxis]="chartOptions.yaxis" [dataLabels]="chartOptions.dataLabels" [stroke]="chartOptions.stroke"
+        [legend]="chartOptions.legend" [fill]="chartOptions.fill" [states]="chartOptions.states"
+        [tooltip]="chartOptions.tooltip" [colors]="chartOptions.colors" [markers]="chartOptions.markers"
+        [plotOptions]="chartOptions.plotOptions"></apx-chart>
+    </div>
+  </ng-container>
 </div>
