@@ -110,6 +110,9 @@ export class CreateSolicitudComponent implements OnInit, OnDestroy {
     this.isLoading$ = this.solicitudService.isLoading$;
     this.user = this.authService.user;
 
+    this.user.name = this.capitalize(this.user.name);
+    this.user.nombre_sede = this.capitalize((this.user.nombre_sede || '').toString());
+
     this.cargarConfiguraciones();
 
     const today = new Date();
@@ -147,8 +150,36 @@ export class CreateSolicitudComponent implements OnInit, OnDestroy {
         this.proveedores = response.proveedores;
         this.sedes = response.sedes;
         this.plantillas = response.plantillas;
+
+        this.unidades = this.unidades.map(unidad => {
+          return { ...unidad, nombre: this.capitalize(unidad.nombre) };
+        });
+
+        this.sedes = this.sedes.map(sede => {
+          return { ...sede, nombre: this.capitalize(sede.nombre) };
+        });
+
+        this.bodegas = this.bodegas.map(bodega => {
+          return { ...bodega, nombre: this.capitalize(bodega.nombre) };
+        });
+
+        this.proveedores = this.proveedores.map(proveedor => {
+          return {
+            ...proveedor, nombre: this.capitalize(proveedor.nombres),
+            apellidos: proveedor.apellidos === null ? this.capitalize(proveedor.apellidos) : ''
+          };
+        });
         this.isLoadingProcess();
       });
+  }
+
+  capitalize(value: string): string {
+    if (!value) return '';
+    return value
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   listarArticulos() {
@@ -508,7 +539,7 @@ export class CreateSolicitudComponent implements OnInit, OnDestroy {
 
   changePlantilla() {
     if (this.plantilla_id !== 9999999) {
-      const plantilla = this.plantillas.find((item) => item.id === this.plantilla_id);      
+      const plantilla = this.plantillas.find((item) => item.id === this.plantilla_id);
       if (plantilla) {
         this.detalle_movimiento = [];
         plantilla.detalles_plantillas?.forEach((deta: DetallePlantilla) => {

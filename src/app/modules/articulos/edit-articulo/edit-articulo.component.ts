@@ -24,6 +24,7 @@ import { DeleteWalletPriceComponent } from '../wallet/delete-wallet-price/delete
 import { DeleteBodegaArticuloComponent } from '../bodega/delete-bodega-articulo/delete-bodega-articulo.component';
 import { WalletService } from '../service/wallet.service';
 import { EditWalletPriceComponent } from '../wallet/edit-wallet-price/edit-wallet-price.component';
+import { isPermission } from 'src/app/config/config';
 
 @Component({
   selector: 'app-edit-articulo',
@@ -199,10 +200,10 @@ export class EditArticuloComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    if (!this.cantidad_bodegas) {
-      this.toast.error('Validación', 'Necesitas colocar una cantidad');
-      return false;
-    }
+    // if (!this.cantidad_bodegas) {
+    //   this.toast.error('Validación', 'Necesitas colocar una cantidad');
+    //   return false;
+    // }
 
     let unidad_seleccionada = this.unidades.find((unidad: Unidad) => unidad.id == this.unidad_id_bodegas);
     let bodega_seleccionada = this.bodegas.find((bodega: Bodega) => bodega.id == this.bodega_id_bodegas);
@@ -441,7 +442,43 @@ export class EditArticuloComponent implements OnInit, OnDestroy {
         this.ivas = response.ivas;
         this.categorias = response.categorias;
         this.proveedores = response.proveedores;
+
+        this.bodegas = this.bodegas.map(bodega => {
+          return { ...bodega, nombre: this.capitalize(bodega.nombre) };
+        });
+
+        this.categorias = this.categorias.map(categoria => {
+          return { ...categoria, nombre: this.capitalize(categoria.nombre) };
+        });
+
+        this.proveedores = this.proveedores.map(proveedor => {
+          return {
+            ...proveedor, nombre: this.capitalize(proveedor.nombres),
+            apellidos: proveedor.apellidos === null ? this.capitalize(proveedor.apellidos) : ''
+          };
+        });
+
+        this.segmentos_clientes = this.segmentos_clientes.map(segmento => {
+          return { ...segmento, nombre: this.capitalize(segmento.nombre) };
+        });
+
+        this.unidades = this.unidades.map(unidad => {
+          return { ...unidad, nombre: this.capitalize(unidad.nombre) };
+        });
+
+        this.sedes = this.sedes.map(sede => {
+          return { ...sede, nombre: this.capitalize(sede.nombre) };
+        });
       });
+  }
+
+  capitalize(value: string): string {
+    if (!value) return '';
+    return value
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   closeSidebar() {
@@ -518,7 +555,15 @@ export class EditArticuloComponent implements OnInit, OnDestroy {
 
   onImpuestoChange() {
     if (this.articulo.impuesto === 1) {
-      this.articulo.iva_id = 1; // Establecer automáticamente el IVA a 1
+      // Encuentra el IVA con porcentaje = 0
+      const ivaCero = this.ivas.find((iva) => iva.porcentaje === 0);
+      if (ivaCero) {
+        this.articulo.iva_id = ivaCero.id; // Asigna el id del IVA encontrado
+      } else {
+        this.articulo.iva_id = 9999999; // O maneja el caso cuando no se encuentra
+      }
+    } else {
+      this.articulo.iva_id = 9999999; // O maneja el caso cuando no se encuentra
     }
   }
 
@@ -607,4 +652,25 @@ export class EditArticuloComponent implements OnInit, OnDestroy {
       this.articulo.sku = '';
     }
   }
+
+  validarDescuentos() {
+    const { descuento_minimo, descuento_maximo } = this.articulo;
+
+    if (descuento_minimo > descuento_maximo) {
+      this.toast.error('Validación', 'El descuento mínimo no puede ser mayor que el descuento máximo.');
+      this.articulo.descuento_minimo = 0;
+      this.articulo.descuento_maximo = 0;
+      return false;
+    } else if (descuento_minimo > 100 || descuento_maximo > 100) {
+      this.toast.error('Validación', 'Los descuentos deben ser porcentuales (máximo 100).');
+      this.articulo.descuento_minimo = 0;
+      this.articulo.descuento_maximo = 0;
+      return false;
+    }
+  }
+
+  isPermission(permission: string) {
+    return isPermission(permission);
+  }
+
 }

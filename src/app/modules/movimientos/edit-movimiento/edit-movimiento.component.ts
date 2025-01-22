@@ -112,6 +112,9 @@ export class EditMovimientoComponent implements OnInit, OnDestroy {
     // this.tipo_movimiento = 1;
     this.isLoading$ = this.movimientoService.isLoading$;
     this.user = this.authService.user;
+    
+    this.user.name = this.capitalize(this.user.name);
+    this.user.nombre_sede = this.capitalize((this.user.nombre_sede || '').toString());
 
     this.cargarConfiguraciones();
 
@@ -189,8 +192,32 @@ export class EditMovimientoComponent implements OnInit, OnDestroy {
         this.bodegas = response.bodegas;
         this.proveedores = response.proveedores;
         this.sedes = response.sedes;
+
+        this.sedes = this.sedes.map(sede => {
+          return { ...sede, nombre: this.capitalize(sede.nombre) };
+        });
+
+        this.bodegas = this.bodegas.map(bodega => {
+          return { ...bodega, nombre: this.capitalize(bodega.nombre) };
+        });
+
+        this.proveedores = this.proveedores.map(proveedor => {
+          return {
+            ...proveedor, nombre: this.capitalize(proveedor.nombres),
+            apellidos: proveedor.apellidos === null ? this.capitalize(proveedor.apellidos) : ''
+          };
+        });
         this.isLoadingProcess();
       });
+  }
+
+  capitalize(value: string): string {
+    if (!value) return '';
+    return value
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   listarArticulos() {

@@ -199,6 +199,8 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
     this.cliente.nombres = 'Cliente General';
     this.buscarCliente();
 
+
+
     // this.buscar_articulo = 'carne';
     // this.buscarArticulos();
 

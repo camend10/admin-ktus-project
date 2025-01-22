@@ -1,3 +1,4 @@
+import { Departamento, Genero, Municipio, TipoDoc } from "src/app/interfaces";
 import { Sede } from "../../configuracion/sedes/interfaces";
 
 export interface ResponseUser {
@@ -38,6 +39,10 @@ export interface User {
     nombre_sede?: String;
     sigla?: string;
     empresa?: string;
+    departamento?: Departamento;
+    municipio?: Municipio;
+    tipodocumento?: TipoDoc;
+    genero?: Genero;
     password?: string;
     sedesFormatted?: string; // Nueva propiedad opcional
 }

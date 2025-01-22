@@ -1,12 +1,14 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+  <div class="spinner-border text-primary" role="status"></div>
+  <span class="loading-text">Cargando...</span>
+</div>
+
 <div class="card mb-5 mb-xl-10">
-  <div
-    class="card-header border-0 cursor-pointer"
-    role="button"
-    data-bs-toggle="collapse"
-    data-bs-target="#kt_account_signin_method"
-  >
+  <div class="card-header border-0 cursor-pointer" role="button" data-bs-toggle="collapse"
+    data-bs-target="#kt_account_signin_method">
     <div class="card-title m-0">
-      <h3 class="fw-bolder m-0">Sign-in Method</h3>
+      <h3 class="fw-bolder m-0">Método de inicio de sesión</h3>
     </div>
   </div>
   <div id="kt_account_signin_method" class="collapse show">
@@ -14,70 +16,44 @@
       <ng-container *ngIf="!showChangeEmailForm">
         <div class="d-flex flex-wrap align-items-center">
           <div id="kt_signin_email" class="false">
-            <div class="fs-6 fw-bolder mb-1">Email Address</div>
-            <div class="fw-bold text-gray-600">support&#64;keenthemes.com</div>
+            <div class="fs-6 fw-bolder mb-1">Email</div>
+            <div class="fw-bold text-gray-600">ejemplo&#64;ktus.com</div>
           </div>
           <div id="kt_signin_email_edit" class="flex-row-fluid d-none">
             <form id="kt_signin_change_email" class="form" novalidate="">
               <div class="row mb-6">
                 <div class="col-lg-6 mb-4 mb-lg-0">
                   <div class="fv-row mb-0">
-                    <label
-                      for="emailaddress"
-                      class="form-label fs-6 fw-bolder mb-3"
-                      >Enter New Email Address</label
-                    ><input
-                      type="email"
-                      class="form-control form-control-lg form-control-solid"
-                      id="emailaddress"
-                      placeholder="Email Address"
-                      name="newEmail"
-                      value="support@keenthemes.com"
-                    />
+                    <label for="emailaddress" class="form-label fs-6 fw-bolder mb-3">Ingrese una nueva dirección de
+                      correo electrónico
+
+                    </label><input type="email" class="form-control form-control-lg form-control-solid"
+                      id="emailaddress" placeholder="Email Address" name="newEmail" value="support@keenthemes.com" />
                   </div>
                 </div>
                 <div class="col-lg-6">
                   <div class="fv-row mb-0">
-                    <label
-                      for="confirmemailpassword"
-                      class="form-label fs-6 fw-bolder mb-3"
-                      >Confirm Password</label
-                    ><input
-                      type="password"
-                      class="form-control form-control-lg form-control-solid"
-                      id="confirmemailpassword"
-                      name="confirmPassword"
-                      value=""
-                    />
+                    <label for="confirmemailpassword" class="form-label fs-6 fw-bolder mb-3">Confirmar
+                      Password</label><input type="password" class="form-control form-control-lg form-control-solid"
+                      id="confirmemailpassword" name="confirmPassword" value="" />
                     <div class="fv-plugins-message-container">
-                      <div class="fv-help-block">Password is required</div>
+                      <div class="fv-help-block">El password es requerido</div>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="d-flex">
-                <button
-                  id="kt_signin_submit"
-                  type="submit"
-                  class="btn btn-primary me-2 px-6"
-                >
-                  Update Email</button
-                ><button
-                  id="kt_signin_cancel"
-                  type="button"
-                  class="btn btn-color-gray-500 btn-active-light-primary px-6"
-                >
-                  Cancel
+                <button id="kt_signin_submit" type="submit" class="btn btn-primary me-2 px-6">
+                  Actualizar Email</button><button id="kt_signin_cancel" type="button"
+                  class="btn btn-color-gray-500 btn-active-light-primary px-6">
+                  Cancelar
                 </button>
               </div>
             </form>
           </div>
           <div id="kt_signin_email_button" class="ms-auto false">
-            <button
-              class="btn btn-light btn-active-light-primary"
-              (click)="toggleEmailForm(true)"
-            >
-              Change Email
+            <button class="btn btn-light btn-active-light-primary" (click)="toggleEmailForm(true)">
+              Cambiar Email
             </button>
           </div>
         </div>
@@ -86,56 +62,36 @@
       <ng-container *ngIf="showChangeEmailForm">
         <div class="d-flex flex-wrap align-items-center">
           <div id="kt_signin_email" class="d-none">
-            <div class="fs-6 fw-bolder mb-1">Email Address</div>
-            <div class="fw-bold text-gray-600">support&#64;keenthemes.com</div>
+            <div class="fs-6 fw-bolder mb-1">Email</div>
+            <div class="fw-bold text-gray-600">ejemplo&#64;ktus.com</div>
           </div>
           <div id="kt_signin_email_edit" class="flex-row-fluid false">
             <form id="kt_signin_change_email" class="form" novalidate="">
               <div class="row mb-6">
                 <div class="col-lg-6 mb-4 mb-lg-0">
                   <div class="fv-row mb-0">
-                    <label
-                      for="emailaddress"
-                      class="form-label fs-6 fw-bolder mb-3"
-                      >Enter New Email Address</label
-                    ><input
-                      type="email"
-                      class="form-control form-control-lg form-control-solid"
-                      id="emailaddress"
-                      placeholder="Email Address"
-                      name="newEmail"
-                      value="support@keenthemes.com"
-                    />
+                    <label for="emailaddress" class="form-label fs-6 fw-bolder mb-3">Ingrese una nueva dirección de
+                      correo electrónico
+                    </label><input type="email" class="form-control form-control-lg form-control-solid"
+                      id="emailaddress" placeholder="Email" name="newEmail" [(ngModel)]="email" />
                   </div>
                 </div>
               </div>
               <div class="d-flex">
-                <button
-                  id="kt_signin_submit"
-                  type="button"
-                  class="btn btn-primary me-2 px-6"
-                  (click)="saveEmail()"
-                >
-                  <ng-container *ngIf="!isLoading"> Update Email </ng-container>
+                <button id="kt_signin_submit" type="button" class="btn btn-primary me-2 px-6" (click)="saveEmail()">
+                  <ng-container *ngIf="!isLoading"> Actualizar Email </ng-container>
                   <ng-container *ngIf="isLoading">
                     <span class="indicator-progress" [style.display]="'block'">
-                      Please wait...{{ " " }}
-                      <span
-                        class="
+                      Espere por favor...{{ " " }}
+                      <span class="
                           spinner-border spinner-border-sm
                           align-middle
                           ms-2
-                        "
-                      ></span>
+                        "></span>
                     </span>
-                  </ng-container></button
-                ><button
-                  id="kt_signin_cancel"
-                  type="button"
-                  class="btn btn-color-gray-500 btn-active-light-primary px-6"
-                  (click)="toggleEmailForm(false)"
-                >
-                  Cancel
+                  </ng-container></button><button id="kt_signin_cancel" type="button"
+                  class="btn btn-color-gray-500 btn-active-light-primary px-6" (click)="toggleEmailForm(false)">
+                  Cancelar
                 </button>
               </div>
             </form>
@@ -152,11 +108,8 @@
             <div class="fw-bold text-gray-600">************</div>
           </div>
           <div id="kt_signin_password_button" class="ms-auto false">
-            <button
-              class="btn btn-light btn-active-light-primary"
-              (click)="togglePasswordForm(true)"
-            >
-              Reset Password
+            <button class="btn btn-light btn-active-light-primary" (click)="togglePasswordForm(true)">
+              Cambiar Password
             </button>
           </div>
         </div>
@@ -169,128 +122,58 @@
               <div class="row mb-1">
                 <div class="col-lg-4">
                   <div class="fv-row mb-0">
-                    <label
-                      for="currentpassword"
-                      class="form-label fs-6 fw-bolder mb-3"
-                      >Current Password</label
-                    ><input
-                      type="password"
-                      class="form-control form-control-lg form-control-solid"
-                      id="currentpassword"
-                      name="currentPassword"
-                      value="1234"
-                    />
+                    <label for="currentpassword" class="form-label fs-6 fw-bolder mb-3">Password Actual</label><input
+                      type="password" class="form-control form-control-lg form-control-solid" id="currentpassword"
+                      placeholder="Password Actual" name="currentpassword" [(ngModel)]="passwordAct" />
                   </div>
                 </div>
                 <div class="col-lg-4">
                   <div class="fv-row mb-0">
-                    <label
-                      for="newpassword"
-                      class="form-label fs-6 fw-bolder mb-3"
-                      >New Password</label
-                    ><input
-                      type="password"
-                      class="form-control form-control-lg form-control-solid"
-                      id="newpassword"
-                      name="newPassword"
-                      value="1234"
-                    />
+                    <label for="newpassword" class="form-label fs-6 fw-bolder mb-3">Nuevo Password</label><input
+                      type="password" class="form-control form-control-lg form-control-solid" id="newpassword"
+                      placeholder="Nuevo Password" name="newpassword" [(ngModel)]="passwordNue" />
                   </div>
                 </div>
                 <div class="col-lg-4">
                   <div class="fv-row mb-0">
-                    <label
-                      for="confirmpassword"
-                      class="form-label fs-6 fw-bolder mb-3"
-                      >Confirm New Password</label
-                    ><input
-                      type="password"
-                      class="form-control form-control-lg form-control-solid"
-                      id="confirmpassword"
-                      name="passwordConfirmation"
-                      value="1234"
-                    />
+                    <label for="confirmpassword" class="form-label fs-6 fw-bolder mb-3">Confirme Nuevo
+                      Password</label><input type="password" class="form-control form-control-lg form-control-solid"
+                      id="confirmpassword" name="passwordConfirmation" placeholder="Confirme Nuevo Password"
+                      [(ngModel)]="passwordRep" />
                   </div>
                 </div>
               </div>
               <div class="form-text mb-5">
-                Password must be at least 8 character and contain symbols
+                La contraseña debe tener al menos 8 caracteres
               </div>
               <div class="d-flex">
-                <button
-                  id="kt_password_submit"
-                  type="button"
-                  class="btn btn-primary me-2 px-6"
-                  (click)="savePassword()"
-                >
-                  <ng-container *ngIf="!isLoading"
-                    >Update Password</ng-container
-                  >
+                <button id="kt_password_submit" type="button" class="btn btn-primary me-2 px-6"
+                  (click)="savePassword()">
+                  <ng-container *ngIf="!isLoading">Actualizar Password</ng-container>
                   <ng-container *ngIf="isLoading">
                     <span class="indicator-progress" [style.display]="'block'">
-                      Please wait...{{ " " }}
-                      <span
-                        class="
+                      Espere por favor...{{ " " }}
+                      <span class="
                           spinner-border spinner-border-sm
                           align-middle
                           ms-2
-                        "
-                      ></span>
+                        "></span>
                     </span>
-                  </ng-container></button
-                ><button
-                  id="kt_password_cancel"
-                  type="button"
-                  class="btn btn-color-gray-500 btn-active-light-primary px-6"
-                  (click)="togglePasswordForm(false)"
-                >
-                  Cancel
+                  </ng-container></button><button id="kt_password_cancel" type="button"
+                  class="btn btn-color-gray-500 btn-active-light-primary px-6" (click)="togglePasswordForm(false)">
+                  Cancelar
                 </button>
               </div>
             </form>
           </div>
           <div id="kt_signin_password_button" class="ms-auto d-none">
             <button class="btn btn-light btn-active-light-primary">
-              Reset Password
+              Resetear Password
             </button>
           </div>
         </div>
       </ng-container>
 
-      <div
-        class="
-          notice
-          d-flex
-          bg-light-primary
-          rounded
-          border-primary border border-dashed
-          p-6
-        "
-      >
-        <app-keenicon name="shield-tick" class="fs-2 text-primary me-4"></app-keenicon>
-        <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
-          <div class="mb-3 mb-md-0 fw-bold">
-            <h4 class="text-gray-800 fw-bolder">Secure Your Account</h4>
-            <div class="fs-6 text-gray-600 pe-7">
-              Two-factor authentication adds an extra layer of security to your
-              account. To log in, in addition you'll need to provide a 6 digit
-              code
-            </div>
-          </div>
-          <a
-            class="
-              btn btn-primary
-              px-6
-              align-self-center
-              text-nowrap
-              cursor-pointer
-            "
-            data-bs-toggle="modal"
-            data-bs-target="#kt_modal_two_factor_authentication"
-            >Enable</a
-          >
-        </div>
-      </div>
     </div>
   </div>
 </div>

@@ -40,6 +40,7 @@ export class MovimientosService {
     fecha_inicio: string,
     fecha_final: string,
     articulo: string,
+    sede_id: number
   }): Observable<ResponseMovimiento2> {
     this.isLoadingSubject.next(true);
 

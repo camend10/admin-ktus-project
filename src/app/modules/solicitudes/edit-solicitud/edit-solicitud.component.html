@@ -178,12 +178,21 @@
                     </div>
 
                     <div class="col-1 d-flex align-items-end">
-                        <a (click)="agregarArticulo()" class="btn btn-success btn-icon me-1 "
+                        <a (click)="agregarArticulo()" class="btn btn-success btn-icon me-3 "
                             *ngIf="movimiento && movimiento.estado !==4" placement="top" ngbTooltip="Agregar">
                             <i class="ki-duotone ki-plus fs-1">
                                 <span class="path1"></span>
                                 <span class="path2"></span>
                                 <span class="path3"></span></i>
+                        </a>
+
+
+                        <a (click)="resetearArticulo()" class="btn btn-dark btn-icon me-1" placement="top"
+                            ngbTooltip="Resetear">
+                            <i class="ki-duotone ki-arrows-circle fs-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
                         </a>
                     </div>
                 </div>

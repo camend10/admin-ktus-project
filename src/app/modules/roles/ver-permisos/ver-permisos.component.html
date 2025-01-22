@@ -1,0 +1,104 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
+
+
+<!--begin::Modal content CREATE-->
+<div class="modal-content">
+    <!--begin::Modal header-->
+    <div class="modal-header" id="kt_modal_add_user_header">
+        <!--begin::Modal title-->
+        <h2 class="fw-bolder">Listado de permisos</h2>
+        <!--end::Modal title-->
+
+        <!--begin::Close-->
+        <div id="kt_modal_add_customer_close" class="btn btn-icon btn-sm btn-active-icon-primary"
+            (click)="modal.dismiss()">
+            <i class="ki-duotone ki-cross fs-1">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+        </div>
+        <!--end::Close-->
+    </div>
+    <!--end::Modal header-->
+    <!--begin::Modal body-->
+    <div class="modal-body py-10 px-lg-17 scroll-y mx-5 my-3">
+        <!--begin::Form-->
+        <form class="form fv-plugins-bootstrap5 fv-plugins-framework" action="#" id="kt_modal_add_customer_form">
+            <!--begin::Scroll-->
+            <div class="scroll-y me-n7 pe-7" id="kt_modal_add_customer_scroll" data-kt-scroll="true"
+                data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto"
+                data-kt-scroll-dependencies="#kt_modal_add_customer_header"
+                data-kt-scroll-wrappers="#kt_modal_add_customer_scroll" data-kt-scroll-offset="300px"
+                style="max-height: 350px;">
+                <!--begin::Input group-->
+
+                <h2 class="d-flex align-items-center">
+                    <i class="ki-duotone ki-user text-dark fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                    Listado de permisos:
+                </h2>
+
+                <div class="fv-row row justify-content-center">
+                    <div class="col-12">
+                        <div id="" class="table-responsive">
+                            <table class="table table-row-dashed table-row-gray-100 align-middle gs-0 gy-3 dataTable">
+                                <thead>
+                                    <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                                        <th class="min-w-125px text-center">#</th>
+                                        <th class="min-w-125px">Entidad</th>
+                                        <th class="min-w-125px">Permisos</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody class="fw-semibold text-gray-600">
+                                    <ng-container *ngFor="let item of groupedPermissions; let i=index;">
+                                        <tr>
+                                            <td style='font-weight: bold;vertical-align: middle;'
+                                                class="text-center text-gray-900 fw-bold text-hover-primary">
+                                                {{ (i+1)}}
+                                            </td>
+
+                                            <td style='font-weight: bold;vertical-align: middle;'
+                                                class="text-gray-900 fw-bold text-hover-primary text-capitalize">
+                                                {{ item.name}}
+                                            </td>
+
+                                            <td style='font-weight: bold;vertical-align: middle;'
+                                                class="text-gray-900 fw-bold text-hover-primary">
+                                                {{ item.permisos.join(', ') }}
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!--end::Scroll-->
+
+
+            <!--begin::Actions-->
+            <div class="text-center pt-15">
+                <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()"> <i
+                        class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i> Cerrar
+                </button>
+            </div>
+            <!--end::Actions-->
+        </form>
+        <!--end::Form-->
+    </div>
+    <!--end::Modal body-->
+</div>
+<!--end::Modal content CREATE-->

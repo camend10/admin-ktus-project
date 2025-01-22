@@ -28,10 +28,12 @@ export class PermissionGeneralService {
             });
             break;
           case 401:
+            const backendMessage = error.error?.message || 'No autenticado.';
             Swal.fire({
               icon: 'warning',
-              title: 'No Autenticado',
-              text: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+              title: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente',
+              // text: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+              text: backendMessage, 
             }).then(() => {
               this.router.navigate(['/auth/login']);
             });

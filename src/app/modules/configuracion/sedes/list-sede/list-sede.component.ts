@@ -106,7 +106,7 @@ export class ListSedeComponent implements OnInit {
   cargarConfiguraciones() {
     this.generalService.cargarConfiguraciones(this.authService.user.empresa_id)
       .subscribe((response) => {
-        this.empresas = response.empresas;
+        this.empresas = response.empresasActivas;
         this.departamentos = response.departamentos;
         this.municipios = response.municipios;
       });

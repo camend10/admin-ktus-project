@@ -113,7 +113,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         } else {
           this.hasError = true;
         }
-      });
+      }
+    );
     this.unsubscribe.push(loginSubscr);
   }
 
@@ -194,7 +195,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.loginForm.patchValue({ empresa_id: 9999999, sede_id: 9999999 });
     this.role_id = 0;
   }
-
 
   ngOnDestroy() {
     this.unsubscribe.forEach((sb) => sb.unsubscribe());

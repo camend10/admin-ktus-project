@@ -548,7 +548,8 @@
                                                 <!--begin::Input-->
                                                 <input type="text" name="descuento_maximo" class="form-control mb-2"
                                                     placeholder="Descuento Máximo" appNumericInput
-                                                    [(ngModel)]="articulo.descuento_maximo" />
+                                                    [(ngModel)]="articulo.descuento_maximo"
+                                                    (blur)="validarDescuentos()" />
                                                 <!--end::Input-->
                                                 <!--begin::Description-->
                                                 <div class="text-muted fs-7"></div>
@@ -812,7 +813,8 @@
                                                                 <th class="min-w-125px">Unidad</th>
                                                                 <th class="min-w-125px">Bodega</th>
                                                                 <th class="min-w-125px text-center">Cantidad</th>
-                                                                <th class="text-center min-w-70px">
+                                                                <th class="text-center min-w-70px"
+                                                                    *ngIf="isPermission('editar_existencias_articulos') || isPermission('eliminar_existencias_articulos')">
                                                                     Acciones</th>
                                                             </tr>
                                                         </thead>
@@ -838,7 +840,8 @@
                                                                         class="text-gray-900 fw-bold text-hover-primary text-center">
                                                                         {{ item.cantidad }}</td>
 
-                                                                    <td class="text-center">
+                                                                    <td class="text-center"
+                                                                        *ngIf="isPermission('editar_existencias_articulos') || isPermission('eliminar_existencias_articulos')">
 
                                                                         <!-- <a href="#"
                                                                             class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
@@ -847,6 +850,7 @@
                                                                                     class="path2"></span></i> </a> -->
 
                                                                         <a href="#" onclick="return false;"
+                                                                            *ngIf="isPermission('eliminar_existencias_articulos')"
                                                                             (click)="removeBodegaArticulo(item)"
                                                                             class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
                                                                             <i class="ki-duotone ki-trash fs-2"><span
@@ -983,7 +987,8 @@
                                                                 <th class="min-w-125px">Sede</th>
                                                                 <th class="min-w-125px">Tipo de cliente</th>
                                                                 <th class="min-w-125px text-end">Precio</th>
-                                                                <th class="text-center min-w-70px">
+                                                                <th class="text-center min-w-70px"
+                                                                    *ngIf="isPermission('editar_precios_articulos') || isPermission('eliminar_precios_articulos')">
                                                                     Acciones</th>
                                                             </tr>
                                                         </thead>
@@ -1015,7 +1020,8 @@
                                                                         class="text-gray-900 fw-bold text-hover-primary text-end">
                                                                         $ {{ item.precio | number:'1.0-2' }}</td>
 
-                                                                    <td class="text-center">
+                                                                    <td class="text-center"
+                                                                        *ngIf="isPermission('editar_precios_articulos') || isPermission('eliminar_precios_articulos')">
 
                                                                         <!-- <a href="#"
                                                                             class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
@@ -1024,6 +1030,7 @@
                                                                                     class="path2"></span></i> </a> -->
 
                                                                         <a href="#" onclick="return false;"
+                                                                            *ngIf="isPermission('eliminar_precios_articulos')"
                                                                             (click)="removeArticuloWallet(item)"
                                                                             class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
                                                                             <i class="ki-duotone ki-trash fs-2"><span

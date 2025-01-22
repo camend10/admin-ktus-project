@@ -63,7 +63,7 @@ export class ListKardexComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.isLoading$ = this.generalService.isLoading$;
+    this.isLoading$ = this.kardexService.isLoading$;
     this.user = this.authService.user;
 
     this.cargarConfiguraciones();
@@ -110,7 +110,8 @@ export class ListKardexComponent implements OnInit, OnDestroy {
         this.bodegas = this.bodegas.map(bodega => {
           return { ...bodega, nombre: this.capitalize(bodega.nombre) };
         });
-
+        this.cdr.detectChanges();
+        this.isLoadingProcess();
       });
   }
 
@@ -139,6 +140,8 @@ export class ListKardexComponent implements OnInit, OnDestroy {
 
     this.kardexService.listar(data).subscribe((resp) => {
       this.kardexs = resp.kardex_articulos;
+
+      console.log(this.kardexs);
       this.cdr.detectChanges();
       this.isLoadingProcess();
     });

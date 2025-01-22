@@ -47,12 +47,12 @@ export const SIDEBAR: any = [
                 permiso: 'ver_articulos',
             },
             {
-                name: 'Ver precios',
-                permiso: 'ver_precios_articulos',
+                name: 'Editar existencias',
+                permiso: 'editar_existencias_articulos',
             },
             {
-                name: 'Nuevo precio',
-                permiso: 'registrar_precios_articulos',
+                name: 'Eliminar existencias',
+                permiso: 'eliminar_existencias_articulos',
             },
             {
                 name: 'Editar precio',
@@ -414,7 +414,7 @@ export const SIDEBAR: any = [
     },
     {
         'name': 'Kardex',
-        'permisos': [           
+        'permisos': [
             {
                 name: 'Ver',
                 permiso: 'ver_kardex',
@@ -449,24 +449,7 @@ export const SIDEBAR: any = [
     //             permiso: 'close_caja',
     //         },
     //     ]
-    // },
-    // {
-    //     'name': 'Proforma',
-    //     'permisos': [
-    //         {
-    //             name: 'Registrar',
-    //             permiso: 'register_proforma',
-    //         },
-    //         {
-    //             name: 'Editar',
-    //             permiso: 'edit_proforma',
-    //         },
-    //         {
-    //             name: 'Eliminar',
-    //             permiso: 'delete_proforma',
-    //         },
-    //     ]
-    // },
+    // },   
     // {
     //     'name': 'Cronograma',
     //     'permisos': [
@@ -484,24 +467,7 @@ export const SIDEBAR: any = [
     //             permiso: 'comisiones',
     //         },
     //     ]
-    // },
-    // {
-    //     'name': 'Compras',
-    //     'permisos': [
-    //         {
-    //             name: 'Registrar',
-    //             permiso: 'register_compra',
-    //         },
-    //         {
-    //             name: 'Editar',
-    //             permiso: 'edit_compra',
-    //         },
-    //         {
-    //             name: 'Eliminar',
-    //             permiso: 'delete_compra',
-    //         },
-    //     ]
-    // },
+    // },   
     // {
     //     'name': 'Transporte',
     //     'permisos': [
@@ -528,24 +494,7 @@ export const SIDEBAR: any = [
     //         },
     //     ]
     // },
-    // {
-    //     'name': 'Movimientos',
-    //     'permisos': [
-    //         {
-    //             name: 'Disponible',
-    //             permiso: 'movimientos',
-    //         },
-    //     ]
-    // },
-    // {
-    //     'name': 'Kardex',
-    //     'permisos': [
-    //         {
-    //             name: 'Disponible',
-    //             permiso: 'kardex',
-    //         },
-    //     ]
-    // },
+
 
 
 ];
@@ -565,4 +514,13 @@ export function isPermission(permission: string) {
     } else {
         return false;
     }
+}
+
+export function isSuperAdmin(): boolean {
+    let user_auth: User = JSON.parse(localStorage.getItem('user') ?? '');
+
+    if (user_auth && (user_auth.role.id === 1 || user_auth.role.id === 2)) {
+        return true;
+    }
+    return false;
 }

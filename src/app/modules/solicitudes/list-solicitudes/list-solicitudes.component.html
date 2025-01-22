@@ -21,9 +21,12 @@
                             <span class="path2"></span>
                         </i>
                         <input type="text" data-kt-customer-table-filter="search" [(ngModel)]="buscar" name="buscar"
-                            class="form-control w-200px ps-12" placeholder="Nº de Solicitud" (keyup.enter)="listar()">
+                            class="form-control w-220px ps-12" placeholder="Nº de Solicitud" (keyup.enter)="listar()">
                     </div>
                     <!--end::Search-->
+                    <!--begin::Description-->
+                    <div class="text-muted fs-7">Nº de Solicitud</div>
+                    <!--end::Description-->
                 </div>
 
                 <div class="col-3">
@@ -32,7 +35,7 @@
                         [(ngModel)]="bodega_id">
                         <option [ngValue]="9999999" selected>Seleccione</option>
 
-                        <ng-container *ngFor="let item of bodegas">
+                        <ng-container *ngFor="let item of bodegasFiltradas">
                             <option [value]="item.id">{{ item.nombre }}</option>
                         </ng-container>
                     </select>
@@ -82,15 +85,15 @@
                     <!--end::Description-->
                 </div>
 
-                <div class="col-4">
+                <div class="col-3">
                     <!--begin::Search-->
-                    <div class="d-flex align-items-center position-relative my-1">
+                    <div class="d-flex align-items-center position-relative">
                         <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
                             <span class="path1"></span>
                             <span class="path2"></span>
                         </i>
                         <input type="text" data-kt-customer-table-filter="search" [(ngModel)]="articulo" name="articulo"
-                            class="form-control w-400px ps-12" placeholder="Articulo" (keyup.enter)="listar()">
+                            class="form-control w-320px ps-12" placeholder="Articulo" (keyup.enter)="listar()">
                     </div>
                     <!--end::Search-->
                     <!--begin::Description-->
@@ -117,6 +120,22 @@
                     <!--begin::Description-->
                     <div class="text-muted fs-7">Fecha final.
                     </div>
+                    <!--end::Description-->
+                </div>
+
+                <div class="col-2">
+                    <!--begin::Select2-->
+                    <select class="form-select fw-bolder" name="sede_id" placeholder="Sedes" [(ngModel)]="sede_id"
+                        (change)="changeSede()">
+                        <option [ngValue]="9999999" selected>Seleccione</option>
+
+                        <ng-container *ngFor="let item of sedes">
+                            <option [value]="item.id">{{ item.nombre }}</option>
+                        </ng-container>
+                    </select>
+                    <!--end::Select2-->
+                    <!--begin::Description-->
+                    <div class="text-muted fs-7">Sedes</div>
                     <!--end::Description-->
                 </div>
 
@@ -166,7 +185,7 @@
                             <th class="min-w-125px">Bodega</th>
                             <th class="min-w-125px">Responsable</th>
                             <th class="min-w-125px">Proveedor</th>
-                            <th class="min-w-125px">Total</th>
+                            <th class="min-w-125px text-end">Total</th>
                             <th class="min-w-125px">Sede</th>
                             <th class="min-w-125px text-center">Estado</th>
                             <th class="text-center min-w-70px"
@@ -236,14 +255,15 @@
 
                                     <a href="#" onclick="return false"
                                         [routerLink]="'/solicitudes/listado/editar/' + item.id" title="Editar"
-                                        onclick="return false;" *ngIf="isPermission('editar_solicitud')"
+                                        onclick="return false;"
+                                        *ngIf="isPermission('editar_solicitud') && isSuperAdmin()"
                                         class="btn btn-icon btn-active-light-primary w-30px h-30px me-3">
                                         <i class="ki-duotone ki-pencil fs-3"><span class="path1"></span><span
                                                 class="path2"></span></i>
                                     </a>
                                     <a href="#" onclick="return false" (click)="cambiarEstado(item)"
                                         onclick="return false;"
-                                        *ngIf="isPermission('eliminar_solicitud') && (item.estado !==3 && item.estado !==4)"
+                                        *ngIf="(isPermission('eliminar_solicitud') && (item.estado !==3 && item.estado !==4)) || (isSuperAdmin())"
                                         [title]="item.estado === 0? 'Activar':'Eliminar'"
                                         class="btn btn-icon btn-active-light-primary w-30px h-30px w-30px h-30px">
                                         <!-- Cambia el color del botón -->

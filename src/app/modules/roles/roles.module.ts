@@ -11,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModalModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { InlineSVGModule } from 'ng-inline-svg-2';
 import { EliminarComponent } from './eliminar/eliminar.component';
+import { VerPermisosComponent } from './ver-permisos/ver-permisos.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { EliminarComponent } from './eliminar/eliminar.component';
     CrearComponent,
     ListarComponent,
     EditarComponent,
-    EliminarComponent
+    EliminarComponent,
+    VerPermisosComponent
   ],
   imports: [
     CommonModule,

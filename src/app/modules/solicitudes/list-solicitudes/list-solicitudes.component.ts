@@ -5,7 +5,7 @@ import { Departamento, Empresa, Genero, Municipio, TipoDoc } from 'src/app/inter
 import { GeneralesService } from 'src/app/services/generales.service';
 import { AuthService } from 'src/app/modules/auth';
 import { User } from 'src/app/modules/users/interfaces';
-import { isPermission, URL_SERVICIOS } from 'src/app/config/config';
+import { isPermission, URL_SERVICIOS, isSuperAdmin } from 'src/app/config/config';
 import { Sede } from '../../configuracion/sedes/interfaces';
 import { Movimiento } from '../interfaces';
 import { Observable } from 'rxjs';
@@ -23,6 +23,8 @@ import { DeleteSolicitudComponent } from '../delete-solicitud/delete-solicitud.c
 })
 export class ListSolicitudesComponent implements OnInit, OnDestroy {
 
+  isSuperAdmin = isSuperAdmin;
+
   movimientos: Movimiento[] = [];
   isLoading$: Observable<boolean>;
 
@@ -30,6 +32,7 @@ export class ListSolicitudesComponent implements OnInit, OnDestroy {
   currentPage: number = 1;
 
   bodegas: Bodega[] = [];
+  bodegasFiltradas: Bodega[] = [];
   proveedores: Proveedor[] = [];
   sedes: Sede[] = [];
   usuarios: User[] = [];
@@ -86,6 +89,7 @@ export class ListSolicitudesComponent implements OnInit, OnDestroy {
       fecha_inicio: this.fecha_inicio,
       fecha_final: this.fecha_final,
       articulo: this.articulo,
+      sede_id: this.sede_id
     };
 
     this.solicitudService.listar(page, data).subscribe((resp) => {
@@ -119,7 +123,7 @@ export class ListSolicitudesComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   formatMovimientoId(id: number): string {
     return `SOL-${id.toString().padStart(6, '0')}`;
   }
@@ -148,7 +152,7 @@ export class ListSolicitudesComponent implements OnInit, OnDestroy {
         this.proveedores = this.proveedores.map(proveedor => {
           return {
             ...proveedor, nombre: this.capitalize(proveedor.nombres),
-            apellidos: this.capitalize(proveedor.apellidos)
+            apellidos: proveedor.apellidos === null ? this.capitalize(proveedor.apellidos) : ''
           };
         });
       });
@@ -220,6 +224,16 @@ export class ListSolicitudesComponent implements OnInit, OnDestroy {
         return 'APROBADO';
       default:
         return 'DESCONOCIDO';
+    }
+  }
+
+  changeSede() {
+    if (this.sede_id !== 9999999) {
+      // Filtra las bodegas según el sede_id seleccionado
+      const bodegasFiltradas = this.bodegas.filter((bodega) => Number(bodega.sede_id) === Number(this.sede_id));
+      this.bodegasFiltradas = bodegasFiltradas;
+    } else {
+      this.bodegasFiltradas = this.bodegas;
     }
   }
 

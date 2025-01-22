@@ -10,6 +10,8 @@ import { EliminarComponent } from '../eliminar/eliminar.component';
 import { AuthService } from 'src/app/modules/auth';
 import { User } from '../../users/interfaces';
 import { isPermission } from 'src/app/config/config';
+import { Permission } from '../models/permission.model';
+import { VerPermisosComponent } from '../ver-permisos/ver-permisos.component';
 
 
 @Component({
@@ -84,6 +86,15 @@ export class ListarComponent implements OnInit {
         this.roles.splice(index, 1);
       }
 
+    });
+  }
+
+  verPermisos(permisos: string[]) {
+    const modalRef = this.modalService.open(VerPermisosComponent, { centered: true, size: 'xl' });
+
+    modalRef.componentInstance.permissions = permisos;
+    modalRef.componentInstance.PermisoC.subscribe((permi: Permission) => {
+    
     });
   }
 

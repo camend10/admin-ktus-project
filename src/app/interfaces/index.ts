@@ -13,6 +13,7 @@ import { User } from "../modules/users/interfaces";
 export interface ResponseConfiguracion {
     departamentos: Departamento[];
     empresas: Empresa[];
+    empresasActivas: Empresa[];
     sedes: Sede[];
     tipodocumentos: TipoDoc[];
     generos: Genero[];

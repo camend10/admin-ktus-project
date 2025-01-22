@@ -51,7 +51,7 @@
                         <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
                             <th class="min-w-125px text-center">#</th>
                             <th class="min-w-125px">Rol</th>
-                            <th class="min-w-125px ">Permisos</th>
+                            <!-- <th class="min-w-125px ">Permisos</th> -->
                             <th class="min-w-125px">Fecha</th>
                             <th class="text-center min-w-70px"
                                 *ngIf="isPermission('editar_roles') || isPermission('editar_roles')">Acciones</th>
@@ -66,7 +66,8 @@
                                         <input class="form-check-input" type="checkbox" value="1">
                                     </div>
                                 </td> -->
-                                <td style='font-weight: bold;vertical-align: middle;' class="text-center text-gray-900 fw-bold text-hover-primary">
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-center text-gray-900 fw-bold text-hover-primary">
                                     {{ (i+1) }}
                                 </td>
                                 <td style='font-weight: bold;vertical-align: middle;'
@@ -74,19 +75,27 @@
                                     {{ rol.name }}
                                 </td>
 
-                                <td style='font-weight: bold;vertical-align: middle;'
+                                <!-- <td style='font-weight: bold;vertical-align: middle;'
                                     class="text-gray-900 fw-bold text-hover-primary">
                                     <span style="width: 400px !important;display: block;">
                                         {{ rol.permission_pluck }}
                                     </span>
-                                </td>
+                                </td> -->
 
                                 <td style='font-weight: bold;vertical-align: middle;'
                                     class="text-gray-900 fw-bold text-hover-primary">{{ rol.created_format_at }}</td>
 
                                 <td class="text-center "
                                     *ngIf="isPermission('editar_roles') || isPermission('eliminar_roles')">
-
+                                    <a href="#" onclick="return false" (click)="verPermisos(rol.permission_pluck)" placement="top"
+                                        ngbTooltip="Ver permisos"
+                                        class="btn btn-icon btn-active-light-primary w-30px h-30px w-30px h-30px">
+                                        <i class="ki-duotone" class="fs-3 ki-duotone ki-questionnaire-tablet">
+                                            <span class="path1"></span><span class="path2"></span>
+                                            <span class="path3"></span><span class="path4"></span>
+                                            <span class="path5"></span>
+                                        </i>
+                                    </a>
                                     <a *ngIf="isPermission('editar_roles') && rol.id > 1" href="#"
                                         onclick="return false" (click)="editarRole(rol)"
                                         class="btn btn-icon btn-active-light-primary w-30px h-30px me-3">

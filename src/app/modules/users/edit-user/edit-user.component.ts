@@ -258,7 +258,4 @@ export class EditUserComponent implements OnInit {
     const selectedCount = this.sedes.filter(s => s.seleccionada).length;
     return selectedCount > 0 && selectedCount < this.sedes.length;
   }
-
-
-
 }

@@ -40,6 +40,7 @@ export class SolicitudesService {
     fecha_inicio: string,
     fecha_final: string,
     articulo: string,
+    sede_id: number,
   }): Observable<ResponseMovimiento> {
     this.isLoadingSubject.next(true);
 
