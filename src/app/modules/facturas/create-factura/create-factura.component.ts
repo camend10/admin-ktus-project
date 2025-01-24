@@ -423,6 +423,7 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
       else if (resp.articulos.data.length === 1) {
         this.articulo = resp.articulos.data[0];
         this.buscar_articulo = this.articulo.nombre;
+
         // this.cliente.identificacion = this.cliente.tipodocumento?.sigla + ' : ' + this.cliente.identificacion;
         // this.toast.success('Exito', 'Se ha seleccionado un articulo');
         setTimeout(() => {
@@ -501,9 +502,13 @@ export class CreateFacturaComponent implements OnInit, OnDestroy {
           Number(bodega.bodega.sede_id) === Number(this.user.sede_id)
       ) ?? [];
 
-
       if (this.bodegas_articulos.length > 0) {
         this.bodega_id_articulo = this.bodegas_articulos[0].bodega.id;
+
+        if (Number(this.bodegas_articulos[0].cantidad) === 0) {
+          this.toast.error('Validación', 'El artículo no tiene existencia en esta bodega.');
+          return;
+        }
       } else {
         this.toast.error('Validación', 'El artículo no tiene existencia en esta bodega.');
         return;

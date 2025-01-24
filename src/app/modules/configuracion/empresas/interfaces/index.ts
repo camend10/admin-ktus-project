@@ -19,7 +19,8 @@ export interface Empresa {
     municipio_id: number;
     departamento?: string;
     municipio?: string;
-
+    imagen?: string;
+    lema?: string;
 }
 
 export interface ResponseEmpresa {

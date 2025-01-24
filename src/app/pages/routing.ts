@@ -108,6 +108,11 @@ const Routing: Routes = [
     loadChildren: () => import('../modules/kardex/kardex.module').then((m) => m.KardexModule),
   },  
   {
+    path: 'reportes',
+    canActivate: [verificaTokenGuard],
+    loadChildren: () => import('../modules/reportes/reportes.module').then((m) => m.ReportesModule),
+  },  
+  {
     path: '',
     redirectTo: '/dashboard',
     pathMatch: 'full',

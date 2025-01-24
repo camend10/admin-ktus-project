@@ -21,55 +21,67 @@ export class EmpresaService {
     this.isLoading$ = this.isLoadingSubject.asObservable();
   }
 
-  registrar(empresa: Empresa): Observable<any> {
+  registrar(empresa: Empresa, file_name: File | null): Observable<any> {
 
     this.isLoadingSubject.next(true);
-    
-    let data = {
-      nit_empresa: empresa.nit_empresa,
-      dv: empresa.dv,
-      nombre: empresa.nombre,
-      email: empresa.email,
-      direccion: empresa.direccion,
-      telefono: empresa.telefono,
-      web: empresa.web,
-      celular: empresa.celular,
-      departamento_id: empresa.departamento_id,
-      municipio_id: empresa.municipio_id,
-      estado: 1,
 
-    };
+    let formData = new FormData();
+
+    formData.append('nit_empresa', empresa.nit_empresa);
+    formData.append('dv', empresa.dv);
+    formData.append('nombre', empresa.nombre);
+    formData.append('email', empresa.email);
+    formData.append('direccion', empresa.direccion);
+    formData.append('telefono', empresa.telefono.toString());
+    formData.append('web', empresa.web);
+    formData.append('celular', empresa.celular.toString());
+    formData.append('departamento_id', empresa.departamento_id.toString());
+    formData.append('municipio_id', empresa.municipio_id.toString());
+    formData.append('estado', String(1));
+    formData.append('lema', empresa.lema || '');
+    if (file_name) {
+      formData.append('imagen', file_name);
+    } else {
+      formData.append('imagen', ''); // O envía 'null' si el backend lo acepta
+    }
+
 
     let URL = URL_SERVICIOS + "/configuracion/empresas";
 
-    return this.http.post<ResponseGestionEmpresa>(URL, data).pipe(
+    return this.http.post<ResponseGestionEmpresa>(URL, formData).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }
 
-  editar(empresa: Empresa): Observable<ResponseGestionEmpresa> {
+  editar(empresa: Empresa, file_name: File | null): Observable<ResponseGestionEmpresa> {
 
     this.isLoadingSubject.next(true);
 
-    let data = {
-      id: empresa.id,
-      nit_empresa: empresa.nit_empresa,
-      dv: empresa.dv,
-      nombre: empresa.nombre,
-      email: empresa.email,
-      direccion: empresa.direccion,
-      telefono: empresa.telefono,
-      web: empresa.web,
-      celular: empresa.celular,
-      departamento_id: empresa.departamento_id,
-      municipio_id: empresa.municipio_id,
-      estado: empresa.estado
-    };
 
+    let formData = new FormData();
+
+    formData.append('id', empresa.id.toString());
+    formData.append('nit_empresa', empresa.nit_empresa);
+    formData.append('dv', empresa.dv);
+    formData.append('nombre', empresa.nombre);
+    formData.append('email', empresa.email);
+    formData.append('direccion', empresa.direccion);
+    formData.append('telefono', empresa.telefono.toString());
+    formData.append('web', empresa.web);
+    formData.append('celular', empresa.celular.toString());
+    formData.append('departamento_id', empresa.departamento_id.toString());
+    formData.append('municipio_id', empresa.municipio_id.toString());
+    formData.append('estado', empresa.estado.toString());
+    formData.append('lema', empresa.lema || '');
+    if (file_name) {
+      formData.append('imagen', file_name);
+    } else {
+      formData.append('imagen', ''); // O envía 'null' si el backend lo acepta
+    }
 
     let URL = URL_SERVICIOS + `/configuracion/empresas/${empresa.id}`;
 
-    return this.http.put<ResponseGestionEmpresa>(URL, data).pipe(
+    return this.http.post<ResponseGestionEmpresa>(URL, formData).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }
@@ -83,7 +95,7 @@ export class EmpresaService {
     return this.http.patch<ResponseGestionEmpresa>(URL, { estado: nuevoEstado }).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
-  } 
+  }
 
   listar(page = 1, buscar: string = ''): Observable<ResponseEmpresa> {
     this.isLoadingSubject.next(true);

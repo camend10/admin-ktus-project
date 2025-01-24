@@ -35,6 +35,58 @@
                 style="max-height: 350px;">
                 <!--begin::Input group-->
 
+
+                <div class="d-flex justify-content-center">
+                    <div class="row fv-row my-1 fv-plugins-icon-container ">
+                        <div class="col-12">
+                            <div class="image-input" data-kt-image-input="true">
+                                <!--begin::Image preview wrapper-->
+                                <!-- <div class="image-input-wrapper w-125px h-125px image-input-placeholder"></div> -->
+
+                                <div class="image-input-wrapper w-200px h-200px"
+                                    [ngClass]="{'image-input-placeholder': !imagen_previzualizada}"
+                                    [ngStyle]="{'background-image': imagen_previzualizada ? 'url(' + imagen_previzualizada + ')' : 'none'}">
+                                </div>
+                                <!--end::Image preview wrapper-->
+
+                                <!--begin::Edit button-->
+                                <label
+                                    class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
+                                    data-kt-image-input-action="change" data-bs-toggle="tooltip" data-bs-dismiss="click"
+                                    title="Change avatar">
+                                    <i class="ki-duotone ki-pencil fs-6"><span class="path1"></span><span
+                                            class="path2"></span></i>
+
+                                    <!--begin::Inputs-->
+                                    <input type="file" name="avatar" accept=".png, .jpg, .jpeg"
+                                        (change)="processFile($event)" />
+                                    <input type="hidden" name="avatar_remove" />
+                                    <!--end::Inputs-->
+                                </label>
+                                <!--end::Edit button-->
+
+                                <!--begin::Cancel button-->
+                                <span
+                                    class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
+                                    data-kt-image-input-action="cancel" data-bs-toggle="tooltip" data-bs-dismiss="click"
+                                    title="Cancel avatar" (click)="cancelImage()">
+                                    <i class="ki-outline ki-cross fs-3"></i>
+                                </span>
+                                <!--end::Cancel button-->
+
+                                <!--begin::Remove button-->
+                                <span
+                                    class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow"
+                                    data-kt-image-input-action="remove" data-bs-toggle="tooltip" data-bs-dismiss="click"
+                                    title="Remove avatar" (click)="removeImage()">
+                                    <i class="ki-outline ki-cross fs-3"></i>
+                                </span>
+                                <!--end::Remove button-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row fv-row my-1 fv-plugins-icon-container">
                     <div class="col-3">
                         <!--begin::Label-->
@@ -117,6 +169,16 @@
                         <input type="text" name="web" class="form-control form-control-solid mb-3 mb-lg-0"
                             placeholder="Página web" [(ngModel)]="empresa.web" />
                         <!--end::Input-->
+                    </div>
+                </div>
+
+                <div class="row fv-row my-1 fv-plugins-icon-container">
+                    <div class="col-12">
+                        <!--begin::Select store template-->
+                        <label for="kt_ecommerce_add_product_store_template" class="form-label">Lema</label>
+                        <!--end::Select store template-->
+                        <textarea [(ngModel)]="empresa.lema" class="form-control form-control-solid w-100" name="lema"
+                            placeholder="Lema" rows="3"></textarea>
                     </div>
                 </div>
 

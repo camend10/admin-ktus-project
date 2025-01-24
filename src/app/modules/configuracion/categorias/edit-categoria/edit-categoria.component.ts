@@ -34,7 +34,6 @@ export class EditCategoriaComponent implements OnInit {
   // imagen_previzualizada: any;
   imagen_previzualizada: string | null = '../../../../assets/media/icons/categoria.png';
 
-
   constructor(
     public modal: NgbActiveModal,
     public categoriaService: CategoriaService,

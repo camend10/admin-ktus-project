@@ -600,6 +600,11 @@ export class EditFacturaComponent implements OnInit, OnDestroy {
 
       if (this.bodegas_articulos.length > 0) {
         this.bodega_id_articulo = this.bodegas_articulos[0].bodega.id;
+        
+        if (Number(this.bodegas_articulos[0].cantidad) === 0) {
+          this.toast.error('Validación', 'El artículo no tiene existencia en esta bodega.');
+          return;
+        }
       } else {
         this.toast.error('Validación', 'El artículo no tiene existencia en esta bodega.');
         return;

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, finalize, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/modules/auth';
 import { User } from 'src/app/modules/users/interfaces';
 import { UsersService } from 'src/app/modules/users/service/users.service';
@@ -51,25 +51,27 @@ export class SignInMethodComponent implements OnInit, OnDestroy {
       return false;
     }
     this.isLoading = true;
-    this.userService.cambiarEmail(this.user, this.email).subscribe((resp) => {
-      this.isLoading = false;
-      if (resp.message === 403) {
-        this.toast.error('Validación', resp.message_text);
-      } else {
-
-        this.toast.success('Exito', resp.message_text);
-        resp.user.estado = Number(resp.user.estado);
-
-        setTimeout(() => {
-          this.logout();
-        }, 1000);
-      }
-    }
-      ,
-      (error) => {
+    this.userService.cambiarEmail(this.user, this.email)
+      .pipe(
+        finalize(() => {
+          this.isLoading = false; // Asegurar que siempre se ejecute
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe((resp) => {
         this.isLoading = false;
-      }
-    );
+        if (resp.message === 403) {
+          this.toast.error('Validación', resp.message_text);
+        } else {
+
+          this.toast.success('Exito', resp.message_text);
+          resp.user.estado = Number(resp.user.estado);
+
+          setTimeout(() => {
+            this.logout();
+          }, 1000);
+        }
+      });
   }
 
   logout() {
@@ -108,26 +110,28 @@ export class SignInMethodComponent implements OnInit, OnDestroy {
     };
 
     this.isLoading = true;
-    this.userService.changePassword(this.user, data).subscribe((resp) => {
-      this.isLoading = false;
-      if (resp.message === 403) {
-        this.toast.error('Validación', resp.message_text);
-      } else {
-
-        this.toast.success('Exito', resp.message_text);
-
-        this.togglePasswordForm(false);
-
-        setTimeout(() => {
-          this.logout();
-        }, 1000);
-      }
-    }
-      ,
-      (error) => {
+    this.userService.changePassword(this.user, data)
+      .pipe(
+        finalize(() => {
+          this.isLoading = false; // Asegurar que siempre se ejecute
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe((resp) => {
         this.isLoading = false;
-      }
-    );
+        if (resp.message === 403) {
+          this.toast.error('Validación', resp.message_text);
+        } else {
+
+          this.toast.success('Exito', resp.message_text);
+
+          this.togglePasswordForm(false);
+
+          setTimeout(() => {
+            this.logout();
+          }, 1000);
+        }
+      });
 
   }
 

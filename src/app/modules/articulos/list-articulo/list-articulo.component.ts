@@ -48,6 +48,7 @@ export class ListArticuloComponent implements OnInit, OnDestroy {
   sedes: Sede[] = [];
   unidades: Unidad[] = [];
   bodegas: Bodega[] = [];
+  bodegasFiltradas: Bodega[] = [];
   segmentos_clientes: SegmentoCliente[] = [];
   ivas: Iva[] = [];
   categorias: Categoria[] = [];
@@ -114,6 +115,24 @@ export class ListArticuloComponent implements OnInit, OnDestroy {
     });
   }
 
+  getCantidadUnidadYSede(item: Articulo): { cantidad: number; unidad: string; sede: string } {
+    if (!item.bodegas_articulos || !this.user?.sede_id) {
+      return { cantidad: 0, unidad: '', sede: '' }; // Valores predeterminados si faltan datos
+    }
+
+    const bodegaArticulo = item.bodegas_articulos.find(
+      bodega =>
+        Number(bodega.unidad?.id) === Number(item.punto_pedido_unidad_id) &&
+        Number(bodega.bodega?.sede_id) === Number(this.user.sede_id)
+    );
+
+    return {
+      cantidad: bodegaArticulo?.cantidad || 0,
+      unidad: bodegaArticulo?.unidad?.nombre || '', // Nombre de la unidad
+      sede: bodegaArticulo?.bodega?.nombre || '', // Nombre de la sede
+    };
+  }
+
   resetList() {
     this.buscar = '';
     this.categoria_id = 9999999;
@@ -149,7 +168,54 @@ export class ListArticuloComponent implements OnInit, OnDestroy {
         this.ivas = response.ivas;
         this.categorias = response.categorias;
         this.proveedores = response.proveedores;
+
+        this.sedes = this.sedes.map(sede => {
+          return { ...sede, nombre: this.capitalize(sede.nombre) };
+        });
+
+        this.bodegas = this.bodegas.map(bodega => {
+          return { ...bodega, nombre: this.capitalize(bodega.nombre) };
+        });
+
+        this.proveedores = this.proveedores.map(proveedor => {
+          return {
+            ...proveedor, nombre: this.capitalize(proveedor.nombres),
+            apellidos: proveedor.apellidos === null ? this.capitalize(proveedor.apellidos) : ''
+          };
+        });
+
+        this.unidades = this.unidades.map(unidad => {
+          return { ...unidad, nombre: this.capitalize(unidad.nombre) };
+        });
+
+        this.segmentos_clientes = this.segmentos_clientes.map(segmento => {
+          return { ...segmento, nombre: this.capitalize(segmento.nombre) };
+        });
+
+        this.categorias = this.categorias.map(categoria => {
+          return { ...categoria, nombre: this.capitalize(categoria.nombre) };
+        });
+
       });
+  }
+
+  changeSede() {
+    if (this.sede_id !== 9999999) {
+      // Filtra las bodegas según el sede_id seleccionado
+      const bodegasFiltradas = this.bodegas.filter((bodega) => Number(bodega.sede_id) === Number(this.sede_id));
+      this.bodegasFiltradas = bodegasFiltradas;
+    } else {
+      this.bodegasFiltradas = this.bodegas;
+    }
+  }
+
+  capitalize(value: string): string {
+    if (!value) return '';
+    return value
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   loadPage($event: number) {
@@ -198,7 +264,7 @@ export class ListArticuloComponent implements OnInit, OnDestroy {
     this.state_stock = 3;
     this.listar();
   }
-  
+
   selectPorAgotar() {
     this.state_stock = 2;
     this.listar();

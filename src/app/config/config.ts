@@ -421,6 +421,15 @@ export const SIDEBAR: any = [
             },
         ]
     },
+    {
+        'name': 'Reportes',
+        'permisos': [
+            {
+                name: 'Baja existencia',
+                permiso: 'baja_existencia',
+            },
+        ]
+    },
     // {
     //     'name': 'Caja',
     //     'permisos': [

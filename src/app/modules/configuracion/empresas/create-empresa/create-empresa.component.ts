@@ -17,6 +17,12 @@ export class CreateEmpresaComponent implements OnInit {
   @Input() departamentos: Departamento[] = [];
   @Input() municipios: Municipio[] = [];
 
+  file_name: File | null = null;
+
+  // imagen_previzualizada: any;
+  imagen_previzualizada: string | null = '../../../../assets/media/icons/empresa.png';
+
+
   empresa: Empresa = {
     id: 0,
     nit_empresa: '',
@@ -29,7 +35,9 @@ export class CreateEmpresaComponent implements OnInit {
     celular: 0,
     estado: 0,
     departamento_id: 9999999,
-    municipio_id: 9999999
+    municipio_id: 9999999,
+    imagen: '',
+    lema: ''
   };
 
   constructor(
@@ -41,6 +49,7 @@ export class CreateEmpresaComponent implements OnInit {
   }
   ngOnInit(): void {
     this.isLoading$ = this.empresaService.isLoading$;
+    this.imagen_previzualizada = '../../../../assets/media/icons/empresa.png';
   }
 
   store() {
@@ -75,7 +84,7 @@ export class CreateEmpresaComponent implements OnInit {
       return false;
     }
 
-    this.empresaService.registrar(this.empresa).subscribe((resp) => {
+    this.empresaService.registrar(this.empresa, this.file_name).subscribe((resp) => {
       if (resp.message === 403) {
         this.toast.error('Validación', resp.message_text);
       } else {
@@ -101,5 +110,41 @@ export class CreateEmpresaComponent implements OnInit {
 
     const remainder = total % 11;
     return remainder > 1 ? (11 - remainder).toString() : remainder.toString();
+  }
+
+  processFile($event: Event) {
+
+    const input = $event.target as HTMLInputElement;
+
+    // Asegúrate de que hay un archivo seleccionado
+    if (!input.files || input.files.length === 0) {
+      this.toast.warning("Validando", "No se ha seleccionado ningún archivo");
+      return;
+    }
+
+    // const file = $event.target.files[0];
+    const file = input.files[0];
+    if (!file || file.type.indexOf("image") < 0) {
+      this.toast.warning("Validando", "El archivo no es una imagen");
+      return;
+    }
+
+    this.file_name = file; // Asigna el archivo a this.file_name
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagen_previzualizada = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  cancelImage() {
+    // Restablece la imagen a la predeterminada cuando se cancela
+    this.imagen_previzualizada = '../../../../assets/media/icons/empresa.png';
+  }
+
+  removeImage() {
+    // Restablece la imagen a la predeterminada cuando se elimina
+    this.imagen_previzualizada = '../../../../assets/media/icons/empresa.png';
   }
 }
