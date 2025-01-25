@@ -140,6 +140,13 @@
                             <span class="path2"></span>
                         </i>
                     </button>
+                    
+                    <button (click)="resetList()" class="btn btn-dark btn-icon me-2" placement="top" ngbTooltip="Resetear">
+                        <i class="ki-duotone ki-arrows-circle fs-2">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                    </button>
 
                     <button (click)="download()" class="btn btn-success btn-icon me-2" placement="top" ngbTooltip="Exportar">
                         <i class="ki-duotone ki-folder-down fs-2">
@@ -148,12 +155,10 @@
                         </i>
                     </button>
 
-                    <button (click)="resetList()" class="btn btn-dark btn-icon" placement="top" ngbTooltip="Resetear">
-                        <i class="ki-duotone ki-arrows-circle fs-2">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                        </i>
+                    <button (click)="exportPdf()" class="btn btn-danger btn-icon me-2" placement="top" ngbTooltip="Exportar en pdf">
+                        <i class="fa-solid fa-file-pdf fs-2"></i>
                     </button>
+
                 </div>
             </div>
         </div>

@@ -203,6 +203,32 @@ export class BajaExistenciaComponent implements OnInit, OnDestroy {
     window.open(URL_SERVICIOS + '/excel/export-articulo-baja-existencia' + link, '_BLANK');
   }
 
+  exportPdf() {
+
+    const params = {
+      buscar: this.buscar, // Siempre incluir
+      categoria_id: this.categoria_id,
+      sede_id: this.sede_id,
+      bodega_id: this.bodega_id,
+      unidad_id_bodegas: this.unidad_id_bodegas,
+      proveedor_id: this.proveedor_id,
+      empresa_id: this.user.empresa_id,
+      state_stock: this.state_stock,
+      sede_usuario_id: this.user.sede_id,
+    };
+
+    // Filtrar las claves excepto 'buscar', que siempre se envía
+    const queryString = Object.entries(params)
+      .filter(([key, value]) => key === 'buscar' || (value !== undefined && value !== null && value !== ''))
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+
+    // Construir el enlace
+    const link = queryString ? `?${queryString}` : '';
+
+    window.open(URL_SERVICIOS + '/pdf/baja-existencia' + link, '_BLANK');
+  }
+
   getCantidadUnidadYSede(item: Articulo): { cantidad: number; unidad: string; sede: string } {
     if (!item.bodegas_articulos || !this.user?.sede_id) {
       return { cantidad: 0, unidad: '', sede: '' }; // Valores predeterminados si faltan datos
