@@ -1,0 +1,250 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
+
+<div class="card">
+
+    <!--begin::Card body-->
+    <div class="card-body pt-0">
+
+        <div class="row">
+
+            <div class="col-3">
+                <!--begin::Select2-->
+                <select class="form-select fw-bolder" name="categoria_id" placeholder="Seleccione Categoria"
+                    [(ngModel)]="categoria_id">
+                    <option [ngValue]="9999999" selected>Categorias</option>
+
+                    <ng-container *ngFor="let item of categorias">
+                        <option [value]="item.id">{{ item.nombre }}</option>
+                    </ng-container>
+                </select>
+                <!--end::Select2-->
+                <!--begin::Description-->
+                <div class="text-muted fs-7">Categoria</div>
+                <!--end::Description-->
+            </div>
+
+            <div class="col-3">
+                <!--begin::Select2-->
+                <select class="form-select mb-2" name="sede_id" placeholder="Seleccione sede" [(ngModel)]="sede_id">
+                    <option [ngValue]="9999999" selected>Sedes</option>
+
+                    <ng-container *ngFor="let item of sedes">
+                        <option [value]="item.id">{{ item.nombre }}</option>
+                    </ng-container>
+                </select>
+                <!--end::Select2-->
+                <!--begin::Description-->
+                <div class="text-muted fs-7">Sedes.</div>
+                <!--end::Description-->
+            </div>
+
+            <div class="col-3">
+                <!--begin::Select2-->
+                <select class="form-select mb-2" name="proveedor_id" placeholder="Seleccione Proveedor"
+                    [(ngModel)]="proveedor_id">
+                    <option [ngValue]="9999999" selected>Proveedor</option>
+
+                    <ng-container *ngFor="let item of proveedores">
+                        <option [value]="item.id" class="text-capitalize">
+                            {{ item.identificacion | number:'1.0-0' }}
+                            <ng-container *ngIf="item.tipo_identificacion === 6">
+                                - {{ item.dv }}
+                            </ng-container>
+                            :
+                            {{ item.nombres }} {{ item.apellidos && item.apellidos !== 'null' ? item.apellidos : ''
+                            }}
+                        </option>
+                    </ng-container>
+                </select>
+                <!--end::Select2-->
+                <!--begin::Description-->
+                <div class="text-muted fs-7">Proveedor.</div>
+                <!--end::Description-->
+            </div>
+
+            <div class="col-3">
+
+                <button (click)="listar()" class="btn btn-primary btn-icon me-2" placement="top" ngbTooltip="Buscar">
+                    <i class="ki-duotone ki-magnifier fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </button>
+
+                <button (click)="resetList()" class="btn btn-dark btn-icon me-2" placement="top" ngbTooltip="Resetear">
+                    <i class="ki-duotone ki-arrows-circle fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </button>
+
+                <button (click)="download()" class="btn btn-success btn-icon me-2" placement="top"
+                    ngbTooltip="Exportar">
+                    <i class="ki-duotone ki-folder-down fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </button>
+
+                <button (click)="exportPdf()" class="btn btn-danger btn-icon me-2" placement="top"
+                    ngbTooltip="Exportar en pdf">
+                    <i class="fa-solid fa-file-pdf fs-2"></i>
+                </button>
+
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-2">
+                <div class="input-group ">
+                    <input type="date" name="fecha_inicio" class="form-control form-control-lg "
+                        (change)="onFechaInicioChange()" [(ngModel)]="fecha_inicio" />
+                </div>
+                <!--begin::Description-->
+                <div class="text-muted fs-7">Fecha de inicio.
+                </div>
+                <!--end::Description-->
+            </div>
+
+            <div class="col-2">
+                <div class="input-group ">
+                    <input type="date" name="fecha_final" class="form-control form-control-lg "
+                        (change)="onFechaFinalChange()" [(ngModel)]="fecha_final" />
+                </div>
+                <!--begin::Description-->
+                <div class="text-muted fs-7">Fecha final.
+                </div>
+                <!--end::Description-->
+            </div>
+
+            <div class="col-4">
+                <!--begin::Select2-->
+                <select class="form-select fw-bolder" name="vendedor_id" placeholder="Vendedor"
+                    [(ngModel)]="vendedor_id">
+                    <option [ngValue]="9999999" selected>Vendedor</option>
+
+                    <ng-container *ngFor="let item of vendedores">
+                        <option [value]="item.id">{{ item.name }}</option>
+                    </ng-container>
+                </select>
+                <!--end::Select2-->
+                <!--begin::Description-->
+                <div class="text-muted fs-7">Vendedor</div>
+                <!--end::Description-->
+            </div>
+
+        </div>
+
+        <!--begin::Table-->
+        <div id="kt_customers_table_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
+            <div id="" class="table-responsive">
+                <table class="table table-row-dashed table-row-gray-100 align-middle gs-0 gy-2 dataTable"
+                    id="kt_customers_table" style="width: 1150.9px;">
+
+                    <thead>
+                        <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                            <th class="min-w-30px text-center">#</th>
+                            <th class="min-w-125px">Articulo</th>
+                            <th class="min-w-135px text-center">Vendidos</th>
+                            <th class="min-w-125px text-center">Existencia</th>
+                            <th class="min-w-125px text-center">Punto de pedido</th>
+                            <th class="min-w-100px">Proveedor</th>
+                            <th class="min-w-100px">Empresa</th>
+                            <th class="min-w-80px text-center">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody class="fw-semibold text-gray-600 fs-7">
+                        <ng-container *ngIf="articulos.length <= 0">
+                            <tr>
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-center text-gray-900 fw-bold text-hover-primary fs-1" colspan="9">
+                                    No existen articulos para estos criterios de busqueda
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <ng-container *ngIf="articulos.length >= 1">
+                            <ng-container *ngFor="let item of articulos; let i=index;">
+                                <tr>
+
+                                    <td style='font-weight: bold;vertical-align: middle;'
+                                        class="text-center text-gray-900 fw-bold text-hover-primary">
+                                        {{ (i+1)}}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="symbol symbol-50px me-5">
+                                                <img [src]="item.imagen" class="" alt="">
+                                            </div>
+                                            <div class="d-flex justify-content-start flex-column">
+                                                <a style="text-transform: capitalize;" href="#" onclick="return false;"
+                                                    class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">{{
+                                                    item.nombre }}</a>
+                                                <span class="text-muted fw-semibold text-muted d-block fs-7">{{ item.sku
+                                                    }}</span>
+                                                <span class="text-muted fw-semibold text-muted d-block fs-7">$ {{
+                                                    item.precio_general | number:'1.0-2' }}</span>
+                                                <span class="text-muted fw-semibold text-muted d-block fs-7 text-capitalize">{{item.categoria?.nombre  }}</span>                                             
+                                            </div>
+
+                                        </div>
+                                    </td>
+
+                                    <td style='font-weight: bold;vertical-align: middle;'
+                                        class="text-gray-900 fw-bold text-hover-primary text-center text-capitalize">
+                                        {{ item.total_vendido }} {{ item.unidad }}
+                                    </td>
+
+                                    <td style='font-weight: bold;vertical-align: middle;'
+                                        class="text-gray-900 fw-bold text-hover-primary text-center">
+                                        {{ getCantidadUnidadYSede(item).cantidad }}
+                                        {{ getCantidadUnidadYSede(item).unidad }}
+                                        ({{ getCantidadUnidadYSede(item).sede }})
+                                    </td>
+
+                                    <td style='font-weight: bold;vertical-align: middle;'
+                                        class="text-gray-900 fw-bold text-hover-primary text-center">
+                                        {{ item.punto_pedido }} {{ item.unidad_punto_pedido?.nombre}}
+                                    </td>
+
+                                    <td style='font-weight: bold; vertical-align: middle;'
+                                        class="text-gray-900 fw-bold text-hover-primary text-capitalize">
+
+                                        {{ item.proveedor?.nombres }}
+                                        <ng-container
+                                            *ngIf="item.proveedor?.apellidos && item.proveedor?.apellidos !== 'null'">
+                                            {{ item.proveedor?.apellidos }}
+                                        </ng-container>
+                                    </td>
+
+
+                                    <td style='font-weight: bold;vertical-align: middle;'
+                                        class="text-gray-900 fw-bold text-hover-primary text-capitalize">{{
+                                        item.empresa?.nombre }}</td>
+
+                                    <td class="text-center">
+                                        <span class="badge fs-7 fw-bold"
+                                            [class]="item.estado === 1 ? 'badge-success' : 'badge-danger'">
+                                            {{ item?.estado === 1 ? 'Activo' : 'Inactivo' }}
+                                        </span>
+                                    </td>
+
+                                </tr>
+                            </ng-container>
+                        </ng-container>
+                    </tbody>
+                    <tfoot></tfoot>
+                </table>
+            </div>
+            <ngb-pagination [collectionSize]="totalPages" [(page)]="currentPage" [pageSize]="20" [rotate]="true"
+                [boundaryLinks]="true" (pageChange)="loadPage($event)"></ngb-pagination>
+        </div>
+        <!--end::Table-->
+    </div>
+    <!--end::Card body-->
+
+</div>

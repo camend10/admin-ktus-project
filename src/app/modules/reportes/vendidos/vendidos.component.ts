@@ -1,48 +1,40 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
-import { GeneralesService } from 'src/app/services/generales.service';
-import { AuthService } from '../../auth';
-import { ReportesService } from '../service/reportes.service';
 import { User } from '../../users/interfaces';
 import { Articulo } from '../../articulos/interfaces';
-import { Empresa } from 'src/app/interfaces';
 import { Sede } from '../../configuracion/sedes/interfaces';
-import { Bodega } from '../../configuracion/bodegas/interfaces';
 import { Categoria } from '../../configuracion/categorias/interfaces';
 import { Proveedor } from '../../configuracion/proveedores/interfaces';
-import { Unidad } from '../../configuracion/unidades/interfaces';
+import { ReportesService } from '../service/reportes.service';
+import { AuthService } from '../../auth';
+import { ToastrService } from 'ngx-toastr';
+import { GeneralesService } from 'src/app/services/generales.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { URL_SERVICIOS } from 'src/app/config/config';
+import { ArticuloElement, ArticuloIndex } from '../interfaces';
 
 @Component({
-  selector: 'app-baja-existencia',
-  templateUrl: './baja-existencia.component.html',
-  styleUrl: './baja-existencia.component.scss'
+  selector: 'app-vendidos',
+  templateUrl: './vendidos.component.html',
+  styleUrl: './vendidos.component.scss'
 })
-export class BajaExistenciaComponent implements OnInit, OnDestroy {
+export class VendidosComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
   totalPages: number = 0;
   currentPage: number = 1;
   user: User;
-  articulos: Articulo[] = [];
+  articulos: ArticuloIndex[] = [];
+  vendedores: User[] = [];
 
-  buscar: string = '';
   categoria_id: number = 9999999;
   sede_id: number = 9999999;
-  bodega_id: number = 9999999;
-  unidad_id_bodegas: number = 9999999;
   proveedor_id: number = 9999999;
-  state_stock: number = 9999999;
-  num_art_agotados: number = 0;
-  num_art_por_agotar: number = 0;
+  fecha_inicio: string = '';
+  fecha_final: string = '';
+  vendedor_id: number = 9999999;
 
-  empresas: Empresa[] = [];
   sedes: Sede[] = [];
-  unidades: Unidad[] = [];
-  bodegas: Bodega[] = [];
-  bodegasFiltradas: Bodega[] = [];
   categorias: Categoria[] = [];
   proveedores: Proveedor[] = [];
 
@@ -61,8 +53,33 @@ export class BajaExistenciaComponent implements OnInit, OnDestroy {
     this.user = this.authService.user;
 
     this.cargarConfiguraciones();
+    this.setCurrentDate();
     this.closeSidebar();
     this.listar();
+  }
+
+  setCurrentDate(): void {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mes con dos dígitos
+    const day = String(date.getDate()).padStart(2, '0'); // Día con dos dígitos
+
+    this.fecha_inicio = `${year}-${month}-${day}`;
+    this.fecha_final = `${year}-${month}-${day}`;
+  }
+
+  onFechaInicioChange(): void {
+    // Si la fecha final es menor que la fecha inicial, actualiza la fecha final
+    if (this.fecha_final < this.fecha_inicio) {
+      this.fecha_final = this.fecha_inicio;
+    }
+  }
+
+  onFechaFinalChange(): void {
+    // Si la fecha inicial es mayor que la fecha final, actualiza la fecha inicial
+    if (this.fecha_inicio > this.fecha_final) {
+      this.fecha_inicio = this.fecha_final;
+    }
   }
 
   ngOnDestroy(): void {
@@ -78,19 +95,13 @@ export class BajaExistenciaComponent implements OnInit, OnDestroy {
   cargarConfiguraciones() {
     this.generalService.cargarConfiguracionesArticulos(this.authService.user.empresa_id)
       .subscribe((response) => {
-        this.empresas = response.empresas;
-        this.unidades = response.unidades;
         this.sedes = response.sedes;
-        this.bodegas = response.bodegas;
         this.categorias = response.categorias;
         this.proveedores = response.proveedores;
+        this.vendedores = response.vendedores;
 
         this.sedes = this.sedes.map(sede => {
           return { ...sede, nombre: this.capitalize(sede.nombre) };
-        });
-
-        this.bodegas = this.bodegas.map(bodega => {
-          return { ...bodega, nombre: this.capitalize(bodega.nombre) };
         });
 
         this.proveedores = this.proveedores.map(proveedor => {
@@ -100,24 +111,14 @@ export class BajaExistenciaComponent implements OnInit, OnDestroy {
           };
         });
 
-        this.unidades = this.unidades.map(unidad => {
-          return { ...unidad, nombre: this.capitalize(unidad.nombre) };
-        });
-
         this.categorias = this.categorias.map(categoria => {
           return { ...categoria, nombre: this.capitalize(categoria.nombre) };
         });
-      });
-  }
 
-  changeSede() {
-    if (this.sede_id !== 9999999) {
-      // Filtra las bodegas según el sede_id seleccionado
-      const bodegasFiltradas = this.bodegas.filter((bodega) => Number(bodega.sede_id) === Number(this.sede_id));
-      this.bodegasFiltradas = bodegasFiltradas;
-    } else {
-      this.bodegasFiltradas = this.bodegas;
-    }
+        this.vendedores = this.vendedores.map(vendedor => {
+          return { ...vendedor, name: this.capitalize(vendedor.name) };
+        });
+      });
   }
 
   capitalize(value: string): string {
@@ -133,28 +134,29 @@ export class BajaExistenciaComponent implements OnInit, OnDestroy {
     this.articulos = [];
 
     let data = {
-      buscar: this.buscar,
       categoria_id: this.categoria_id,
       sede_id: this.sede_id,
-      bodega_id: this.bodega_id,
-      unidad_id_bodegas: this.unidad_id_bodegas,
       proveedor_id: this.proveedor_id,
-      state_stock: this.state_stock,
+      fecha_inicio: this.fecha_inicio,
+      fecha_final: this.fecha_final,
+      vendedor_id: this.vendedor_id,
     };
 
-    this.reporteService.baja_existencia(page, data).subscribe((resp) => {
-
+    this.reporteService.vendidos(page, data).subscribe((resp) => {
       // Verifica si existe `resp.articulos.data` antes de procesar
       if (resp && resp.articulos && resp.articulos.data) {
-        this.articulos = resp.articulos.data.map((articulo) => ({
-          ...articulo,
-          estado: Number(articulo.estado), // Convierte el estado a número
-        }));
+        // Supongamos que recibes la respuesta de Laravel en una variable llamada `resp`
+        this.articulos = resp.articulos.data.map(item => {
+          return {
+            ...item.articulo, // Copia todas las propiedades del objeto `articulo`
+            articulo_id: item.articulo_id,
+            total_vendido: item.total_vendido,
+            unidad: item.unidad
+          };
+        });
 
         this.totalPages = resp.total; // Asigna el total de páginas desde `resp.total`
         this.currentPage = page; // Página actual
-        this.num_art_agotados = resp.num_art_agotados;
-        this.num_art_por_agotar = resp.num_art_por_agotar;
       } else {
         console.error('Estructura inesperada en la respuesta del servidor:', resp);
       }
@@ -162,73 +164,64 @@ export class BajaExistenciaComponent implements OnInit, OnDestroy {
   }
 
   resetList() {
-    this.buscar = '';
     this.categoria_id = 9999999;
     this.sede_id = 9999999;
-    this.bodega_id = 9999999;
-    this.unidad_id_bodegas = 9999999;
     this.proveedor_id = 9999999;
-    this.state_stock = 9999999;
+    this.vendedor_id = 9999999;
+    this.setCurrentDate();
     this.listar();
   }
 
   download() {
 
-    // let sedeId = this.sede_id === 9999999
-    //   ? (this.user?.sede_id ?? 0) // Si this.user.sede_id no está definido, usa 0
-    //   : (this.sede_id ?? 0); // Si this.sede_id no está definido, usa 0
-
     const params = {
-      buscar: this.buscar, // Siempre incluir
       categoria_id: this.categoria_id,
       sede_id: this.sede_id,
-      bodega_id: this.bodega_id,
-      unidad_id_bodegas: this.unidad_id_bodegas,
       proveedor_id: this.proveedor_id,
       empresa_id: this.user.empresa_id,
-      state_stock: this.state_stock,
       sede_usuario_id: this.user.sede_id,
+      fecha_inicio: this.fecha_inicio,
+      fecha_final: this.fecha_final,
+      vendedor_id: this.vendedor_id,
     };
 
     // Filtrar las claves excepto 'buscar', que siempre se envía
     const queryString = Object.entries(params)
-      .filter(([key, value]) => key === 'buscar' || (value !== undefined && value !== null && value !== ''))
+      .filter(([key, value]) => (value !== undefined && value !== null))
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
 
     // Construir el enlace
     const link = queryString ? `?${queryString}` : '';
 
-    window.open(URL_SERVICIOS + '/excel/export-articulo-baja-existencia' + link, '_BLANK');
+    window.open(URL_SERVICIOS + '/excel/export-vendidos' + link, '_BLANK');
   }
 
   exportPdf() {
 
     const params = {
-      buscar: this.buscar, // Siempre incluir
       categoria_id: this.categoria_id,
       sede_id: this.sede_id,
-      bodega_id: this.bodega_id,
-      unidad_id_bodegas: this.unidad_id_bodegas,
       proveedor_id: this.proveedor_id,
       empresa_id: this.user.empresa_id,
-      state_stock: this.state_stock,
       sede_usuario_id: this.user.sede_id,
+      fecha_inicio: this.fecha_inicio,
+      fecha_final: this.fecha_final,
+      vendedor_id: this.vendedor_id,
     };
 
-    // Filtrar las claves excepto 'buscar', que siempre se envía
     const queryString = Object.entries(params)
-      .filter(([key, value]) => key === 'buscar' || (value !== undefined && value !== null && value !== ''))
+      .filter(([key, value]) => (value !== undefined && value !== null))
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
 
     // Construir el enlace
     const link = queryString ? `?${queryString}` : '';
 
-    window.open(URL_SERVICIOS + '/pdf/baja-existencia' + link, '_BLANK');
+    window.open(URL_SERVICIOS + '/pdf/vendidos' + link, '_BLANK');
   }
 
-  getCantidadUnidadYSede(item: Articulo): { cantidad: number; unidad: string; sede: string } {
+  getCantidadUnidadYSede(item: ArticuloIndex): { cantidad: number; unidad: string; sede: string } {
     if (!item.bodegas_articulos || !this.user?.sede_id) {
       return { cantidad: 0, unidad: '', sede: '' }; // Valores predeterminados si faltan datos
     }

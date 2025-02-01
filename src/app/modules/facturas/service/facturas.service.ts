@@ -96,6 +96,8 @@ export class FacturasService {
       articulo: string,
       fecha_inicio: string,
       fecha_final: string,
+      sede_id: number,
+      sede_usuario_id: number
     }
   ): Observable<ResponseFactura> {
 

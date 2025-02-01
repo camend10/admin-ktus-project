@@ -1,0 +1,289 @@
+<!-- Loading Spinner -->
+<div *ngIf="isLoading$ | async" class="loading-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <span class="loading-text">Cargando...</span>
+</div>
+
+
+<div class="card">
+
+    <!--begin::Card body-->
+    <div class="card-body pt-0">
+        <div class="row pt-6">
+            <div class="col-8">
+
+                <div class="row">
+                    <div class="col-4">
+                        <!--begin::Select2-->
+                        <select class="form-select fw-bolder" name="sede_id" placeholder="Sedes" [(ngModel)]="sede_id"
+                            (change)="changeSede()">
+                            <option [ngValue]="9999999" selected>Seleccione</option>
+
+                            <ng-container *ngFor="let item of sedes">
+                                <option [value]="item.id">{{ item.nombre }}</option>
+                            </ng-container>
+                        </select>
+                        <!--end::Select2-->
+                        <!--begin::Description-->
+                        <div class="text-muted fs-7">Sedes</div>
+                        <!--end::Description-->
+                    </div>
+
+                    <div class="col-3" (change)="changeBodega()">
+                        <!--begin::Select2-->
+                        <select class="form-select fw-bolder" name="bodega_id" placeholder="Bodegas"
+                            [(ngModel)]="bodega_id">
+                            <option [ngValue]="9999999" selected>Seleccione</option>
+
+                            <ng-container *ngFor="let item of bodegasFiltradas">
+                                <option [value]="item.id">{{ item.nombre }}</option>
+                            </ng-container>
+                        </select>
+                        <!--end::Select2-->
+                        <!--begin::Description-->
+                        <div class="text-muted fs-7">Bodegas</div>
+                        <!--end::Description-->
+                    </div>
+
+                    <div class="col-5">
+                        <!--begin::Search-->
+                        <div class="d-flex align-items-center position-relative">
+                            <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                            <input type="text" data-kt-customer-table-filter="search" [(ngModel)]="articulo"
+                                name="articulo" class="form-control w-320px ps-12" placeholder="Articulo"
+                                (keyup.enter)="listar()">
+                        </div>
+                        <!--end::Search-->
+                        <!--begin::Description-->
+                        <div class="text-muted fs-7">Articulo</div>
+                        <!--end::Description-->
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-3">
+                        <div class="input-group ">
+                            <input type="date" name="fecha_inicio" class="form-control form-control-lg "
+                                (change)="onFechaInicioChange()" [(ngModel)]="fecha_inicio" />
+                        </div>
+                        <!--begin::Description-->
+                        <div class="text-muted fs-7">Fecha de inicio.
+                        </div>
+                        <!--end::Description-->
+                    </div>
+
+                    <div class="col-3">
+                        <div class="input-group ">
+                            <input type="date" name="fecha_final" class="form-control form-control-lg "
+                                (change)="onFechaFinalChange()" [(ngModel)]="fecha_final" />
+                        </div>
+                        <!--begin::Description-->
+                        <div class="text-muted fs-7">Fecha final.
+                        </div>
+                        <!--end::Description-->
+                    </div>
+
+                    <div class="col-3">
+                        <button (click)="listar()" class="btn btn-primary btn-icon me-2" placement="top"
+                            ngbTooltip="Buscar">
+                            <i class="ki-duotone ki-magnifier fs-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                        </button>
+
+                        <button (click)="resetList()" class="btn btn-dark btn-icon me-2" placement="top"
+                            ngbTooltip="Resetear">
+                            <i class="ki-duotone ki-arrows-circle fs-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                        </button>
+
+
+                        <button (click)="exportPdf()" class="btn btn-danger btn-icon me-2" placement="top"
+                            ngbTooltip="Exportar en pdf">
+                            <i class="fa-solid fa-file-pdf fs-2"></i>
+                        </button>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-6">
+                        <h4 class="fw-bolder text-end">Total Entradas: </h4>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="fw-bolder text-start"> {{ total_entradas }} <span class="ms-2 text-capitalize">{{ unidad }}</span>
+                        </h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <h4 class="fw-bolder text-end">Total Salidas: </h4>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="fw-bolder text-start"> {{ total_salidas }} <span class="ms-2 text-capitalize">{{ unidad }}</span>
+                        </h4>
+                    </div>
+                </div>
+                <hr>
+                <div class="row" *ngIf="existencia_inicial > -1">
+                    <div class="col-6">
+                        <h4 class="fw-bolder text-end">Total Existencia: </h4>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="fw-bolder text-start"> {{ existencia_final }} <span class="ms-2 text-capitalize">{{ unidad }}</span>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!--begin::Table-->
+        <div id="kt_customers_table_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
+            <div id="" class="table-responsive">
+                <table class="table table-row-dashed table-row-gray-100 align-middle gs-0 gy-3 dataTable"
+                    id="kt_customers_table" style="width: 1150.9px;">
+
+                    <thead>
+                        <tr class="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+                            <th class="min-w-125px text-center">#</th>
+                            <th class="min-w-125px">Nº</th>
+                            <th class="min-w-125px">Fecha</th>
+                            <th class="min-w-125px">Movimiento</th>
+                            <th class="min-w-125px">Detalle</th>
+                            <th class="min-w-125px text-center">Cantidad</th>
+                            <th class="min-w-125px">Origen</th>
+                            <th class="min-w-125px">Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody class="fw-semibold text-gray-600">
+                        <!-- Fila inicial para existencia_inicial -->
+                        <tr *ngIf="existencia_inicial > -1" style="background-color: #f0f0f0;">
+
+                            <td style='font-weight: bold;text-wrap: nowrap;vertical-align: middle;text-wrap: nowrap;'
+                                class="text-gray-900 fw-bold text-hover-primary text-capitalize text-end" colspan="5">
+                                Existencia Inicial
+                            </td>
+
+                            <td style='font-weight: bold;vertical-align: middle;'
+                                class="text-gray-900 fw-bold text-hover-primary text-capitalize text-center"
+                                style="text-wrap: nowrap;">
+                                {{ existencia_inicial }} <span class="text-capitalize">{{ unidad
+                                    }}</span><!-- Mostrar existencia_inicial -->
+                            </td>
+
+                            <td style='font-weight: bold;vertical-align: middle;'
+                                class="text-gray-900 fw-bold text-hover-primary text-capitalize"
+                                style="text-wrap: nowrap;">
+                                <!-- Sede vacía o personalizada -->
+                            </td>
+
+                            <td class="text-center" style="text-wrap: nowrap;vertical-align: middle;">
+                                <!-- Estado vacío o personalizado -->
+                            </td>
+
+                        </tr>
+
+                        <ng-container *ngFor="let item of movimientos; let i=index;">
+                            <tr>
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-center text-gray-900 fw-bold text-hover-primary">
+                                    {{ (i+1)}}
+                                </td>
+
+                                <td style='font-weight: bold;text-wrap: nowrap;vertical-align: middle;'
+                                    class="text-gray-900 fw-bold text-hover-primary text-capitalize"
+                                    style="text-wrap: nowrap;">
+                                    {{ item.id }}
+                                </td>
+
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-gray-900 fw-bold text-hover-primary text-capitalize"
+                                    style="text-wrap: nowrap;">{{
+                                    item.fecha | date:'yyyy-MM-dd'}}
+                                </td>
+
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-gray-900 fw-bold text-hover-primary text-capitalize"
+                                    style="text-wrap: nowrap;">{{
+                                    item.tipo }}</td>
+
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-gray-900 fw-bold text-hover-primary text-capitalize"
+                                    style="text-wrap: nowrap;">{{
+                                    item.observacion }}</td>
+
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-gray-900 fw-bold text-hover-primary text-capitalize text-center"
+                                    style="text-wrap: nowrap;">
+                                    {{item.cantidad }} {{ unidad }}
+                                </td>
+
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-gray-900 fw-bold text-hover-primary text-capitalize"
+                                    style="text-wrap: nowrap;">
+                                    {{item.origen }}
+                                </td>
+
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-gray-900 fw-bold text-hover-primary text-capitalize"
+                                    style="text-wrap: nowrap;">
+                                    {{item.usuario }}
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                        <tr *ngIf="existencia_inicial > -1" style="background-color: #f0f0f0;">
+
+                            <td style='font-weight: bold;text-wrap: nowrap;vertical-align: middle;text-wrap: nowrap;'
+                                class="text-gray-900 fw-bold text-hover-primary text-capitalize text-end" colspan="5">
+                                Existencia Final
+                            </td>
+
+                            <td style='font-weight: bold;vertical-align: middle;'
+                                class="text-gray-900 fw-bold text-hover-primary text-capitalize text-center"
+                                style="text-wrap: nowrap;">
+                                {{ existencia_final }} <span class="text-capitalize">{{ unidad
+                                    }}</span><!-- Mostrar existencia_inicial -->
+                            </td>
+
+                            <td style='font-weight: bold;vertical-align: middle;'
+                                class="text-gray-900 fw-bold text-hover-primary text-capitalize"
+                                style="text-wrap: nowrap;">
+                                <!-- Sede vacía o personalizada -->
+                            </td>
+
+                            <td class="text-center" style="text-wrap: nowrap;vertical-align: middle;">
+                                <!-- Estado vacío o personalizado -->
+                            </td>
+
+                        </tr>
+
+                        <ng-container *ngIf="movimientos.length <= 0">
+                            <tr>
+                                <td style='font-weight: bold;vertical-align: middle;'
+                                    class="text-center fs-2 fw-bold text-hover-primary" colspan="8">
+                                    No existen movimientos con estos filtros
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                    </tbody>
+                    <tfoot></tfoot>
+                </table>
+            </div>
+
+        </div>
+        <!--end::Table-->
+    </div>
+    <!--end::Card body-->
+</div>

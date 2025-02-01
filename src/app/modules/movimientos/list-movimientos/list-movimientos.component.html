@@ -29,7 +29,23 @@
                     <!--end::Description-->
                 </div>
 
-                <div class="col-3">
+                <div class="col-2">
+                    <!--begin::Select2-->
+                    <select class="form-select fw-bolder" name="sede_id" placeholder="Sedes" [(ngModel)]="sede_id"
+                        (change)="changeSede()">
+                        <option [ngValue]="9999999" selected>Seleccione</option>
+
+                        <ng-container *ngFor="let item of sedes">
+                            <option [value]="item.id">{{ item.nombre }}</option>
+                        </ng-container>
+                    </select>
+                    <!--end::Select2-->
+                    <!--begin::Description-->
+                    <div class="text-muted fs-7">Sedes</div>
+                    <!--end::Description-->
+                </div>
+
+                <div class="col-2">
                     <!--begin::Select2-->
                     <select class="form-select fw-bolder" name="bodega_id" placeholder="Bodegas"
                         [(ngModel)]="bodega_id">
@@ -123,22 +139,6 @@
                     <!--end::Description-->
                 </div>
 
-                <div class="col-2">
-                    <!--begin::Select2-->
-                    <select class="form-select fw-bolder" name="sede_id" placeholder="Sedes" [(ngModel)]="sede_id"
-                        (change)="changeSede()">
-                        <option [ngValue]="9999999" selected>Seleccione</option>
-
-                        <ng-container *ngFor="let item of sedes">
-                            <option [value]="item.id">{{ item.nombre }}</option>
-                        </ng-container>
-                    </select>
-                    <!--end::Select2-->
-                    <!--begin::Description-->
-                    <div class="text-muted fs-7">Sedes</div>
-                    <!--end::Description-->
-                </div>
-
                 <div class="col-3">
                     <button (click)="listar()" class="btn btn-primary btn-icon me-2" placement="top"
                         ngbTooltip="Buscar">
@@ -195,6 +195,7 @@
                         </tr>
                     </thead>
                     <tbody class="fw-semibold text-gray-600">
+                        
                         <ng-container *ngFor="let item of movimientos; let i=index;">
                             <tr>
                                 <td style='font-weight: bold;vertical-align: middle;'

@@ -13,23 +13,7 @@
 
             <div class="row">
 
-                <div class="col-2">
-                    <!--begin::Search-->
-                    <div class="d-flex align-items-center position-relative">
-                        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                        </i>
-                        <input type="text" data-kt-customer-table-filter="search" [(ngModel)]="buscar" name="buscar"
-                            class="form-control w-200px ps-12" placeholder="Nº de Factura" (keyup.enter)="listar()">
-                    </div>
-                    <!--end::Search-->
-                    <!--begin::Description-->
-                    <div class="text-muted fs-7">Factura</div>
-                    <!--end::Description-->
-                </div>
-
-                <div class="col-2">
+                <div class="col-4">
                     <!--begin::Select2-->
                     <select class="form-select fw-bolder" name="segmento_cliente_id" placeholder="Tipo de cliente"
                         [(ngModel)]="segmento_cliente_id">
@@ -45,7 +29,7 @@
                     <!--end::Description-->
                 </div>
 
-                <div class="col-2">
+                <div class="col-4">
                     <!--begin::Select2-->
                     <select class="form-select fw-bolder" name="categoria_id" placeholder="Categorias"
                         [(ngModel)]="categoria_id">
@@ -61,7 +45,7 @@
                     <!--end::Description-->
                 </div>
 
-                <div class="col-3">
+                <div class="col-4">
                     <!--begin::Select2-->
                     <select class="form-select fw-bolder" name="vendedor_id" placeholder="Vendedor"
                         [(ngModel)]="vendedor_id">
@@ -78,25 +62,27 @@
                 </div>
 
                 <div class="col-2">
-                    <!--begin::Search-->
-                    <div class="d-flex align-items-center position-relative">
-                        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                        </i>
-                        <input type="text" data-kt-customer-table-filter="search" [(ngModel)]="cliente" name="cliente"
-                            class="form-control w-300px ps-12" placeholder="Cliente" (keyup.enter)="listar()">
-                    </div>
-                    <!--end::Search-->
+                    <!--begin::Select2-->
+                    <select class="form-select mb-2" placeholder="Metodo de pago" [(ngModel)]="metodo_pago_id"
+                        name="metodo_pago_id">
+                        <option [ngValue]="9999999" selected>Metodo de pago</option>
+
+                        <ng-container *ngIf="metodos_pagos">
+                            <ng-container *ngFor="let item of metodos_pagos">
+                                <option [ngValue]="item.id">{{ item.nombre }}</option>
+                            </ng-container>
+                        </ng-container>
+                    </select>
+                    <!--end::Select2-->
                     <!--begin::Description-->
-                    <div class="text-muted fs-7">Cliente.
+                    <div class="text-muted fs-7">Metodos de pagos.
                     </div>
                     <!--end::Description-->
                 </div>
 
-                <div class="col-2">
+                <div class="col-3">
                     <!--begin::Select2-->
-                    <select class="form-select fw-bolder" name="sede_id" placeholder="Sedes" [(ngModel)]="sede_id">
+                    <select class="form-select mb-2" name="sede_id" placeholder="Seleccione sede" [(ngModel)]="sede_id">
                         <option [ngValue]="9999999" selected>Sedes</option>
 
                         <ng-container *ngFor="let item of sedes">
@@ -105,25 +91,10 @@
                     </select>
                     <!--end::Select2-->
                     <!--begin::Description-->
-                    <div class="text-muted fs-7">Sedes</div>
+                    <div class="text-muted fs-7">Sedes.</div>
                     <!--end::Description-->
                 </div>
 
-                <div class="col-2">
-                    <!--begin::Search-->
-                    <div class="d-flex align-items-center position-relative">
-                        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                        </i>
-                        <input type="text" data-kt-customer-table-filter="search" [(ngModel)]="articulo" name="articulo"
-                            class="form-control w-260px ps-12" placeholder="Articulo" (keyup.enter)="listar()">
-                    </div>
-                    <!--end::Search-->
-                    <!--begin::Description-->
-                    <div class="text-muted fs-7">Articulo</div>
-                    <!--end::Description-->
-                </div>
 
                 <div class="col-2">
                     <div class="input-group ">
@@ -147,7 +118,7 @@
                     <!--end::Description-->
                 </div>
 
-                <div class="col-4">
+                <div class="col-3">
                     <button (click)="listar()" class="btn btn-primary btn-icon me-2" placement="top"
                         ngbTooltip="Buscar">
                         <i class="ki-duotone ki-magnifier fs-2">
@@ -171,20 +142,10 @@
                             <span class="path2"></span>
                         </i>
                     </button>
-
-                    <button (click)="download_detalle()" class="btn btn-info btn-icon me-2" placement="top"
-                        ngbTooltip="Exportar Detalle de Facturas">
-                        <i class="ki-duotone ki-questionnaire-tablet fs-2">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                        </i>
+                    <button (click)="exportPdf()" class="btn btn-danger btn-icon me-2" placement="top"
+                        ngbTooltip="Exportar en pdf">
+                        <i class="fa-solid fa-file-pdf fs-2"></i>
                     </button>
-
-                    <!--begin::Add customer-->
-                    <a type="button" class="btn btn-primary" *ngIf="isPermission('registrar_factura')" placement="top"
-                        ngbTooltip="Crear Factura" routerLink="/facturas/crear">
-                        <i class="ki-duotone ki-plus"></i>Crear Factura</a>
-                    <!--end::Add customer-->
 
                 </div>
             </div>
@@ -210,17 +171,14 @@
                             <th class="min-w-125px text-end">Total Venta</th>
                             <th class="min-w-125px">Forma de pago</th>
                             <th class="min-w-125px">Sede</th>
-                            <th class="min-w-125px text-center">Estado</th>
-                            <th class="text-center min-w-70px">Acciones
-                            </th>
                         </tr>
                     </thead>
                     <tbody class="fw-semibold text-gray-600">
                         <ng-container *ngIf="facturas.length <= 0">
                             <tr>
                                 <td style='font-weight: bold;vertical-align: middle;'
-                                    class="text-center text-gray-900 fw-bold text-hover-primary fs-1" colspan="10">
-                                    No existen facturas para estos criterios de busqueda
+                                    class="text-center text-gray-900 fw-bold text-hover-primary fs-1" colspan="8">
+                                    No existen ventas para estos criterios de busqueda
                                 </td>
                             </tr>
                         </ng-container>
@@ -281,22 +239,6 @@
                                                 {{ item.factura_pago?.[0]?.metodo_pago?.nombre || 'Sin método de pago'
                                                 }}
                                             </a>
-                                            <span
-                                                class="text-muted fw-semibold text-muted d-block fs-7 text-hover-primary text-capitalize">
-                                                {{ item.factura_deliverie?.sede_deliverie?.nombre || 'En Caja' }}
-                                            </span>
-                                            <span
-                                                class="text-muted fw-semibold text-muted d-block text-hover-primary text-capitalize">
-
-                                                <span
-                                                    [ngClass]="item.estado === 1 ? getBadgeClass(item.estado_pago) + ' small-badge' : 'badge badge-danger fs-7 fw-bold'"
-                                                    style="font-size: 0.75rem !important; padding: 0.2em 0.4em !important; line-height: 1 !important;">
-                                                    {{ item.estado === 1 ? getEstadoPagoText(item.estado_pago) : 'SIN
-                                                    PAGO' }}
-                                                </span>
-
-
-                                            </span>
                                         </div>
                                     </div>
                                 </td>
@@ -305,63 +247,6 @@
                                     class="text-gray-900 fw-bold text-hover-primary  text-capitalizetext-capitalize"
                                     style="text-wrap: nowrap;">{{
                                     item.sede?.nombre }}</td>
-
-                                <td class="text-center" style="text-wrap: nowrap;vertical-align: middle;">
-                                    <span *ngIf="item?.estado === 1 " class="badge badge-success fs-7 fw-bold">
-                                        Activa
-                                    </span>
-                                    <span *ngIf="item?.estado === 0 " class="badge badge-danger fs-7 fw-bold">
-                                        Eliminada
-                                    </span>
-                                </td>
-
-                                <td class="text-center" style="text-wrap: nowrap;vertical-align: middle;">
-
-                                    <a href="#" onclick="return false" (click)="imprimirFactura(item)" placement="top"
-                                        ngbTooltip="Imprimir factura"
-                                        class="btn btn-icon btn-bg-danger btn-active-color-danger w-30px h-30px w-30px h-30px">
-
-                                        <i class="fs-3 ki-duotone ki-printer text-white"><span
-                                                class="path1"></span><span class="path2"></span><span
-                                                class="path3"></span><span class="path4"></span><span
-                                                class="path5"></span>
-                                        </i>
-                                    </a>
-
-                                    <a href="#" onclick="return false" (click)="verFactura(item)" placement="top"
-                                        ngbTooltip="Ver factura"
-                                        class="btn btn-icon btn-active-light-primary w-30px h-30px w-30px h-30px">
-                                        <i class="ki-duotone" class="fs-3 ki-duotone ki-questionnaire-tablet">
-                                            <span class="path1"></span><span class="path2"></span>
-                                            <span class="path3"></span><span class="path4"></span>
-                                            <span class="path5"></span>
-                                        </i>
-                                    </a>
-
-                                    <a *ngIf="isPermission('editar_factura') && item.estado === 1"
-                                        [routerLink]="'/facturas/listado/editar/' + item.id" placement="top"
-                                        ngbTooltip="Edita factura"
-                                        class="btn btn-icon btn-active-light-primary w-30px h-30px">
-                                        <i class="ki-duotone ki-pencil fs-3"><span class="path1"></span><span
-                                                class="path2"></span></i>
-                                    </a>
-
-                                    <a href="#" (click)="cambiarEstado(item)" onclick="return false;" placement="top"
-                                        ngbTooltip="Eliminar factura"
-                                        *ngIf="isPermission('eliminar_factura') && item.estado === 1" title="Eliminar"
-                                        class="btn btn-icon btn-active-light-primary w-30px h-30px w-30px h-30px">
-                                        <!-- Cambia el color del botón -->
-
-                                        <i class="ki-duotone" class="fs-3 ki-duotone ki-trash">
-                                            <!-- Icono de check para activar y trash para eliminar -->
-                                            <span class="path1"></span><span class="path2"></span>
-                                            <span class="path3"></span><span class="path4"></span>
-                                            <span class="path5"></span>
-                                        </i>
-                                    </a>
-
-                                </td>
-
                             </tr>
                         </ng-container>
 
@@ -375,6 +260,7 @@
                             <td colspan="2"></td>
                         </tr>
                     </tfoot>
+
                 </table>
             </div>
             <ngb-pagination [collectionSize]="totalPages" [(page)]="currentPage" [pageSize]="20" [rotate]="true"

@@ -51,6 +51,7 @@ export class ListFacturasComponent implements OnInit, OnDestroy {
   tipo: number = 9999999;
   categoria_id: number = 9999999;
   vendedor_id: number = 9999999;
+  sede_id: number = 9999999;
 
   cliente: string = '';
 
@@ -133,7 +134,9 @@ export class ListFacturasComponent implements OnInit, OnDestroy {
       cliente: this.cliente,
       articulo: this.articulo,
       fecha_inicio: this.fecha_inicio,
-      fecha_final: this.fecha_final
+      fecha_final: this.fecha_final,
+      sede_id: this.sede_id,
+      sede_usuario_id: this.user.sede_id ?? 0
     };
 
     this.facturaService.listar(page, data).subscribe((resp) => {
@@ -198,6 +201,14 @@ export class ListFacturasComponent implements OnInit, OnDestroy {
         this.segmentos_clientes = this.segmentos_clientes.map(segmentos => {
           return { ...segmentos, nombre: this.capitalize(segmentos.nombre) };
         });
+
+        this.sedes = this.sedes.map(sede => {
+          return { ...sede, nombre: this.capitalize(sede.nombre) };
+        });
+
+        this.metodos_pagos = this.metodos_pagos.map(metodos => {
+          return { ...metodos, nombre: this.capitalize(metodos.nombre) };
+        });
         // this.isLoadingProcess();
       });
   }
@@ -226,8 +237,9 @@ export class ListFacturasComponent implements OnInit, OnDestroy {
       fecha_inicio: this.fecha_inicio,
       fecha_final: this.fecha_final,
       empresa_id: this.user.empresa_id,
-      sede_id: this.user.sede_id,
+      sede_id: this.sede_id,
       role_id: this.user.role_id,
+      sede_usuario_id: this.user.sede_id ?? 0
     };
 
     // Filtrar las claves excepto 'buscar', que siempre se envía
@@ -240,6 +252,14 @@ export class ListFacturasComponent implements OnInit, OnDestroy {
     const link = queryString ? `?${queryString}` : '';
 
     window.open(URL_SERVICIOS + '/excel/export-factura' + link, '_BLANK');
+  }
+
+  getTotalVenta(): number {
+    return this.facturas
+      .filter(factura => factura.estado === 1) // Filtrar solo facturas con estado 1
+      .reduce((total, factura) => {
+        return total + (factura.sub_total - factura.total_descuento + factura.total_iva);
+      }, 0);
   }
 
   download_detalle() {

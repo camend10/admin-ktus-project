@@ -412,21 +412,37 @@ export const SIDEBAR: any = [
             },
         ]
     },
-    {
-        'name': 'Kardex',
-        'permisos': [
-            {
-                name: 'Ver',
-                permiso: 'ver_kardex',
-            },
-        ]
-    },
+    // {
+    //     'name': 'Kardex',
+    //     'permisos': [
+    //         {
+    //             name: 'Ver',
+    //             permiso: 'ver_kardex',
+    //         },
+    //     ]
+    // },
     {
         'name': 'Reportes',
         'permisos': [
             {
+                name: 'Kardex',
+                permiso: 'ver_kardex',
+            },
+            {
                 name: 'Baja existencia',
                 permiso: 'baja_existencia',
+            },
+            {
+                name: 'Ventas',
+                permiso: 'ventas',
+            },
+            {
+                name: 'Vendidos',
+                permiso: 'vendidos',
+            },
+            {
+                name: 'Movimientos',
+                permiso: 'movimientos',
             },
         ]
     },
